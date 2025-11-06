@@ -28,6 +28,7 @@
 //Specific Libraries
 #include "src/ParseIni.h"
 #include "src/ParamsFromSD.h"
+#include "src/ListCtrlParams.h"
 
 //Board to board coms
 #include "src/UARTHandler.h"
@@ -62,6 +63,9 @@ void setup()
     //Get the config information from the SD card (calls function in ParseIni).
     ini_parser(config_info::config_to_send);              
     
+	//Debugging ListCtrlParams
+	ctrl_param_array_gen();
+	
     //Print to confirm config came through correctly (Should not contain zeros).
     #if defined(MAIN_DEBUG) || defined(SIMPLE_DEBUG)
         for (int i = 0; i < ini_config::number_of_keys; i++)
