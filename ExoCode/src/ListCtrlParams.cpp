@@ -18,33 +18,67 @@ void ctrl_param_array_gen() {
 	}
 	
 	//Configure
-	char stringArray[MAX_COLUMNS][MAX_STRING_LENGTH];
+	static char stringArray[(uint8_t)config_defs::ankle_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
 	
-	// Call the function to read and parse the fifth row
-   int columnsRead = readAndParseFifthRow("/ankleControllers/spv2.csv", stringArray, MAX_COLUMNS, MAX_STRING_LENGTH);
+	Serial.print("  |  Number of ankle controllers: ");
+	Serial.print((uint8_t)config_defs::ankle_controllers::Count);
+	
+	uint8_t row_idx = 0;
+	for (int i_ctrl = 2; i_ctrl < (uint8_t)config_defs::ankle_controllers::Count; i_ctrl++) {
+        Serial.print("Current index value: ");
+        Serial.println(i_ctrl);
+		
+        if (controller_parameter_filenames::ankle.count(i_ctrl)) { // condition is true if count is 1
+			Serial.print("Key ");
+			Serial.print((int)i_ctrl);
+			Serial.println(" exists.");
+			
+			std::string filename = controller_parameter_filenames::ankle[i_ctrl];
+			Serial.print("\nstd::string filename is ");
+			Serial.print(filename.c_str());
+			Serial.print("char filename_char = filename.c_str() returns ");
+			const char* filename_char = filename.c_str();
+			Serial.print(filename_char);
+			
+			
+			// Call the function to read and parse the fifth row
+		int columnsRead = readAndParseFifthRow(filename_char, stringArray, MAX_COLUMNS, MAX_STRING_LENGTH, row_idx);
+		
 
-  // Print the results
-  if (columnsRead > 0) {
-    Serial.println("\nFifth Row Data Saved:");
-    for (int i = 0; i < columnsRead; i++) {
-      Serial.print("Column ");
-      Serial.print(i + 1);
-      Serial.print(": ");
-      Serial.println(stringArray[i]);
-    }
-  } else {
-    Serial.println("\nFailed to read or parse the fifth row.");
-  } 
+		// Print the results
+		if (columnsRead > 0) {
+			Serial.println("\nFifth Row Data Saved:");
+			for (int i = 0; i < columnsRead; i++) {
+			  Serial.print("Column ");
+			  Serial.print(i + 1);
+			  Serial.print(": ");
+			  Serial.println(stringArray[row_idx][i]);
+			}
+		}
+		else {
+			Serial.println("\nFailed to read or parse the fifth row.");
+		}
+		
+		row_idx++;
+	}
+
+}
+	
+	
+	
+	
 	
 }
 
 // --- Function to Read and Parse ---
 
- int readAndParseFifthRow(const char* filename, char arr[][MAX_STRING_LENGTH], int maxCols, int maxLen) {
-  File dataFile = SD.open(filename);
+ int readAndParseFifthRow(const char* filename_char, char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], int maxCols, int maxLen, uint8_t row_idx) {
+	 Serial.print("\nIncoming filename_char is ");
+	 Serial.print(filename_char);
+  File dataFile = SD.open(filename_char);
   if (!dataFile) {
     Serial.print("Error opening ");
-    Serial.println(filename);
+    Serial.println(filename_char);
     return 0; // Return 0 columns read
   }
 
@@ -86,7 +120,7 @@ void ctrl_param_array_gen() {
 
     if (c == ',') {
       // End of a field: terminate the current string and move to the next column
-      arr[colIndex][charIndex] = '\0'; // Null-terminate the string
+      arr[row_idx][colIndex][charIndex] = '\0'; // Null-terminate the string
       colIndex++;
       charIndex = 0; // Reset character index for the next column
       
@@ -97,7 +131,7 @@ void ctrl_param_array_gen() {
 	else if (c != '\r' && c != '\n') { // Ignore carriage return and newline characters
       // Append character to the current string
       if (charIndex < maxLen - 1) { // -1 for the null terminator
-        arr[colIndex][charIndex] = c;
+        arr[row_idx][colIndex][charIndex] = c;
         charIndex++;
       } else {
         Serial.println("Warning: String truncated.");
@@ -108,9 +142,12 @@ void ctrl_param_array_gen() {
   // 3. Handle the Last Column
   // Null-terminate the last string after the loop finishes
   if (colIndex < maxCols && charIndex > 0) {
-    arr[colIndex][charIndex] = '\0';
+    arr[row_idx][colIndex][charIndex] = '\0';
     colIndex++; // Increment to count the last column
   }
+
+	Serial.print("\nNumber of columns read: ");
+	Serial.print(colIndex);
 
   return colIndex; // Return the number of columns successfully read
 }

@@ -147,6 +147,8 @@ namespace config_defs
         step = 6,
         phmc = 7,
 		calibr_manager = 8,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
     
     enum class knee_controllers : uint8_t   //Knee Controller IDs
@@ -157,6 +159,8 @@ namespace config_defs
         chirp = 4,
         step = 5,
 		calibr_manager = 6,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
         
     enum class ankle_controllers : uint8_t  //Ankle Controller IDs
@@ -172,6 +176,8 @@ namespace config_defs
         step = 9,
 		spv2 = 10,
 		pjmc_plus = 11,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
 
     enum class elbow_controllers : uint8_t  //Elbow Controller IDs
@@ -182,6 +188,8 @@ namespace config_defs
         calibr_manager = 4,
         chirp = 5,
         step = 6,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
     
     enum class use_torque_sensor : uint8_t  //Option to use or not use torque sensor for low-level control
