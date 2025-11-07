@@ -95,6 +95,25 @@ bool ExoBLE::setup()
     BLE.addService(_gatt_db.ErrorService);
 
     _gatt_db.RXChar.setEventHandler(BLEWritten, ble_rx::on_rx_recieved);
+
+    // When the central subscribes to notifications on TX, send a simple handshake string
+    _gatt_db.TXChar.setEventHandler(BLESubscribed,
+        [](BLEDevice central, BLECharacteristic characteristic)
+        {
+            const char handshake_msg[] = "READY";
+            characteristic.writeValue(handshake_msg);
+
+            // Send a longer, segmented message split at commas to respect MTU
+            const char *segments[] = {"f,", "36,", "11,", "pjmc_plus,", "param1,", "param2\n"};
+            const int numSegments = sizeof(segments) / sizeof(segments[0]);
+            for (int i = 0; i < numSegments; ++i)
+            {
+                characteristic.writeValue(segments[i]);
+                delay(5);
+            }
+        }
+    );
+
     BLE.setConnectionInterval(6, 6);
     advertising_onoff(true);
 
@@ -187,6 +206,11 @@ bool ExoBLE::handle_updates()
                 logger::print("Connection");
                 logger::print("\n");
             #endif
+
+            // Mark connected and send a simple handshake string to the GUI
+            _connected = current_status;
+            const char handshake_msg[] = "READY";
+            _gatt_db.TXChar.writeValue(handshake_msg);
         }
 
         advertising_onoff(current_status == 0);

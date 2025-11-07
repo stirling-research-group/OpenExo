@@ -43,6 +43,10 @@ class RtBridge(QtCore.QObject):
         self._payload: List[float] = []
         self._data_length = 0
 
+        # Handshake payload reassembly state
+        self._collecting_handshake_payload = False
+        self._handshake_payload_buf: str = ""
+
     @QtCore.Slot(bytes)
     def feed_bytes(self, data: bytes):
         try:
@@ -51,9 +55,26 @@ class RtBridge(QtCore.QObject):
             return
 
         # Handshake
-        if s == "handshake":
+        if s == "READY":
+            print("RtBridge::feed_bytes->Handshake received")
             self._handshake = True
+            # Begin collecting the initial long handshake payload split across notifications
+            self._collecting_handshake_payload = True
+            self._handshake_payload_buf = ""
             self.handshakeReceived.emit()
+            return
+
+        # If we're collecting the extended handshake payload, accumulate until newline
+        if self._collecting_handshake_payload:
+            self._handshake_payload_buf += s
+            if "\n" in self._handshake_payload_buf:
+                line, _, _ = self._handshake_payload_buf.partition("\n")
+                # Split by commas and drop empty entries
+                tokens = [tok.strip() for tok in line.split(",") if tok.strip()]
+                print(f"RtBridge::feed_bytes->Handshake payload: {tokens}")
+                # Done collecting extended handshake
+                self._collecting_handshake_payload = False
+                self._handshake_payload_buf = ""
             return
 
         # Parameter names first, plain strings until END
