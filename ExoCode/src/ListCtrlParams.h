@@ -19,14 +19,27 @@
 #endif
 
 	// Define the size of the array and the max length for each string
-	const int MAX_COLUMNS = 22;
-	const int MAX_STRING_LENGTH = 30;
+	const int MAX_COLUMNS = 30;
+	const int MAX_STRING_LENGTH = 10;
+	const int MAX_SNAPSHOTS = 2 * ((uint8_t)config_defs::ankle_controllers::Count + (uint8_t)config_defs::hip_controllers::Count + (uint8_t)config_defs::knee_controllers::Count + (uint8_t)config_defs::elbow_controllers::Count);
+	// Calculate the MAX size of the transmission buffer:
+	// (Max Chars per Cell + 1 comma delimiter) * MAX_COLUMNS + 
+	// (+ 1 newline character) * MAX_SNAPSHOTS + 
+	// (+ 1 for the final null-terminator)
+	const size_t MAX_MESSAGE_SIZE = 
+		(MAX_STRING_LENGTH + 1) * MAX_COLUMNS * MAX_SNAPSHOTS + MAX_SNAPSHOTS + 1;
+
+	
+	
+	
 	
 
 	// Array to hold the strings from the fifth row
 
 void ctrl_param_array_gen();
-int readAndParseFifthRow(const char* filename_char, char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], int maxCols, int maxLen, uint8_t row_idx);
+int readAndParseFifthRow(const char* filename_char, char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], int maxCols, int maxLen, uint8_t row_idx, int i_ctrl);
+void create_csv_message();
+bool retrieveJointAndController(const char* filename_char, char* joint_out, char* controller_out);
 
 
 #endif
