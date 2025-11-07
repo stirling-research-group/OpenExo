@@ -2,9 +2,7 @@
 
 #if defined(ARDUINO_TEENSY36)  || defined(ARDUINO_TEENSY41)
 
-void ctrl_param_array_gen() {
-	Serial.print("\n**(^*&^*&^&Running ListCtrlParams.cpp$%^&#$#*&(");
-	
+void ctrl_param_array_gen() {	
 	//Begin SD card
 	if (!SD.begin(SD_SELECT)) {
 			while (1)
@@ -17,67 +15,110 @@ void ctrl_param_array_gen() {
 			}
 	}
 	
-	//Configure
+	uint8_t csvCount;
 	static char stringArray[(uint8_t)config_defs::ankle_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
 	
-	Serial.print("  |  Number of ankle controllers: ");
-	Serial.print((uint8_t)config_defs::ankle_controllers::Count);
+	//Loop through joints
+	for (int i_joint = 1; i_joint < 5; i_joint++) {
+		switch (i_joint)
+		{
+		case 1://ankle
+			//static char stringArray[(uint8_t)config_defs::ankle_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
+			csvCount = (uint8_t)config_defs::ankle_controllers::Count;
+			break;
+		case 2://hip
+			//static char stringArray[(uint8_t)config_defs::hip_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
+			csvCount = (uint8_t)config_defs::hip_controllers::Count;
+			break;
+		case 3://knee
+			//static char stringArray[(uint8_t)config_defs::knee_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
+			csvCount = (uint8_t)config_defs::knee_controllers::Count;
+			break;
+		case 4://elbow
+			//static char stringArray[(uint8_t)config_defs::elbow_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
+			csvCount = (uint8_t)config_defs::elbow_controllers::Count;
+			break;
+		}
+		
 	
-	uint8_t row_idx = 0;
-	for (int i_ctrl = 2; i_ctrl < (uint8_t)config_defs::ankle_controllers::Count; i_ctrl++) {
-        Serial.print("Current index value: ");
-        Serial.println(i_ctrl);
+		//Configure
 		
-        if (controller_parameter_filenames::ankle.count(i_ctrl)) { // condition is true if count is 1
-			Serial.print("Key ");
-			Serial.print((int)i_ctrl);
-			Serial.println(" exists.");
-			
-			std::string filename = controller_parameter_filenames::ankle[i_ctrl];
-			Serial.print("\nstd::string filename is ");
-			Serial.print(filename.c_str());
-			Serial.print("char filename_char = filename.c_str() returns ");
-			const char* filename_char = filename.c_str();
-			Serial.print(filename_char);
-			
-			
-			// Call the function to read and parse the fifth row
-		int columnsRead = readAndParseFifthRow(filename_char, stringArray, MAX_COLUMNS, MAX_STRING_LENGTH, row_idx);
 		
+		Serial.print("\n\n\n\nTotal number of controllers: ");
+		Serial.print(csvCount);
+		
+		uint8_t row_idx = 0;
+		for (int i_ctrl = 2; i_ctrl < csvCount; i_ctrl++) {			
+			bool csvExists;
+			std::string filename;
+			switch (i_joint)
+			{
+			case 1://ankle
+				csvExists = controller_parameter_filenames::ankle.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::ankle[i_ctrl];
+				}
+				break;
+			case 2://hip
+				csvExists = controller_parameter_filenames::hip.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::hip[i_ctrl];
+				}
+				break;
+			case 3://knee
+				csvExists = controller_parameter_filenames::knee.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::knee[i_ctrl];
+				}
+				break;
+			case 4://elbow
+				csvExists = controller_parameter_filenames::elbow.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::elbow[i_ctrl];
+				}
+				break;
+			} 
+			
+			if (csvExists) { // condition is true if count is 1
+				Serial.print("\n\nController ");
+				Serial.print((int)i_ctrl);
+				Serial.println(" has a csv.");
 
-		// Print the results
-		if (columnsRead > 0) {
-			Serial.println("\nFifth Row Data Saved:");
-			for (int i = 0; i < columnsRead; i++) {
-			  Serial.print("Column ");
-			  Serial.print(i + 1);
-			  Serial.print(": ");
-			  Serial.println(stringArray[row_idx][i]);
+				const char* filename_char = filename.c_str();
+				//Serial.print(filename_char);
+				
+				
+				// Call the function to read and parse the fifth row
+				int columnsRead = readAndParseFifthRow(filename_char, stringArray, MAX_COLUMNS, MAX_STRING_LENGTH, row_idx);
+				
+
+				// Print the results
+				if (columnsRead > 0) {
+					//Serial.println("\nFifth Row Data Saved:");
+					for (int i = 0; i < columnsRead; i++) {
+					  Serial.print("\nParam ");
+					  Serial.print(i + 1);
+					  Serial.print(": ");
+					  Serial.print(stringArray[row_idx][i]);
+					}
+				}
+				else {
+					Serial.println("\nFailed to read or parse the fifth row.");
+				}
+				row_idx++;
 			}
 		}
-		else {
-			Serial.println("\nFailed to read or parse the fifth row.");
-		}
-		
-		row_idx++;
 	}
-
-}
-	
-	
-	
-	
-	
 }
 
 // --- Function to Read and Parse ---
 
  int readAndParseFifthRow(const char* filename_char, char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], int maxCols, int maxLen, uint8_t row_idx) {
-	 Serial.print("\nIncoming filename_char is ");
+	 Serial.print("\nOpening csv: ");
 	 Serial.print(filename_char);
   File dataFile = SD.open(filename_char);
   if (!dataFile) {
-    Serial.print("Error opening ");
+    Serial.print("\nError opening ");
     Serial.println(filename_char);
     return 0; // Return 0 columns read
   }
@@ -107,7 +148,7 @@ void ctrl_param_array_gen() {
   dataFile.close(); // Always close the file!
 
   if (rowCount < 4) {
-    Serial.println("File is too short (less than 5 rows).");
+    //Serial.println("File is too short (less than 5 rows).");
     return 0;
   }
   
@@ -134,7 +175,7 @@ void ctrl_param_array_gen() {
         arr[row_idx][colIndex][charIndex] = c;
         charIndex++;
       } else {
-        Serial.println("Warning: String truncated.");
+        //Serial.println("Warning: String truncated.");
       }
     }
   }
