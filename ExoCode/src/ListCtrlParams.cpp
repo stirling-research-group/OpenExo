@@ -2,9 +2,19 @@
 
 #if defined(ARDUINO_TEENSY36)  || defined(ARDUINO_TEENSY41)
 
-void ctrl_param_array_gen() {
-	Serial.print("\n**(^*&^*&^&Running ListCtrlParams.cpp$%^&#$#*&(");
-	
+namespace { // Use an anonymous namespace for file-local scope (Best Practice)
+    static char stringArray[MAX_SNAPSHOTS][MAX_COLUMNS][MAX_STRING_LENGTH]; 
+    // Define txBuffer here too, as it's also global data
+    // The 1D buffer that will hold the final, flattened CSV string
+	char txBuffer[MAX_MESSAGE_SIZE];
+	uint8_t failed2open;
+	// Define the number of prefix columns to insert
+	const int PREFIX_COLS = 3;
+	const size_t MAX_NAME_LENGTH = 64;
+	uint8_t joint_id_val;
+}
+
+void ctrl_param_array_gen() {	
 	//Begin SD card
 	if (!SD.begin(SD_SELECT)) {
 			while (1)
@@ -16,140 +26,381 @@ void ctrl_param_array_gen() {
 				Serial.println("SD.begin() failed");
 			}
 	}
-	
-	//Configure
-	static char stringArray[(uint8_t)config_defs::ankle_controllers::Count][MAX_COLUMNS][MAX_STRING_LENGTH];
-	
-	Serial.print("  |  Number of ankle controllers: ");
-	Serial.print((uint8_t)config_defs::ankle_controllers::Count);
-	
-	uint8_t row_idx = 0;
-	for (int i_ctrl = 2; i_ctrl < (uint8_t)config_defs::ankle_controllers::Count; i_ctrl++) {
-        Serial.print("Current index value: ");
-        Serial.println(i_ctrl);
-		
-        if (controller_parameter_filenames::ankle.count(i_ctrl)) { // condition is true if count is 1
-			Serial.print("Key ");
-			Serial.print((int)i_ctrl);
-			Serial.println(" exists.");
-			
-			std::string filename = controller_parameter_filenames::ankle[i_ctrl];
-			Serial.print("\nstd::string filename is ");
-			Serial.print(filename.c_str());
-			Serial.print("char filename_char = filename.c_str() returns ");
-			const char* filename_char = filename.c_str();
-			Serial.print(filename_char);
-			
-			
-			// Call the function to read and parse the fifth row
-		int columnsRead = readAndParseFifthRow(filename_char, stringArray, MAX_COLUMNS, MAX_STRING_LENGTH, row_idx);
-		
 
-		// Print the results
-		if (columnsRead > 0) {
-			Serial.println("\nFifth Row Data Saved:");
-			for (int i = 0; i < columnsRead; i++) {
-			  Serial.print("Column ");
-			  Serial.print(i + 1);
-			  Serial.print(": ");
-			  Serial.println(stringArray[row_idx][i]);
+	uint8_t csvCount;
+	uint8_t row_idx = 0;
+	failed2open = 0;
+	
+	//Loop through joints
+	for (int i_joint = 1; i_joint < 9; i_joint++) {
+		switch (i_joint)
+		{
+		case 1://left ankle
+			csvCount = (uint8_t)config_defs::ankle_controllers::Count;
+			break;
+		case 2://right ankle
+			csvCount = (uint8_t)config_defs::ankle_controllers::Count;
+			break;	
+		case 3://left hip
+			csvCount = (uint8_t)config_defs::hip_controllers::Count;
+			break;
+		case 4://right hip
+			csvCount = (uint8_t)config_defs::hip_controllers::Count;
+			break;
+		case 5://left knee
+			csvCount = (uint8_t)config_defs::knee_controllers::Count;
+			break;
+		case 6://right knee
+			csvCount = (uint8_t)config_defs::knee_controllers::Count;
+			break;
+		case 7://left elbow
+			csvCount = (uint8_t)config_defs::elbow_controllers::Count;
+			break;
+		case 8://right elbow
+			csvCount = (uint8_t)config_defs::elbow_controllers::Count;
+			break;
+		}
+		
+	
+		//Configure
+		//Serial.print("\n\n\n\nTotal number of controllers: ");
+		//Serial.print(csvCount);
+		
+		
+		for (int i_ctrl = 2; i_ctrl < csvCount; i_ctrl++) {//starting from 2 to skip the first controllers (Disabled controllers)
+			bool csvExists;
+			std::string filename;
+			char joint_id_string;
+			switch (i_joint)
+			{
+			case 1://left ankle
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_ankle;
+				joint_id_val = (uint8_t)config_defs::joint_id::left_ankle;
+				csvExists = controller_parameter_filenames::ankle.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::ankle[i_ctrl];
+				}
+				break;
+			case 2://right ankle
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_ankle;
+				joint_id_val = (uint8_t)config_defs::joint_id::right_ankle;
+				csvExists = controller_parameter_filenames::ankle.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::ankle[i_ctrl];
+				}
+				break;
+			case 3://left hip
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_hip;
+				joint_id_val = (uint8_t)config_defs::joint_id::left_hip;
+				csvExists = controller_parameter_filenames::hip.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::hip[i_ctrl];
+				}
+				break;
+			case 4://right hip
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_hip;
+				joint_id_val = (uint8_t)config_defs::joint_id::right_hip;
+				csvExists = controller_parameter_filenames::hip.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::hip[i_ctrl];
+				}
+				break;
+			case 5://left knee
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_knee;
+				joint_id_val = (uint8_t)config_defs::joint_id::left_knee;
+				csvExists = controller_parameter_filenames::knee.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::knee[i_ctrl];
+				}
+				break;
+			case 6://right knee
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_knee;
+				joint_id_val = (uint8_t)config_defs::joint_id::right_knee;
+				csvExists = controller_parameter_filenames::knee.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::knee[i_ctrl];
+				}
+				break;
+			case 7://left elbow
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_elbow;
+				joint_id_val = (uint8_t)config_defs::joint_id::left_elbow;
+				csvExists = controller_parameter_filenames::elbow.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::elbow[i_ctrl];
+				}
+				break;
+			case 8://right elbow
+				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_elbow;
+				joint_id_val = (uint8_t)config_defs::joint_id::right_elbow;
+				csvExists = controller_parameter_filenames::elbow.count(i_ctrl);
+				if (csvExists) {
+					filename = controller_parameter_filenames::elbow[i_ctrl];
+				}
+				break;
+			} 
+			
+			if (csvExists) { // condition is true if count is 1
+				//Serial.print("\n\nController ");
+				//Serial.print((int)i_ctrl);
+				//Serial.println(" has a csv.");
+
+				const char* filename_char = filename.c_str();
+				
+				// Call the function to read and parse the fifth row
+				int columnsRead = readAndParseFifthRow(filename_char, stringArray, MAX_COLUMNS, MAX_STRING_LENGTH, row_idx, i_ctrl);
+				
+
+				// Print the results
+				if (columnsRead > 0) {
+					//Serial.println("\nFifth Row Data Saved:");
+					/* for (int i = 0; i < columnsRead; i++) {
+					  Serial.print("\nParam ");
+					  Serial.print(i + 1);
+					  Serial.print(": ");
+					  Serial.print(stringArray[row_idx][i]);
+					} */
+					row_idx++;
+				}
+				else {
+					//Serial.println("\nFailed to read or parse the fifth row.");
+					failed2open++;
+				}
 			}
 		}
-		else {
-			Serial.println("\nFailed to read or parse the fifth row.");
-		}
-		
-		row_idx++;
 	}
-
-}
 	
+	create_csv_message();
+	// The message is now ready for transmission/printing
+	Serial.println("--- Prepared CSV Message ---");
+	Serial.println(txBuffer);
 	
-	
-	
-	
+	Serial.print("\nNominal total number of csv: ");
+	Serial.print((uint8_t)config_defs::ankle_controllers::Count + (uint8_t)config_defs::hip_controllers::Count + (uint8_t)config_defs::knee_controllers::Count + (uint8_t)config_defs::elbow_controllers::Count);
+	Serial.print("\nNumber of row in stringArray: ");
+	Serial.print(row_idx+1);
+	Serial.print("\nNumber of failed 2 open csv: ");
+	Serial.print(failed2open);
 }
 
 // --- Function to Read and Parse ---
 
- int readAndParseFifthRow(const char* filename_char, char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], int maxCols, int maxLen, uint8_t row_idx) {
-	 Serial.print("\nIncoming filename_char is ");
-	 Serial.print(filename_char);
-  File dataFile = SD.open(filename_char);
-  if (!dataFile) {
-    Serial.print("Error opening ");
-    Serial.println(filename_char);
-    return 0; // Return 0 columns read
-  }
+ int readAndParseFifthRow(
+    const char* filename_char, 
+    char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], 
+    int maxCols, 
+    int maxLen, 
+    uint8_t row_idx,
+	int i_ctrl) 
+{
+    // Buffers to hold extracted components
+    char joint_name[MAX_NAME_LENGTH];
+    char controller_name[MAX_NAME_LENGTH];
 
-  // 1. Find the Fifth Line
-  int rowCount = 0;
-  String targetLine = "";
-  
-  // Read byte by byte until the end of the file or the fifth row is found
-  while (dataFile.available()) {
-    char c = dataFile.read();
+    // Attempt to extract Joint and Controller names from the path
+    bool extraction_success = retrieveJointAndController(
+        filename_char, 
+        joint_name, 
+        controller_name
+    );
     
-    // Append character to the current line string
-    if (rowCount == 4) { // Row 5 is index 4 (0-based)
-      targetLine += c;
+    // Use default values if extraction fails
+    //uint8_t joint_id_val = 255; // Default UNKNOWN ID
+    const char* controller_str = "UNKNOWN_CTRL";
+
+    if (extraction_success) {
+        //joint_id_val = get_joint_id_from_name(joint_name);
+        controller_str = controller_name;
     }
     
-    // Check for a newline character to count rows
-    if (c == '\n') {
-      rowCount++;
-      if (rowCount > 4) {
-        break; // Stop after reading the entire fifth row
-      }
+    // Check if there is enough space in the array for the prefix
+    if (maxCols < PREFIX_COLS) {
+        Serial.println("\nERROR: MAX_COLUMNS too small for prefix insertion.");
+        return 0;
     }
-  }
 
-  dataFile.close(); // Always close the file!
-
-  if (rowCount < 4) {
-    Serial.println("File is too short (less than 5 rows).");
-    return 0;
-  }
-  
-  // 2. Parse the Line (Tokenize the String)
-  int colIndex = 0;
-  int charIndex = 0;
-  
-  for (int i = 0; i < targetLine.length(); i++) {
-    char c = targetLine.charAt(i);
-
-    if (c == ',') {
-      // End of a field: terminate the current string and move to the next column
-      arr[row_idx][colIndex][charIndex] = '\0'; // Null-terminate the string
-      colIndex++;
-      charIndex = 0; // Reset character index for the next column
-      
-      // Safety check: stop if max columns reached
-      if (colIndex >= maxCols) break;
-
+    //Serial.print("\nOpening csv: ");
+    //Serial.print(filename_char);
+    
+    // Using SD.h types (File)
+    File dataFile = SD.open(filename_char);
+    
+    if (!dataFile) {
+        Serial.print("\nError opening ");
+        Serial.println(filename_char);
+        // Assuming 'failed2open' is a global variable
+        // failed2open++;
+        return 0; // Return 0 columns read
     }
-	else if (c != '\r' && c != '\n') { // Ignore carriage return and newline characters
-      // Append character to the current string
-      if (charIndex < maxLen - 1) { // -1 for the null terminator
-        arr[row_idx][colIndex][charIndex] = c;
-        charIndex++;
-      } else {
-        Serial.println("Warning: String truncated.");
-      }
+
+    // 1. Find the Fifth Line
+    int rowCount = 0;
+    String targetLine = "";
+    
+    // Read byte by byte until the end of the file or the fifth row is found
+    while (dataFile.available()) {
+        char c = dataFile.read();
+        
+        if (rowCount == 4) { // Row 5 is index 4 (0-based)
+            targetLine += c;
+        }
+        
+        if (c == '\n') {
+            rowCount++;
+            if (rowCount > 4) {
+                break; // Stop after reading the entire fifth row
+            }
+        }
     }
-  }
-  
-  // 3. Handle the Last Column
-  // Null-terminate the last string after the loop finishes
-  if (colIndex < maxCols && charIndex > 0) {
-    arr[row_idx][colIndex][charIndex] = '\0';
-    colIndex++; // Increment to count the last column
-  }
 
-	Serial.print("\nNumber of columns read: ");
-	Serial.print(colIndex);
+    dataFile.close(); // Always close the file!
 
-  return colIndex; // Return the number of columns successfully read
+    if (rowCount < 4) {
+        return 0;
+    }
+    
+    // 2. Parse the Line (Tokenize the String) - STARTING AT INDEX PREFIX_COLS (3)
+    int colIndex = PREFIX_COLS; // Start parsing data into index 3
+    int charIndex = 0;
+    int dataColsRead = 0; // Tracks columns successfully parsed from the file
+
+    for (int i = 0; i < targetLine.length(); i++) {
+        char c = targetLine.charAt(i);
+
+        if (c == ',') {
+            // End of a field: terminate the current string and move to the next column
+            arr[row_idx][colIndex][charIndex] = '\0'; // Null-terminate the string
+            
+            dataColsRead++;
+            colIndex++;
+            charIndex = 0; // Reset character index for the next column
+            
+            // Safety check: stop if max columns reached (accounting for the 3 prefixes)
+            if (colIndex >= maxCols) break;
+
+        }
+        else if (c != '\r' && c != '\n') { 
+            // Append character to the current string
+            if (charIndex < maxLen - 1) { 
+                arr[row_idx][colIndex][charIndex] = c;
+                charIndex++;
+            }
+        }
+    }
+    
+    // 3. Handle the Last Parsed Column
+    if (colIndex < maxCols && charIndex > 0) {
+        arr[row_idx][colIndex][charIndex] = '\0';
+        dataColsRead++;
+        colIndex++;
+    } 
+    // Ensure the column immediately after the last written data is also null-terminated (cleared)
+    else if (colIndex < maxCols) {
+        arr[row_idx][colIndex][0] = '\0';
+    }
+
+
+    // --- 4. INSERT PREFIX COLUMNS (Columns 0, 1, and 2) ---
+
+    // Column 0: Insert uint8_t Joint ID value
+    // Use snprintf to convert the uint8_t (%u) into a string
+    snprintf(arr[row_idx][0], maxLen, "%u", joint_id_val);
+
+    // Column 1: Insert Controller Name string
+    strncpy(arr[row_idx][1], controller_str, maxLen - 1);
+    arr[row_idx][1][maxLen - 1] = '\0';
+
+    // Column 2: Insert the full File Name
+    //strncpy(arr[row_idx][2], filename_char, maxLen - 1);
+	snprintf(arr[row_idx][2], maxLen, "%u", i_ctrl);
+    //arr[row_idx][2][maxLen - 1] = '\0';
+
+
+    // The total number of columns written is the prefix columns plus the data columns read
+    int totalColsWritten = PREFIX_COLS + dataColsRead;
+    
+    //Serial.print("\nNumber of columns read: ");
+    //Serial.print(dataColsRead);
+    //Serial.print(" (Total stored: ");
+    //Serial.print(totalColsWritten);
+    //Serial.print(")");
+
+    return totalColsWritten; 
+}
+
+void create_csv_message() {
+    // 1. Initialize the buffer
+    txBuffer[0] = '\0'; // Start with an empty string
+	strcat(txBuffer, "f,");
+	
+    // 2. Iterate through all stored rows (snapshots)
+    for (int i = 0; i < MAX_SNAPSHOTS; i++) {
+        
+        // Safety Check: Stop if the row is empty (based on our placeholder logic)
+        if (stringArray[i][0][0] == '\0') {
+            break; 
+        }
+
+        // 3. Iterate through all columns in the current row
+        for (int j = 0; j < MAX_COLUMNS; j++) {
+            
+			if (stringArray[i][j][0] == '\0') {
+				break; 
+			}
+			
+            // a. Append the string from the cell
+            // Note: This relies on stringArray[i][j] being null-terminated
+            strcat(txBuffer, stringArray[i][j]);
+
+            // b. Append the comma delimiter, except after the last column
+            if (j < MAX_COLUMNS - 1) {
+				if (stringArray[i][j+1][0] != '\0') {
+					strcat(txBuffer, ",");
+				}
+            }
+        }
+        
+        // 4. Append the End-of-Line symbol
+        // Using '\n' (newline) is common; use "\r\n" for Windows/BLE compatibility if needed.
+        strcat(txBuffer, "\n"); 
+    }
+	strcat(txBuffer, ",z");
+}
+
+/**
+ * @brief Extracts the "Joint" and "Controller" names from a path string 
+ * formatted as "\Joint\Controller.csv". (Logic based on extract_components.cpp)
+ */
+bool retrieveJointAndController(const char* filename_char, char* joint_out, char* controller_out) {
+    if (!filename_char || !joint_out || !controller_out) return false;
+
+    // 1. PREPARE START POINTER
+    const char* start_ptr = filename_char;
+    if (*start_ptr == '/') {
+        start_ptr++; 
+    }
+    
+    // 2. FIND JOINT END ('/')
+    const char* joint_end_ptr = strchr(start_ptr, '/');
+    if (!joint_end_ptr) return false;
+
+    // 3. EXTRACT JOINT NAME
+    size_t joint_len = joint_end_ptr - start_ptr;
+    size_t copy_len = (joint_len < MAX_NAME_LENGTH) ? joint_len : MAX_NAME_LENGTH - 1;
+    strncpy(joint_out, start_ptr, copy_len);
+    joint_out[copy_len] = '\0'; 
+
+    // 4. FIND CONTROLLER END ('.csv')
+    const char* controller_start_ptr = joint_end_ptr + 1;
+    const char* controller_end_ptr = strstr(controller_start_ptr, ".csv");
+    if (!controller_end_ptr) return false;
+    
+    // 5. EXTRACT CONTROLLER NAME
+    size_t controller_len = controller_end_ptr - controller_start_ptr;
+    copy_len = (controller_len < MAX_NAME_LENGTH) ? controller_len : MAX_NAME_LENGTH - 1;
+    strncpy(controller_out, controller_start_ptr, copy_len);
+    controller_out[copy_len] = '\0'; 
+
+    return true;
 }
 
 #endif
