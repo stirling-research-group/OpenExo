@@ -29,6 +29,7 @@
 #include "src/ParseIni.h"
 #include "src/ParamsFromSD.h"
 #include "src/ListCtrlParams.h"
+#include "src/SendBulkChar.h"
 
 //Board to board coms
 #include "src/UARTHandler.h"
@@ -65,6 +66,7 @@ void setup()
     
 	//Debugging ListCtrlParams
 	ctrl_param_array_gen();
+	send_bulk_char();
 	
     //Print to confirm config came through correctly (Should not contain zeros).
     #if defined(MAIN_DEBUG) || defined(SIMPLE_DEBUG)
