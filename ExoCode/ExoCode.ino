@@ -29,6 +29,7 @@
 #include "src/ParseIni.h"
 #include "src/ParamsFromSD.h"
 #include "src/ListCtrlParams.h"
+#include "src/SendBulkChar.h"
 
 //Board to board coms
 #include "src/UARTHandler.h"
@@ -65,6 +66,7 @@ void setup()
     
 	//Debugging ListCtrlParams
 	ctrl_param_array_gen();
+	send_bulk_char();
 	
     //Print to confirm config came through correctly (Should not contain zeros).
     #if defined(MAIN_DEBUG) || defined(SIMPLE_DEBUG)
@@ -679,6 +681,7 @@ void loop()
 #include "src/UART_msg_t.h"
 #include "src/ComsLed.h"
 #include "src/RealTimeI2C.h"
+#include "src/GetBulkChar.h"
 
 #include "src/WaistBarometer.h"
 #include "src/InclineDetector.h"
@@ -726,8 +729,7 @@ namespace config_info
 void setup()
 {
     Serial.begin(115200);
-    delay(100);
-
+	
     #if MAIN_DEBUG
       while (!Serial);
         logger::print("Setup->Getting config");

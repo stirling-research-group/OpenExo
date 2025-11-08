@@ -1,18 +1,9 @@
-#include "ListCtrlParams.h"
+
 
 #if defined(ARDUINO_TEENSY36)  || defined(ARDUINO_TEENSY41)
+#include "ListCtrlParams.h"
 
-namespace { // Use an anonymous namespace for file-local scope (Best Practice)
-    static char stringArray[MAX_SNAPSHOTS][MAX_COLUMNS][MAX_STRING_LENGTH]; 
-    // Define txBuffer here too, as it's also global data
-    // The 1D buffer that will hold the final, flattened CSV string
-	char txBuffer[MAX_MESSAGE_SIZE];
-	uint8_t failed2open;
-	// Define the number of prefix columns to insert
-	const int PREFIX_COLS = 3;
-	const size_t MAX_NAME_LENGTH = 64;
-	uint8_t joint_id_val;
-}
+char txBuffer_bulkStr[MAX_MESSAGE_SIZE];
 
 void ctrl_param_array_gen() {	
 	//Begin SD card
@@ -26,7 +17,10 @@ void ctrl_param_array_gen() {
 				Serial.println("SD.begin() failed");
 			}
 	}
-
+	
+	// Serial.print("\nconst size_t MAX_MESSAGE_SIZE = ");
+	// Serial.print(MAX_MESSAGE_SIZE);
+	
 	uint8_t csvCount;
 	uint8_t row_idx = 0;
 	failed2open = 0;
@@ -172,7 +166,7 @@ void ctrl_param_array_gen() {
 	create_csv_message();
 	// The message is now ready for transmission/printing
 	Serial.println("--- Prepared CSV Message ---");
-	Serial.println(txBuffer);
+	Serial.println(txBuffer_bulkStr);
 	
 	Serial.print("\nNominal total number of csv: ");
 	Serial.print((uint8_t)config_defs::ankle_controllers::Count + (uint8_t)config_defs::hip_controllers::Count + (uint8_t)config_defs::knee_controllers::Count + (uint8_t)config_defs::elbow_controllers::Count);
@@ -329,8 +323,8 @@ void ctrl_param_array_gen() {
 
 void create_csv_message() {
     // 1. Initialize the buffer
-    txBuffer[0] = '\0'; // Start with an empty string
-	strcat(txBuffer, "f,");
+    txBuffer_bulkStr[0] = '\0'; // Start with an empty string
+	strcat(txBuffer_bulkStr, "f,");
 	
     // 2. Iterate through all stored rows (snapshots)
     for (int i = 0; i < MAX_SNAPSHOTS; i++) {
@@ -349,21 +343,21 @@ void create_csv_message() {
 			
             // a. Append the string from the cell
             // Note: This relies on stringArray[i][j] being null-terminated
-            strcat(txBuffer, stringArray[i][j]);
+            strcat(txBuffer_bulkStr, stringArray[i][j]);
 
             // b. Append the comma delimiter, except after the last column
             if (j < MAX_COLUMNS - 1) {
 				if (stringArray[i][j+1][0] != '\0') {
-					strcat(txBuffer, ",");
+					strcat(txBuffer_bulkStr, ",");
 				}
             }
         }
         
         // 4. Append the End-of-Line symbol
         // Using '\n' (newline) is common; use "\r\n" for Windows/BLE compatibility if needed.
-        strcat(txBuffer, "\n"); 
+        strcat(txBuffer_bulkStr, "\n"); 
     }
-	strcat(txBuffer, ",z");
+	strcat(txBuffer_bulkStr, ",z");
 }
 
 /**
