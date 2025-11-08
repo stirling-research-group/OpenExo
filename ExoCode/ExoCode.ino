@@ -29,7 +29,6 @@
 #include "src/ParseIni.h"
 #include "src/ParamsFromSD.h"
 #include "src/ListCtrlParams.h"
-#include "src/SendBulkChar.h"
 
 //Board to board coms
 #include "src/UARTHandler.h"
