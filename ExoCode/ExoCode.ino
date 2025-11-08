@@ -90,10 +90,16 @@ void setup()
       #endif
 }
 
+namespace uart_debug_flags
+{
+    volatile bool nano_ready = false;
+}
+
 void loop()
-{       
+{
     static bool first_run = true;
-    
+    static bool debug_text_sent = false;
+
     //Create the data object
     static ExoData exo_data(config_info::config_to_send);     
 
@@ -121,6 +127,8 @@ void loop()
     
     if (first_run)
     {
+        uart_debug_flags::nano_ready = false;
+        debug_text_sent = false;
         first_run = false;
 
         //Waits for the message telling it to get the config information 
@@ -470,6 +478,30 @@ void loop()
         #endif
     }
 
+    if (!first_run && !debug_text_sent && uart_debug_flags::nano_ready)
+    {
+        UART_msg_t debug_msg = {};
+        const char debug_text[] = "HELLO NANO";
+        debug_msg.command = UART_command_names::debug_text;
+        debug_msg.joint_id = 0;
+        debug_msg.len = (uint8_t)strlen(debug_text);
+
+        if (debug_msg.len > MAX_DATA_SIZE)
+        {
+            debug_msg.len = MAX_DATA_SIZE;
+        }
+
+        for (uint8_t i = 0; i < debug_msg.len; i++)
+        {
+            debug_msg.data[i] = static_cast<float>(debug_text[i]);
+        }
+
+        Serial.print("[UART] Teensy sending: ");
+        Serial.println(debug_text);
+        uart_handler->UART_msg(debug_msg);
+        debug_text_sent = true;
+    }
+
     //Run the calibrations we need to do if not using the app
     #ifdef HEADLESS
         
@@ -728,6 +760,15 @@ void setup()
     Serial.begin(115200);
     delay(100);
 
+    #if defined(ARDUINO_ARDUINO_NANO33BLE) || defined(ARDUINO_NANO_RP2040_CONNECT)
+        const uint32_t serial_wait_start = millis();
+        while (!Serial && (millis() - serial_wait_start < 5000))
+        {
+            delay(10);
+        }
+        Serial.println("[UART] Nano setup starting");
+    #endif
+
     #if MAIN_DEBUG
       while (!Serial);
         logger::print("Setup->Getting config");
@@ -754,6 +795,15 @@ void setup()
     {
         //Green
         led->set_color(0, 255, 0);
+    }
+
+    {
+        UART_msg_t ready_msg = {};
+        ready_msg.command = UART_command_names::debug_ready;
+        ready_msg.joint_id = 0;
+        ready_msg.len = 0;
+        Serial.println("[UART] Nano sending debug_ready");
+        handler->UART_msg(ready_msg);
     }
 
     #if REAL_TIME_I2C
