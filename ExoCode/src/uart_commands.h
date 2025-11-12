@@ -12,13 +12,6 @@
 #include "Logger.h"
 #include "RealTimeI2C.h"
 
-#if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
-namespace uart_debug_flags
-{
-    extern volatile bool nano_ready;
-}
-#endif
-
 /**
  * @brief Type to associate a command with an ammount of data
  *
@@ -52,9 +45,6 @@ namespace UART_command_names
     static const uint8_t update_error_code = 0x16;
     static const uint8_t get_FSR_thesholds = 0x17;
     static const uint8_t update_FSR_thesholds = 0x18;
-    static const uint8_t debug_text = 0x19;
-    static const uint8_t debug_text_ack = 0x1A;
-    static const uint8_t debug_ready = 0x1B;
 };
 
 /**
@@ -618,68 +608,6 @@ namespace UART_command_handlers
         exo_data->left_side.toe_fsr_upper_threshold = msg.data[(uint8_t)UART_command_enums::FSR_thresholds::LEFT_THRESHOLD] + fsr_config::SCHMITT_DELTA;
         exo_data->left_side.toe_fsr_lower_threshold = msg.data[(uint8_t)UART_command_enums::FSR_thresholds::LEFT_THRESHOLD] - fsr_config::SCHMITT_DELTA;
     }
-
-    inline static void debug_text(UARTHandler *handler, ExoData *exo_data, UART_msg_t msg)
-    {
-        (void)exo_data;
-
-        char text_buffer[MAX_DATA_SIZE + 1] = {0};
-        uint8_t copy_len = msg.len;
-        if (copy_len > MAX_DATA_SIZE)
-        {
-            copy_len = MAX_DATA_SIZE;
-        }
-
-        for (uint8_t i = 0; i < copy_len; i++)
-        {
-            text_buffer[i] = static_cast<char>(static_cast<int>(msg.data[i] + 0.5f));
-        }
-        text_buffer[copy_len] = '\0';
-
-        Serial.print("[UART] Received debug_text: ");
-        Serial.println(text_buffer);
-
-        #if defined(ARDUINO_ARDUINO_NANO33BLE) || defined(ARDUINO_NANO_RP2040_CONNECT)
-        UART_msg_t ack = {};
-        ack.command = UART_command_names::debug_text_ack;
-        ack.joint_id = msg.joint_id;
-        ack.len = 1;
-        ack.data[0] = copy_len;
-        handler->UART_msg(ack);
-
-        Serial.println("Nano received debug_text command");
-        #else
-        (void)handler;
-        #endif
-    }
-
-    inline static void debug_text_ack(UARTHandler *handler, ExoData *exo_data, UART_msg_t msg)
-    {
-        (void)handler;
-        (void)exo_data;
-
-        int ack_len = static_cast<int>(msg.data[0] + 0.5f);
-
-        #if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
-        Serial.print("[UART] Teensy received debug_text_ack length=");
-        Serial.println(ack_len);
-        #else
-        Serial.print("[UART] debug_text_ack length=");
-        Serial.println(ack_len);
-        #endif
-    }
-
-#if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
-    inline static void debug_ready(UARTHandler *handler, ExoData *exo_data, UART_msg_t msg)
-    {
-        (void)handler;
-        (void)exo_data;
-        (void)msg;
-
-        Serial.println("[UART] Teensy received debug_ready");
-        uart_debug_flags::nano_ready = true;
-    }
-#endif
 };
 
 namespace UART_command_utils
@@ -879,17 +807,6 @@ namespace UART_command_utils
         case UART_command_names::update_FSR_thesholds:
             UART_command_handlers::update_FSR_thesholds(handler, exo_data, msg);
             break;
-        case UART_command_names::debug_text:
-            UART_command_handlers::debug_text(handler, exo_data, msg);
-            break;
-        case UART_command_names::debug_text_ack:
-            UART_command_handlers::debug_text_ack(handler, exo_data, msg);
-            break;
-#if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
-        case UART_command_names::debug_ready:
-            UART_command_handlers::debug_ready(handler, exo_data, msg);
-            break;
-#endif
 
 
         default:
