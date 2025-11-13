@@ -5,7 +5,7 @@
 
 char txBuffer_bulkStr[MAX_MESSAGE_SIZE];
 
-void ctrl_param_array_gen() {	
+void ctrl_param_array_gen(uint8_t* config_to_send) {
 	//Begin SD card
 	if (!SD.begin(SD_SELECT)) {
 			while (1)
@@ -30,28 +30,76 @@ void ctrl_param_array_gen() {
 		switch (i_joint)
 		{
 		case 1://left ankle
+		if ((config_to_send[config_defs::exo_ankle_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::ankle_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		case 2://right ankle
+		if ((config_to_send[config_defs::exo_ankle_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::ankle_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;	
 		case 3://left hip
+		if ((config_to_send[config_defs::exo_hip_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::hip_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		case 4://right hip
+		if ((config_to_send[config_defs::exo_hip_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::hip_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		case 5://left knee
+		if ((config_to_send[config_defs::exo_knee_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::knee_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		case 6://right knee
+		if ((config_to_send[config_defs::exo_knee_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::knee_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		case 7://left elbow
+		if ((config_to_send[config_defs::exo_elbow_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::elbow_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		case 8://right elbow
+		if ((config_to_send[config_defs::exo_elbow_default_controller_idx] > 1) && ((((uint8_t)config_defs::exo_side::bilateral == config_to_send[config_defs::exo_side_idx])) || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]))))
+		{
 			csvCount = (uint8_t)config_defs::elbow_controllers::Count;
+		}
+		else {
+			continue;
+		}
 			break;
 		}
 		

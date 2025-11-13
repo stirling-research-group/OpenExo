@@ -65,7 +65,7 @@ void setup()
     ini_parser(config_info::config_to_send);              
     
 	//Debugging ListCtrlParams
-	ctrl_param_array_gen();
+	ctrl_param_array_gen(config_info::config_to_send);
 	send_bulk_char();
 	
     //Print to confirm config came through correctly (Should not contain zeros).

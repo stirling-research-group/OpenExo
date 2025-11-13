@@ -37,7 +37,7 @@
 
 	// Array to hold the strings from the fifth row
 
-void ctrl_param_array_gen();
+void ctrl_param_array_gen(uint8_t* config_to_send);
 int readAndParseFifthRow(const char* filename_char, char arr[][MAX_COLUMNS][MAX_STRING_LENGTH], int maxCols, int maxLen, uint8_t row_idx, int i_ctrl);
 void create_csv_message();
 bool retrieveJointAndController(const char* filename_char, char* joint_out, char* controller_out);
