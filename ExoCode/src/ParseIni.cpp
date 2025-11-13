@@ -158,10 +158,7 @@
         // logger::println(config_map::exo_name[data.exo_name]);
 
         config_to_send[config_defs::exo_name_idx] = config_map::exo_name[data.exo_name];
-        Serial.print("\n$%^&*^%*^&*^*&^&^&^&^&^config_to_send[config_defs::exo_name_idx]: ");
-		Serial.print(config_to_send[config_defs::exo_name_idx]);
-		Serial.print("+__))*)*(*(*(");
-		
+        
         //=========================================================
 
         //Cast the string to a char array so get_section_key will can take it.
