@@ -41,17 +41,36 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
         {
             // Inner switch: Selects the specific column name for this mode (0-based)
             switch (column_index) {
-                case 0:  return "JointID";
-                case 1:  return "ControllerID";
-                case 2:  return "FileName";
-                case 3:  return "Timestamp";
-                case 4:  return "TargetValue";
-                case 5:  return "CurrentValue";
-                case 6:  return "Error";
-                case 7:  return "P_Term";
-                case 8:  return "I_Term";
-                case 9:  return "D_Term";
-                case 10: return "BattVol";
+                case 0:  return "Desired Torque (L)";
+                case 1:  return "Meaured Torque (L)";
+                case 2:  return "Desired Torque (R)";
+                case 3:  return "Meaured Torque (R)";
+                case 4:  return "Toe FSR (L)";
+                case 5:  return "Stance Phase (L)";
+                case 6:  return "Toe FSR (R)";
+                case 7:  return "Stance Phase (R)";
+                case 8:  return "Channel 8";
+                case 9:  return "Channel 9";
+                case 10: return "Battery Level (Volts)";
+                default: return "INVALID_COL";
+            }
+        }
+		
+		case (uint8_t)config_defs::exo_name::bilateral_hip:
+        {
+            // Inner switch: Selects the specific column name for this mode (0-based)
+            switch (column_index) {
+                case 0:  return "Meaured Torque (R)";
+                case 1:  return "Desired Torque (R)";
+                case 2:  return "Meaured Torque (L)";
+                case 3:  return "Desired Torque (L)";
+                case 4:  return "Gait/100 (R)";
+                case 5:  return "Toe FSR (R)";
+                case 6:  return "Gait/100 (L)";
+                case 7:  return "Toe FSR (L)";
+                case 8:  return "Heel FSR (R)";
+                case 9:  return "Heel FSR (L)";
+                case 10: return "Battery Level (Volts)";
                 default: return "INVALID_COL";
             }
         }
@@ -60,17 +79,17 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
         default:
         {
             switch (column_index) {
-                case 0:  return "Data 0";
-                case 1:  return "Data 1";
-                case 2:  return "Data 2";
-                case 3:  return "Data 3";
-                case 4:  return "Data 4";
-                case 5:  return "Data 5";
-                case 6:  return "Data 6";
-                case 7:  return "Data 7";
-                case 8:  return "Data 8";
-                case 9:  return "Data 9";
-                case 10: return "Data 10";
+                case 0:  return "Channel 0";
+                case 1:  return "Channel 1";
+                case 2:  return "Channel 2";
+                case 3:  return "Channel 3";
+                case 4:  return "Channel 4";
+                case 5:  return "Channel 5";
+                case 6:  return "Channel 6";
+                case 7:  return "Channel 7";
+                case 8:  return "Channel 8";
+                case 9:  return "Channel 9";
+                case 10: return "Battery Level (Volts)";
                 default: return "INVALID_COL";
             }
         }
@@ -80,7 +99,7 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
 /**
  * @brief Function declaration to combine the column strings into a single delimited C-string.
  */
-bool create_figure_titles(char* output_buffer, size_t buffer_size);
+bool create_figure_titles(char* output_buffer, size_t buffer_size, uint8_t* config_to_send);
 
 #endif
 #endif

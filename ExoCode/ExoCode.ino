@@ -30,6 +30,7 @@
 #include "src/ParamsFromSD.h"
 #include "src/ListCtrlParams.h"
 #include "src/SendBulkChar.h"
+#include "src/FigureTitles.h"
 
 //Board to board coms
 #include "src/UARTHandler.h"
@@ -51,7 +52,7 @@ void setup()
     analogReadResolution(12);
     
     Serial.begin(115200);
-    delay(500);
+    //delay(500);
 
     #ifdef SIMPLE_DEBUG
         Serial.print("\nIn SIMPLE_DEBUG mode, debugging statements are printed.");
@@ -65,6 +66,11 @@ void setup()
     ini_parser(config_info::config_to_send);              
     
 	//Debugging ListCtrlParams
+	char output_buffer[200];
+	bool success_RAM = create_figure_titles(output_buffer, sizeof(output_buffer), config_info::config_to_send);
+	Serial.print("\nFigure Titles output_buffer: ");
+	Serial.print(output_buffer);
+	Serial.print("\n");
 	ctrl_param_array_gen(config_info::config_to_send);
 	send_bulk_char();
 	

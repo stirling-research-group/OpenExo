@@ -11,10 +11,24 @@ void send_bulk_char() {
 	Serial8.begin(57600);
 	pinMode(13,OUTPUT);
 	digitalWrite(13,HIGH);
-	delay(5000);
-	digitalWrite(13,LOW);
-	delay(4000);
-	digitalWrite(13,HIGH);
+	long initial_time = millis();
+	bool NanoReachedOut = false;
+	while (millis() - initial_time < 9000)
+	{
+		if (Serial8.available() > 0) {
+			digitalWrite(13,LOW);
+            char incomingChar = Serial8.read();
+			Serial.println(incomingChar);
+			if (incomingChar == 'R') {
+				delay(500);
+				break;
+			}
+		}
+	}
+	// delay(5000);
+	// digitalWrite(13,LOW);
+	// delay(4000);
+	// digitalWrite(13,HIGH);
     // 1. Check if the buffer is empty
     if (txBuffer_bulkStr[0] == '\0') {
         Serial.println("Warning: txBuffer_bulkStr is empty. Skipping UART send.");
@@ -28,8 +42,9 @@ void send_bulk_char() {
     // This is the most efficient method for large C-strings on Arduino.
     Serial8.write(txBuffer_bulkStr, message_length);
 	//char myString[] = "f,This is a test char string.\nNew line starts here.,z";
-	Serial8.write(txBuffer_bulkStr, message_length);
-    delay(5000);
+	//Serial8.write(txBuffer_bulkStr, message_length);
+    digitalWrite(13,HIGH);
+	delay(500);
     // Optional: Add a small delay if the receiving end is slow to process data.
     // delay(5); 
 

@@ -31,9 +31,18 @@ RxState currentState = WAITING_FOR_F;
  * This function blocks indefinitely until a full message is received and processed.
  */
 void readSingleMessageBlocking() {
+	long initialTime = millis();
     Serial.println("\n--- Entering Blocking Read Mode ---");
     Serial.println("System will halt execution until a full frame is received.");
     Serial1.begin(57600);
+	delay(3000);
+	
+    char txBuffer_NanoReady[10] = "R";
+	size_t message_length = strlen(txBuffer_NanoReady);
+    // 2. Transmit the entire message in one burst using Serial.write().
+    // This is the most efficient method for large C-strings on Arduino.
+    Serial1.write(txBuffer_NanoReady, message_length);
+	Serial.print("\nCharacter R sent.");
 	delay(100);
 	
     // The loop runs indefinitely until the messageComplete flag is set to true.
@@ -115,15 +124,17 @@ void readSingleMessageBlocking() {
         // Optional: Introduce a small delay if no data is available to prevent watchdog timer resets on some boards.
         // delay(1); 
     } // End of while (!messageComplete)
-
-    
+	float time_spent = (millis() - initialTime)/1000;
+    delay(5000);
     // --- Message Processing Block ---
     // This code runs only once, immediately after messageComplete is true.
     Serial.println("\n--- MESSAGE RECEIVED (Full Frame) ---");
     Serial.print("Frame Size: ");
     Serial.println(strlen(rxBuffer)); 
     Serial.print("Frame: ");
-    Serial.println(rxBuffer); 
+    Serial.println(rxBuffer);
+	Serial.print("\n&*(&^&*^*&^ Time spent: ");
+	Serial.print(time_spent);
 
     // !!! INSERT YOUR MESSAGE PARSING LOGIC HERE !!!
 
