@@ -13,10 +13,12 @@
  * @param buffer_size The maximum size of the output_buffer.
  * @return true if the string was created successfully, false otherwise.
  */
-bool create_figure_titles(char* output_buffer, size_t buffer_size, uint8_t* config_to_send) {
+void create_figure_titles(uint8_t* config_to_send) {
+	char output_buffer[MAX_COMBINED_HEADER_LENGTH];
+	size_t buffer_size = sizeof(output_buffer);
     // Delimiter strings
-    const char START_MARKER[] = "t,";
-    const char END_MARKER[] = ",?";
+    const char START_MARKER[] = "\nt,";
+    const char END_MARKER[] = ",??";
     const size_t START_LEN = strlen(START_MARKER);
     const size_t END_LEN = strlen(END_MARKER);
     
@@ -72,8 +74,9 @@ bool create_figure_titles(char* output_buffer, size_t buffer_size, uint8_t* conf
     
     // 3. APPEND the end marker ",z"
     strcat(output_buffer, END_MARKER);
+	
+	strcat(txBuffer_bulkStr, output_buffer);
     
-    return true;
 }
 #endif // COLUMN_DEFS_H
 

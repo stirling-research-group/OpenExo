@@ -8,19 +8,11 @@
 //Specific Libraries
 #include "ParseIni.h"
 #include "ParamsFromSD.h"
+#include "ListCtrlParams.h"
 
 
 #include <cstddef> // Required for size_t
 #include <cstdint> // Required for uint8_t
-
-// --- MOCKUP CONFIGURATION DEFINITIONS ---
-/* namespace config_defs {    
-    enum exo_name : uint8_t {
-        bilateral_ankle = 1, // Exoskeleton Type 1
-        default_mode = 99    // Default or unknown type
-    };
-} */
-// ------------------------------------------
 
 // Maximum buffer size estimate (must be large enough for "t," + 11 columns + 10 commas + ",z" + null terminator)
 const size_t MAX_COMBINED_HEADER_LENGTH = 200; 
@@ -96,10 +88,12 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
     }
 }
 
+
 /**
  * @brief Function declaration to combine the column strings into a single delimited C-string.
  */
-bool create_figure_titles(char* output_buffer, size_t buffer_size, uint8_t* config_to_send);
+//bool create_figure_titles(char* output_buffer, size_t buffer_size, uint8_t* config_to_send);
+void create_figure_titles(uint8_t* config_to_send);
 
 #endif
 #endif

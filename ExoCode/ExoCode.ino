@@ -66,13 +66,13 @@ void setup()
     ini_parser(config_info::config_to_send);              
     
 	//Debugging ListCtrlParams
-	char output_buffer[200];
-	bool success_RAM = create_figure_titles(output_buffer, sizeof(output_buffer), config_info::config_to_send);
-	Serial.print("\nFigure Titles output_buffer: ");
-	Serial.print(output_buffer);
-	Serial.print("\n");
+	long initialTime = millis();
 	ctrl_param_array_gen(config_info::config_to_send);
+	create_figure_titles(config_info::config_to_send);
 	send_bulk_char();
+	long time_spent = millis() - initialTime;
+	Serial.print("\nTeensy Boot time added: ");
+	Serial.print(time_spent);
 	
     //Print to confirm config came through correctly (Should not contain zeros).
     #if defined(MAIN_DEBUG) || defined(SIMPLE_DEBUG)
@@ -736,7 +736,17 @@ void setup()
 {
     Serial.begin(115200);
 	
+	long initialTime = millis();
 	readSingleMessageBlocking();
+	long time_spent = millis() - initialTime;
+	
+	Serial.print("\nNano Boot time added: ");
+	Serial.print(time_spent);
+	Serial.println("\n--- MESSAGE RECEIVED (Full Frame) ---");
+    Serial.print("Frame Size: ");
+    Serial.println(strlen(rxBuffer_bulkStr)); 
+    Serial.print("Frame: ");
+    Serial.println(rxBuffer_bulkStr);
 	
     #if MAIN_DEBUG
       while (!Serial);

@@ -8,7 +8,7 @@
  * * IMPORTANT: Serial.begin() must be called in setup() before this function runs.
  */
 void send_bulk_char() {
-	Serial8.begin(57600);
+	Serial8.begin(115200);
 	pinMode(13,OUTPUT);
 	digitalWrite(13,HIGH);
 	long initial_time = millis();
@@ -20,7 +20,10 @@ void send_bulk_char() {
             char incomingChar = Serial8.read();
 			Serial.println(incomingChar);
 			if (incomingChar == 'R') {
-				delay(500);
+				while (Serial8.available() > 0) {
+					incomingChar = Serial8.read();//clear the buffer, as the Nano might have sent many "R"
+				}
+				delay(50);
 				break;
 			}
 		}
@@ -44,11 +47,12 @@ void send_bulk_char() {
 	//char myString[] = "f,This is a test char string.\nNew line starts here.,z";
 	//Serial8.write(txBuffer_bulkStr, message_length);
     digitalWrite(13,HIGH);
-	delay(500);
+	delay(50);
     // Optional: Add a small delay if the receiving end is slow to process data.
     // delay(5); 
 
     Serial.println("\n--- Message sent ---");
+	Serial.print(txBuffer_bulkStr);
 
     // 3. Clear the buffer to prepare for the next assembly.
     // Crucial to prevent new, shorter messages from containing old data fragments.

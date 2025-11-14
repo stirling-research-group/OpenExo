@@ -8,6 +8,7 @@
 #include "ParseIni.h"
 #include "Utilities.h"
 #include "ParamsFromSD.h"
+#include "FigureTitles.h"
 
 #include <SPI.h>
 #include <SD.h>

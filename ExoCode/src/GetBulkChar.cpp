@@ -10,9 +10,9 @@
 //const int MAX_MESSAGE_SIZE = 25000; 
 
 // --- Receiver Variables ---
-char rxBuffer[25000]; // Buffer to store the received data payload
-//char rxBuffer[MAX_MESSAGE_SIZE]; // Buffer to store the received data payload
-int rxIndex = 0;                 // Current index for writing into rxBuffer
+//char rxBuffer_bulkStr[25000]; // Buffer to store the received data payload
+char rxBuffer_bulkStr[MAX_MESSAGE_SIZE]; // Buffer to store the received data payload
+int rxIndex = 0;                 // Current index for writing into rxBuffer_bulkStr
 bool messageComplete = false;    // Flag indicating a complete message is ready
 
 // State tracking for the serial reception
@@ -32,22 +32,26 @@ RxState currentState = WAITING_FOR_F;
  */
 void readSingleMessageBlocking() {
 	long initialTime = millis();
-    Serial.println("\n--- Entering Blocking Read Mode ---");
-    Serial.println("System will halt execution until a full frame is received.");
-    Serial1.begin(57600);
-	delay(3000);
+    //Serial.println("\n--- Entering Blocking Read Mode ---");
+    //Serial.println("System will halt execution until a full frame is received.");
+    Serial1.begin(115200);
+	//delay(3000);
 	
     char txBuffer_NanoReady[10] = "R";
 	size_t message_length = strlen(txBuffer_NanoReady);
     // 2. Transmit the entire message in one burst using Serial.write().
     // This is the most efficient method for large C-strings on Arduino.
-    Serial1.write(txBuffer_NanoReady, message_length);
-	Serial.print("\nCharacter R sent.");
-	delay(100);
+    while (!Serial1.available()) {
+		Serial1.write(txBuffer_NanoReady, message_length);
+		//Serial.print("\nCharacter R sent.");
+		delay(20);
+		if (millis() - initialTime > 5000) {
+			break;
+		}
+	}
 	
     // The loop runs indefinitely until the messageComplete flag is set to true.
     while (!messageComplete) {
-        
         // Only proceed if data is available in the UART buffer
         if (Serial1.available() > 0) {
 			//Serial.print("\nSerial.available() > 0, incomingChar:");
@@ -58,8 +62,8 @@ void readSingleMessageBlocking() {
             if (currentState == WAITING_FOR_F) {
                 if (incomingChar == 'f') {
                     // Store 'f' and transition
-                    if (rxIndex < 25000 - 1) {
-                        rxBuffer[rxIndex++] = incomingChar;
+                    if (rxIndex < MAX_MESSAGE_SIZE - 1) {
+                        rxBuffer_bulkStr[rxIndex++] = incomingChar;
                         currentState = WAITING_FOR_COMMA;
                     } else {
                         // Buffer overflow on first character
@@ -73,13 +77,13 @@ void readSingleMessageBlocking() {
             else if (currentState == WAITING_FOR_COMMA) {
                 if (incomingChar == ',') {
                     // Found the first delimiter: Store ',' and begin RECEIVING_DATA
-                    if (rxIndex < 25000 - 1) {
-                        rxBuffer[rxIndex++] = incomingChar;
+                    if (rxIndex < MAX_MESSAGE_SIZE - 1) {
+                        rxBuffer_bulkStr[rxIndex++] = incomingChar;
                         currentState = RECEIVING_DATA;
                         // rxIndex is now 2 (pointing to the start of the payload)
                     } else {
                         // Buffer overflow protection: reset and wait again for 'f'
-                        Serial.println("ERROR: Receive buffer overflow during start marker.");
+                        //Serial.println("ERROR: Receive buffer overflow during start marker.");
                         currentState = WAITING_FOR_F;
                         rxIndex = 0;
                     }
@@ -94,8 +98,8 @@ void readSingleMessageBlocking() {
             else if (currentState == RECEIVING_DATA) {
                 
                 // Check for buffer overflow first
-                if (rxIndex >= 25000 - 1) {
-                    Serial.println("ERROR: Receive buffer overflow.");
+                if (rxIndex >= MAX_MESSAGE_SIZE - 1) {
+                    //Serial.println("ERROR: Receive buffer overflow.");
                     currentState = WAITING_FOR_F;
                     rxIndex = 0;
                     continue; // Skip processing this character
@@ -103,13 +107,13 @@ void readSingleMessageBlocking() {
                 
                 // --- 1. CHECK FOR END MARKER (",z") ---
                 // We check the incoming character against the previous one stored in the buffer.
-                if (incomingChar == '?' && rxBuffer[rxIndex - 1] == ',') {
+                if (incomingChar == '?' && rxBuffer_bulkStr[rxIndex - 1] == '?' && rxBuffer_bulkStr[rxIndex - 2] == ',') {
                     
                     // Store the 'z'
-                    rxBuffer[rxIndex++] = incomingChar;
+                    rxBuffer_bulkStr[rxIndex++] = incomingChar;
                     
                     // Add the null terminator after 'z'
-                    rxBuffer[rxIndex] = '\0'; 
+                    rxBuffer_bulkStr[rxIndex] = '\0'; 
                         
                     messageComplete = true; // Exit the blocking while loop
                         
@@ -117,26 +121,16 @@ void readSingleMessageBlocking() {
                 }
 
                 // --- 2. STORE DATA ---
-                rxBuffer[rxIndex] = incomingChar;
+                rxBuffer_bulkStr[rxIndex] = incomingChar;
                 rxIndex++;
             }
         } 
+		if (millis() - initialTime > 8000) {
+			break;
+		}
         // Optional: Introduce a small delay if no data is available to prevent watchdog timer resets on some boards.
         // delay(1); 
     } // End of while (!messageComplete)
-	float time_spent = (millis() - initialTime)/1000;
-    delay(5000);
-    // --- Message Processing Block ---
-    // This code runs only once, immediately after messageComplete is true.
-    Serial.println("\n--- MESSAGE RECEIVED (Full Frame) ---");
-    Serial.print("Frame Size: ");
-    Serial.println(strlen(rxBuffer)); 
-    Serial.print("Frame: ");
-    Serial.println(rxBuffer);
-	Serial.print("\n&*(&^&*^*&^ Time spent: ");
-	Serial.print(time_spent);
-
-    // !!! INSERT YOUR MESSAGE PARSING LOGIC HERE !!!
 
     // Reset the state machine to be ready for the *next* time this function is called (if ever)
     // Note: Since this is in setup(), we typically won't run again, but it's clean practice.
