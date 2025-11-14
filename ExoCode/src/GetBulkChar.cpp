@@ -37,23 +37,30 @@ void readSingleMessageBlocking() {
     Serial1.begin(115200);
 	//delay(3000);
 	
-    char txBuffer_NanoReady[10] = "R";
+    char txBuffer_NanoReady[2] = "R";
 	size_t message_length = strlen(txBuffer_NanoReady);
     // 2. Transmit the entire message in one burst using Serial.write().
     // This is the most efficient method for large C-strings on Arduino.
     while (!Serial1.available()) {
 		Serial1.write(txBuffer_NanoReady, message_length);
 		//Serial.print("\nCharacter R sent.");
+		digitalWrite(LEDR, HIGH);
+		digitalWrite(LEDG, LOW);
+		digitalWrite(LEDB, HIGH);
 		delay(20);
 		if (millis() - initialTime > 5000) {
 			break;
 		}
 	}
 	
+	digitalWrite(LEDR, HIGH);
+	digitalWrite(LEDG, LOW);
+	digitalWrite(LEDB, LOW);
+	
     // The loop runs indefinitely until the messageComplete flag is set to true.
     while (!messageComplete) {
         // Only proceed if data is available in the UART buffer
-        if (Serial1.available() > 0) {
+        while (Serial1.available()) {
 			//Serial.print("\nSerial.available() > 0, incomingChar:");
             char incomingChar = Serial1.read();
 			//Serial.println(incomingChar);
@@ -65,13 +72,14 @@ void readSingleMessageBlocking() {
                     if (rxIndex < MAX_MESSAGE_SIZE - 1) {
                         rxBuffer_bulkStr[rxIndex++] = incomingChar;
                         currentState = WAITING_FOR_COMMA;
-                    } else {
+                    }
+					else {
                         // Buffer overflow on first character
                         currentState = WAITING_FOR_F;
                         rxIndex = 0;
                     }
                 }
-            } 
+            }
             
             // State 2: WAITING_FOR_COMMA
             else if (currentState == WAITING_FOR_COMMA) {
@@ -81,13 +89,15 @@ void readSingleMessageBlocking() {
                         rxBuffer_bulkStr[rxIndex++] = incomingChar;
                         currentState = RECEIVING_DATA;
                         // rxIndex is now 2 (pointing to the start of the payload)
-                    } else {
+                    }
+					else {
                         // Buffer overflow protection: reset and wait again for 'f'
                         //Serial.println("ERROR: Receive buffer overflow during start marker.");
                         currentState = WAITING_FOR_F;
                         rxIndex = 0;
                     }
-                } else {
+                }
+				else {
                     // If 'f' was followed by something other than ',', discard 'f' and restart
                     currentState = WAITING_FOR_F;
                     rxIndex = 0; // Discard the already stored 'f'
@@ -124,19 +134,28 @@ void readSingleMessageBlocking() {
                 rxBuffer_bulkStr[rxIndex] = incomingChar;
                 rxIndex++;
             }
-        } 
+			// 3. Immediately exit the inner 'while' loop if the message is complete
+            if (messageComplete) {
+                break;
+            }
+        }
 		if (millis() - initialTime > 8000) {
 			break;
 		}
         // Optional: Introduce a small delay if no data is available to prevent watchdog timer resets on some boards.
         // delay(1); 
     } // End of while (!messageComplete)
-
+	
+	Serial1.end();
     // Reset the state machine to be ready for the *next* time this function is called (if ever)
     // Note: Since this is in setup(), we typically won't run again, but it's clean practice.
     // messageComplete = false; // We don't reset this, as it's the loop exit condition.
     currentState = WAITING_FOR_F;
     rxIndex = 0;
+	
+	digitalWrite(LEDR, HIGH);
+	digitalWrite(LEDG, HIGH);
+	digitalWrite(LEDB, HIGH);
 }
 
 #endif

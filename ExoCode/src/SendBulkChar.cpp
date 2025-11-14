@@ -58,5 +58,6 @@ void send_bulk_char() {
     // Crucial to prevent new, shorter messages from containing old data fragments.
     txBuffer_bulkStr[0] = '\0';
 	digitalWrite(13,LOW);
+	Serial8.end();
 }
 #endif

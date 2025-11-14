@@ -739,7 +739,7 @@ void setup()
 	long initialTime = millis();
 	readSingleMessageBlocking();
 	long time_spent = millis() - initialTime;
-	
+	//delay(5000);
 	Serial.print("\nNano Boot time added: ");
 	Serial.print(time_spent);
 	Serial.println("\n--- MESSAGE RECEIVED (Full Frame) ---");
