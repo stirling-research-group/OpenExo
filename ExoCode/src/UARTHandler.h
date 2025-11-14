@@ -27,7 +27,7 @@
 #define FIXED_POINT_FACTOR 100
 #define UART_BAUD 256000
 
-#define MAX_RX_LEN 64       //Bytes
+#define MAX_RX_LEN 256       //Bytes
 #define RX_TIMEOUT_US 1000  //Microseconds
 
 /* SLIP special character codes */
