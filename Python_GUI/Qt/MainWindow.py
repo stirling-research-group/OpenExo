@@ -45,7 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
         toolbar.addAction(act_scan)
         toolbar.addAction(act_trial)
         toolbar.addAction(act_disc)
-        act_scan.triggered.connect(lambda: self.stack.setCurrentWidget(self.scan_page))
+        act_scan.triggered.connect(self._navigate_to_scan)
         act_trial.triggered.connect(lambda: self.stack.setCurrentWidget(self.trial_page))
         act_disc.triggered.connect(self._on_disconnect)
         # Hide manual navigation to prevent tab-like selection
@@ -300,6 +300,14 @@ class MainWindow(QtWidgets.QMainWindow):
                     pass
         except Exception:
             pass
+
+    @QtCore.Slot()
+    def _navigate_to_scan(self):
+        try:
+            self._on_disconnect()
+        except Exception:
+            pass
+        self.stack.setCurrentWidget(self.scan_page)
 
     @QtCore.Slot()
     def _on_save_csv(self):
