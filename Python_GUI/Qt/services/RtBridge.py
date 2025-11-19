@@ -16,7 +16,7 @@ class RtBridge(QtCore.QObject):
     - rt data: frames containing 'c' with numeric payload per the existing scheme
     """
 
-    handshakeReceived = QtCore.Signal()
+    handshakeReceived = QtCore.Signal(str)
     parameterNamesReceived = QtCore.Signal(list)
     controllersReceived = QtCore.Signal(list, list)
     controllerMatrixReceived = QtCore.Signal(list)
@@ -33,6 +33,9 @@ class RtBridge(QtCore.QObject):
         self._temp_params: List[str] = []
         self._controllers_done = False
         self._controller_matrix: List[List[str]] = []
+        self._rows_68: List[List[str]] = []
+        self._rows_36: List[List[str]] = []
+        self._rows_38: List[List[str]] = []
 
         # Stream parse state (port of minimal logic)
         self._event_count_regex = QtCore.QRegularExpression("[0-9]+")
@@ -56,12 +59,11 @@ class RtBridge(QtCore.QObject):
 
         # Handshake
         if s == "READY":
-            print("RtBridge::feed_bytes->Handshake received")
+            print("RtBridge::feed_bytes->Handshake header received")
             self._handshake = True
             # Begin collecting the initial long handshake payload split across notifications
             self._collecting_handshake_payload = True
             self._handshake_payload_buf = ""
-            self.handshakeReceived.emit()
             return
 
         # If we're collecting the extended handshake payload, accumulate until newline
@@ -72,9 +74,110 @@ class RtBridge(QtCore.QObject):
                 # Split by commas and drop empty entries
                 tokens = [tok.strip() for tok in line.split(",") if tok.strip()]
                 print(f"RtBridge::feed_bytes->Handshake payload: {tokens}")
+                payload_line = line.replace('|', '\n')
+                joined_tokens = ", ".join(tokens)
+                payload_str = "READY" if not joined_tokens else f"READY, {joined_tokens}"
+                self.handshakeReceived.emit(payload_str)
+
+                # Parse controllers and parameter headers from the payload blob
+                rows = [row.strip() for row in payload_line.split("\n") if row.strip()]
+                controller_rows = []
+                param_names = []
+                self._rows_68 = []
+                self._rows_36 = []
+                self._rows_38 = []
+                current_prefix = None
+                current_rows: List[str] = []
+                for row in rows:
+                    parts_raw = row.split(",")
+                    parts = [part.strip() for part in parts_raw if part is not None]
+                    if not parts:
+                        continue
+                    prefix = parts[0].lower()
+                    if prefix == 'f':
+                        # Legacy fetch command header, ignore beyond logging
+                        continue
+                    if prefix == 't':
+                        param_names = [p.strip() for p in parts[1:] if p.strip()]
+                        print(f"RtBridge::feed_bytes->Parameter names: {param_names}")
+                        continue
+                    if prefix == '?':
+                        # End-of-handshake sentinel
+                        continue
+                    controller_rows.append(parts)
+                    if prefix in ('68', '36', '38'):
+                        if current_prefix is None:
+                            current_prefix = prefix
+                        elif current_prefix != prefix:
+                            formatted_block = "\n".join(current_rows)
+                            if current_prefix == '68':
+                                self._rows_68.append(formatted_block)
+                            elif current_prefix == '36':
+                                self._rows_36.append(formatted_block)
+                            elif current_prefix == '38':
+                                self._rows_38.append(formatted_block)
+                            current_rows = []
+                            current_prefix = prefix
+                        row_string = ",".join(parts)
+                        current_rows.append(row_string)
+                    else:
+                        formatted_block = "\n".join(current_rows)
+                        if current_prefix == '68':
+                            self._rows_68.append(formatted_block)
+                        elif current_prefix == '36':
+                            self._rows_36.append(formatted_block)
+                        elif current_prefix == '38':
+                            self._rows_38.append(formatted_block)
+                        current_rows = []
+                        current_prefix = None
+
+                if current_rows and current_prefix:
+                    formatted_block = "\n".join(current_rows)
+                    if current_prefix == '68':
+                        self._rows_68.append(formatted_block)
+                    elif current_prefix == '36':
+                        self._rows_36.append(formatted_block)
+                    elif current_prefix == '38':
+                        self._rows_38.append(formatted_block)
+
+                if param_names:
+                    self._param_names = list(param_names)
+                    self.parameterNamesReceived.emit(list(param_names))
+
+                for block in self._rows_68:
+                    print(f"RtBridge::feed_bytes->Rows with 68:\n{block}\n")
+                for block in self._rows_36:
+                    print(f"RtBridge::feed_bytes->Rows with 36:\n{block}\n")
+                for block in self._rows_38:
+                    print(f"RtBridge::feed_bytes->Rows with 38:\n{block}\n")
+
+                if controller_rows:
+                    prefix_label = {
+                        '68': "Right Ankle",
+                        '36': "Left Ankle",
+                        '38': "Other Joint",
+                    }
+                    self._controllers = [row[1] if len(row) > 1 else "" for row in controller_rows]
+                    self._controller_params = [row[2:] if len(row) > 2 else [] for row in controller_rows]
+                    self._controller_matrix = []
+                    for row in controller_rows:
+                        if len(row) > 1:
+                            prefix = row[0] if row else ""
+                            label_prefix = prefix_label.get(prefix, f"Joint {prefix}")
+                            controller_name = row[1]
+                            display_name = f"{label_prefix}: {controller_name}" if controller_name else label_prefix
+                            self._controller_matrix.append([display_name] + row[2:])
+                    if self._controllers:
+                        self.controllersReceived.emit(list(self._controllers), list(self._controller_params))
+                        self.controllerMatrixReceived.emit(list(self._controller_matrix))
+
                 # Done collecting extended handshake
                 self._collecting_handshake_payload = False
                 self._handshake_payload_buf = ""
+                # Treat the handshake payload as the complete parameter preamble
+                self._collecting_names = False
+                self._names.clear()
+                self._controllers_done = True
             return
 
         # Parameter names first, plain strings until END

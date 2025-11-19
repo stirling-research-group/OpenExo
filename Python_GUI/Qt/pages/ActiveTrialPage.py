@@ -49,6 +49,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         # Update Controller at the top
         self.btn_update_controller = QtWidgets.QPushButton("Update Controller")
         controls.addWidget(self.btn_update_controller)
+        self.btn_update_controller.setEnabled(False)
         controls.addSpacing(8)
 
         # Toggle plotted data visibility
@@ -172,6 +173,12 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.timer.setTimerType(QtCore.Qt.PreciseTimer)
         # Toggle state: which 4-value block to plot (0..3 or 4..7)
         self._block_index = 0  # 0 = data[0..3], 1 = data[4..7]
+
+    def set_update_controller_enabled(self, enabled: bool):
+        try:
+            self.btn_update_controller.setEnabled(bool(enabled))
+        except Exception:
+            pass
 
     # Public API to integrate later with bridges
     def start_sim(self):

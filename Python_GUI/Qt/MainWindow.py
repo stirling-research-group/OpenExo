@@ -158,16 +158,14 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception:
             pass
 
-    @QtCore.Slot()
-    def _on_handshake(self):
-        # Acknowledge handshake so firmware can continue sending names/data
+    @QtCore.Slot(str)
+    def _on_handshake(self, payload: str):
         try:
-            self.scan_page.status.setText("Handshake received; sending ACK…")
+            print(f"MainWindow::_on_handshake -> Handshake payload received")
         except Exception:
             pass
         try:
-            # '$' is the ACK byte used in the legacy protocol
-            self.qt_dev.write(b'$')
+            self.scan_page.status.setText("Handshake received; controller parameters incoming…")
         except Exception:
             pass
 
@@ -183,6 +181,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self._param_names = list(names)
         except Exception:
             self._param_names = []
+        try:
+            self.trial_page.set_channel_labels(self._param_names)
+        except Exception:
+            pass
         try:
             self.qt_dev.write(b'$')
         except Exception:
@@ -207,6 +209,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self._controller_matrix = list(matrix)
         except Exception:
             self._controller_matrix = []
+        has_matrix = bool(self._controller_matrix)
+        try:
+            self.settings_page.set_controller_matrix(self._controller_matrix if has_matrix else [])
+        except Exception:
+            pass
+        try:
+            self.trial_page.set_update_controller_enabled(has_matrix)
+        except Exception:
+            pass
 
     @QtCore.Slot()
     def _on_device_start(self):
