@@ -48,6 +48,10 @@ class ScanWindowQt(QtWidgets.QWidget):
 
         self.selected_address: str | None = None
         self.selected_name: str | None = None
+        self._qt_dev: QtExoDeviceManager | None = None
+        self._scanner: DeviceScannerWorker | None = None
+        self._connected = False
+        self._pending_scan = False
 
         self._build_ui()
         self._wire_workers()
@@ -130,15 +134,22 @@ class ScanWindowQt(QtWidgets.QWidget):
     # UI handlers
     @QtCore.Slot()
     def on_scan(self):
-        self.status.setText("Scanning…")
-        self.list_devices.clear()
-        self.btn_scan.setEnabled(False)
-        self.btn_save_connect.setEnabled(False)
         if self._scanner is None:
             self.status.setText("Scanner not ready")
-            self.btn_scan.setEnabled(True)
             return
-        self._scanner.scan_once()
+        self.btn_scan.setEnabled(False)
+        self.btn_save_connect.setEnabled(False)
+        self.list_devices.clear()
+        self._pending_scan = True
+        if self._qt_dev is not None and self._connected:
+            try:
+                self.status.setText("Disconnecting…")
+                self._qt_dev.disconnect()
+            except Exception:
+                self._connected = False
+                self._start_scan_now()
+        else:
+            self._start_scan_now()
 
     @QtCore.Slot()
     def on_load_saved(self):
@@ -189,13 +200,17 @@ class ScanWindowQt(QtWidgets.QWidget):
 
     # Called by MainWindow after it creates QtExoDeviceManager
     def bind_device_manager(self, qt_dev: QtExoDeviceManager):
+        self._qt_dev = qt_dev
         self._scanner = DeviceScannerWorker(qt_dev)
         self._scanner.resultsReady.connect(self._on_scan_results)
         self._scanner.error.connect(self._on_error)
+        qt_dev.connected.connect(self._on_device_connected)
+        qt_dev.disconnected.connect(self._on_device_disconnected)
 
     # Worker callbacks
     @QtCore.Slot(list)
     def _on_scan_results(self, results: List[Tuple[str, str]]):
+        self._pending_scan = False
         self.btn_scan.setEnabled(True)
         self.list_devices.clear()
         if not results:
@@ -206,6 +221,25 @@ class ScanWindowQt(QtWidgets.QWidget):
             item = QtWidgets.QListWidgetItem(f"{name} - {addr}")
             item.setData(QtCore.Qt.UserRole, (name, addr))
             self.list_devices.addItem(item)
+
+    @QtCore.Slot(str, str)
+    def _on_device_connected(self, name: str, address: str):
+        self._connected = True
+
+    @QtCore.Slot()
+    def _on_device_disconnected(self):
+        self._connected = False
+        if self._pending_scan:
+            self._start_scan_now()
+
+    def _start_scan_now(self):
+        self.status.setText("Scanning…")
+        if self._scanner is None:
+            self.status.setText("Scanner not ready")
+            self.btn_scan.setEnabled(True)
+            self._pending_scan = False
+            return
+        self._scanner.scan_once()
 
     @QtCore.Slot(bool, str)
     def _on_connected(self, ok: bool, msg: str):
