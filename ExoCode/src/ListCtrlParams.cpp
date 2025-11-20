@@ -118,6 +118,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 1://left ankle
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_ankle;
 				joint_id_val = (uint8_t)config_defs::joint_id::left_ankle;
+				strncpy(jointName, "Ankle(L)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::ankle.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::ankle[i_ctrl];
@@ -126,6 +128,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 2://right ankle
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_ankle;
 				joint_id_val = (uint8_t)config_defs::joint_id::right_ankle;
+				strncpy(jointName, "Ankle(R)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::ankle.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::ankle[i_ctrl];
@@ -134,6 +138,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 3://left hip
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_hip;
 				joint_id_val = (uint8_t)config_defs::joint_id::left_hip;
+				strncpy(jointName, "Hip(L)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::hip.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::hip[i_ctrl];
@@ -142,6 +148,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 4://right hip
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_hip;
 				joint_id_val = (uint8_t)config_defs::joint_id::right_hip;
+				strncpy(jointName, "Hip(R)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::hip.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::hip[i_ctrl];
@@ -150,6 +158,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 5://left knee
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_knee;
 				joint_id_val = (uint8_t)config_defs::joint_id::left_knee;
+				strncpy(jointName, "Knee(L)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::knee.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::knee[i_ctrl];
@@ -158,6 +168,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 6://right knee
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_knee;
 				joint_id_val = (uint8_t)config_defs::joint_id::right_knee;
+				strncpy(jointName, "Knee(R)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::knee.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::knee[i_ctrl];
@@ -166,6 +178,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 7://left elbow
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_elbow;
 				joint_id_val = (uint8_t)config_defs::joint_id::left_elbow;
+				strncpy(jointName, "Elbow(L)", 10); 
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::elbow.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::elbow[i_ctrl];
@@ -174,6 +188,10 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 			case 8://right elbow
 				//joint_id_string_l = (uint8_t)config_defs::joint_id::left_elbow;
 				joint_id_val = (uint8_t)config_defs::joint_id::right_elbow;
+				strncpy(jointName, "Elbow(R)", 10); 
+				// Ensure the array is null-terminated at the end of its allocated space
+				// to prevent printing garbage if the source string was 10 chars long.
+				jointName[9] = '\0';
 				csvExists = controller_parameter_filenames::elbow.count(i_ctrl);
 				if (csvExists) {
 					filename = controller_parameter_filenames::elbow[i_ctrl];
@@ -342,19 +360,23 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 
 
     // --- 4. INSERT PREFIX COLUMNS (Columns 0, 1, and 2) ---
-
+	
+	// New Column 0: Insert char Joint name string
+	strncpy(arr[row_idx][0], jointName, maxLen - 1);
+	arr[row_idx][0][maxLen - 1] = '\0';
+	
     // Column 0: Insert uint8_t Joint ID value
     // Use snprintf to convert the uint8_t (%u) into a string
-    snprintf(arr[row_idx][0], maxLen, "%u", joint_id_val);
+    snprintf(arr[row_idx][1], maxLen, "%u", joint_id_val);
 
     // Column 1: Insert Controller Name string
-    strncpy(arr[row_idx][1], controller_str, maxLen - 1);
-    arr[row_idx][1][maxLen - 1] = '\0';
+    strncpy(arr[row_idx][2], controller_str, maxLen - 1);
+    arr[row_idx][2][maxLen - 1] = '\0';
 
     // Column 2: Insert the full File Name
     //strncpy(arr[row_idx][2], filename_char, maxLen - 1);
-	snprintf(arr[row_idx][2], maxLen, "%u", i_ctrl);
-    //arr[row_idx][2][maxLen - 1] = '\0';
+	snprintf(arr[row_idx][3], maxLen, "%u", i_ctrl);
+    //arr[row_idx][3][maxLen - 1] = '\0';
 
 
     // The total number of columns written is the prefix columns plus the data columns read

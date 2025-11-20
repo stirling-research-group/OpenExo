@@ -21,7 +21,7 @@
 
 	// Define the size of the array and the max length for each string
 	const int MAX_COLUMNS = 30;
-	const int MAX_STRING_LENGTH = 5;
+	const int MAX_STRING_LENGTH = 10;
 	const int MAX_SNAPSHOTS = 2 * ((uint8_t)config_defs::ankle_controllers::Count + (uint8_t)config_defs::hip_controllers::Count + (uint8_t)config_defs::knee_controllers::Count + (uint8_t)config_defs::elbow_controllers::Count);
 	// Calculate the MAX size of the transmission buffer:
 	// (Max Chars per Cell + 1 comma delimiter) * MAX_COLUMNS + 
@@ -52,9 +52,10 @@ namespace { // Use an anonymous namespace for file-local scope (Best Practice)
     
 	uint8_t failed2open;
 	// Define the number of prefix columns to insert
-	const int PREFIX_COLS = 3;
+	const int PREFIX_COLS = 4;
 	const size_t MAX_NAME_LENGTH = 64;
 	uint8_t joint_id_val;
+	char jointName[10];
 }
 
 
