@@ -73,8 +73,13 @@ class RtBridge(QtCore.QObject):
                 line, _, _ = self._handshake_payload_buf.partition("\n")
                 # Split by commas and drop empty entries
                 tokens = [tok.strip() for tok in line.split(",") if tok.strip()]
-                print(f"RtBridge::feed_bytes->Handshake payload: {tokens}")
+                
+                # Print the payload in the same format as the Serial Monitor
                 payload_line = line.replace('|', '\n')
+                print("RtBridge::feed_bytes->Handshake payload received:")
+                for payload_row in payload_line.split('\n'):
+                    if payload_row.strip():
+                        print(f"    {payload_row}")
                 joined_tokens = ", ".join(tokens)
                 payload_str = "READY" if not joined_tokens else f"READY, {joined_tokens}"
                 self.handshakeReceived.emit(payload_str)
@@ -86,11 +91,12 @@ class RtBridge(QtCore.QObject):
                 self._rows_68 = []
                 self._rows_36 = []
                 self._rows_38 = []
-                current_prefix = None
+                current_joint = None
                 current_rows: List[str] = []
+                
                 for row in rows:
                     parts_raw = row.split(",")
-                    parts = [part.strip() for part in parts_raw if part is not None]
+                    parts = [part.strip() for part in parts_raw if part.strip()]
                     if not parts:
                         continue
                     prefix = parts[0].lower()
@@ -104,41 +110,43 @@ class RtBridge(QtCore.QObject):
                     if prefix == '?':
                         # End-of-handshake sentinel
                         continue
+                    
+                    # Each row format: [JointName, JointID, ControllerName, ParamCount, ...params]
+                    # Example: ['Ankle(L)', '68', 'zeroTorqu', '2', 'use_pid', 'p_gain', 'i_gain', 'd_gain']
                     controller_rows.append(parts)
-                    if prefix in ('68', '36', '38'):
-                        if current_prefix is None:
-                            current_prefix = prefix
-                        elif current_prefix != prefix:
+                    
+                    # Group by joint name for display blocks
+                    if len(parts) >= 2:
+                        joint_name = parts[0]
+                        joint_id = parts[1]
+                        
+                        if current_joint is None:
+                            current_joint = joint_name
+                        elif current_joint != joint_name:
                             formatted_block = "\n".join(current_rows)
-                            if current_prefix == '68':
+                            if joint_id == '68':
                                 self._rows_68.append(formatted_block)
-                            elif current_prefix == '36':
+                            elif joint_id == '36':
                                 self._rows_36.append(formatted_block)
-                            elif current_prefix == '38':
+                            elif joint_id == '38':
                                 self._rows_38.append(formatted_block)
                             current_rows = []
-                            current_prefix = prefix
+                            current_joint = joint_name
+                        
                         row_string = ",".join(parts)
                         current_rows.append(row_string)
-                    else:
-                        formatted_block = "\n".join(current_rows)
-                        if current_prefix == '68':
-                            self._rows_68.append(formatted_block)
-                        elif current_prefix == '36':
-                            self._rows_36.append(formatted_block)
-                        elif current_prefix == '38':
-                            self._rows_38.append(formatted_block)
-                        current_rows = []
-                        current_prefix = None
 
-                if current_rows and current_prefix:
-                    formatted_block = "\n".join(current_rows)
-                    if current_prefix == '68':
-                        self._rows_68.append(formatted_block)
-                    elif current_prefix == '36':
-                        self._rows_36.append(formatted_block)
-                    elif current_prefix == '38':
-                        self._rows_38.append(formatted_block)
+                if current_rows and current_joint:
+                    # Flush last group - need to determine ID from the last row
+                    if controller_rows:
+                        last_id = controller_rows[-1][1] if len(controller_rows[-1]) > 1 else None
+                        formatted_block = "\n".join(current_rows)
+                        if last_id == '68':
+                            self._rows_68.append(formatted_block)
+                        elif last_id == '36':
+                            self._rows_36.append(formatted_block)
+                        elif last_id == '38':
+                            self._rows_38.append(formatted_block)
 
                 if param_names:
                     self._param_names = list(param_names)
@@ -152,23 +160,25 @@ class RtBridge(QtCore.QObject):
                     print(f"RtBridge::feed_bytes->Rows with 38:\n{block}\n")
 
                 if controller_rows:
-                    prefix_label = {
-                        '68': "Right Ankle",
-                        '36': "Left Ankle",
-                        '38': "Other Joint",
-                    }
-                    self._controllers = [row[1] if len(row) > 1 else "" for row in controller_rows]
-                    self._controller_params = [row[2:] if len(row) > 2 else [] for row in controller_rows]
+                    # Build matrix: [JointName, JointID, ControllerName, Param1, Param2, ...]
                     self._controller_matrix = []
                     for row in controller_rows:
-                        if len(row) > 1:
-                            prefix = row[0] if row else ""
-                            label_prefix = prefix_label.get(prefix, f"Joint {prefix}")
-                            controller_name = row[1]
-                            display_name = f"{label_prefix}: {controller_name}" if controller_name else label_prefix
-                            self._controller_matrix.append([display_name] + row[2:])
-                    if self._controllers:
-                        self.controllersReceived.emit(list(self._controllers), list(self._controller_params))
+                        if len(row) >= 3:
+                            # row[0] = joint name (e.g., "Ankle(L)")
+                            # row[1] = joint ID (e.g., "68")
+                            # row[2] = controller name (e.g., "zeroTorqu")
+                            # row[3] = param count
+                            # row[4:] = parameter names
+                            joint_name = row[0]
+                            joint_id = row[1]
+                            controller_name = row[2]
+                            params = row[4:] if len(row) > 4 else []  # Skip param count at index 3
+                            
+                            # Create display row: [Joint, Controller, Param1, Param2, ...]
+                            display_row = [f"{joint_name} ({joint_id})", controller_name] + params
+                            self._controller_matrix.append(display_row)
+                    
+                    if self._controller_matrix:
                         self.controllerMatrixReceived.emit(list(self._controller_matrix))
 
                 # Done collecting extended handshake
