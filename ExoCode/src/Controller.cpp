@@ -2649,13 +2649,13 @@ PJMC_PLUS::PJMC_PLUS(config_defs::joint_id id, ExoData* exo_data)
 float PJMC_PLUS::calc_motor_cmd()
 {
 	// Calculate Generic Contribution
-	float plantar_setpoint = _controller_data->parameters[controller_defs::pjmc_plus::plantar_scaling];
+	/* float plantar_setpoint = _controller_data->parameters[controller_defs::pjmc_plus::plantar_scaling];
 	float dorsi_setpoint = _controller_data->parameters[controller_defs::pjmc_plus::dorsi_scaling];
 	float threshold = constrain(_controller_data->parameters[controller_defs::pjmc_plus::timing_threshold]/100, 0, 99);
 	float percent_grf = constrain(_side_data->toe_fsr, 0, 1.5);
 	float percent_grf_heel = constrain(_side_data->heel_fsr, 0, 1.5);
 	float cmd_ff = _pjmc_generic(percent_grf, threshold, dorsi_setpoint, -plantar_setpoint);
-	cmd_ff = min(dorsi_setpoint, cmd_ff);//cap the dorsiflexion setpoint
+	cmd_ff = min(dorsi_setpoint, cmd_ff);//cap the dorsiflexion setpoint */
 	
 	// if (!_joint_data->is_left){
 		// Serial.print("\nRunning pjmcPlus...");
@@ -2664,10 +2664,39 @@ float PJMC_PLUS::calc_motor_cmd()
     
     //Low-pass filter on torque_reading
     const float torque = _joint_data->torque_reading;
-    const float alpha = 0.5;
+    const float alpha = 0.8;
     _controller_data->filtered_torque_reading = utils::ewma(torque, _controller_data->filtered_torque_reading, alpha);
 	
 	float cmd;
+	
+	
+	//Engineering validation starts (step response)
+
+	
+	if ((_controller_data->SPV2_step_old_setpoint == 0) && (_controller_data->parameters[controller_defs::pjmc_plus::maxon_outOfOffice_itr] != 0)) {
+		_controller_data->SPV2_step_millis = millis();
+		_controller_data->SPV2_in_step_mode = true;
+	}
+	if (_controller_data->parameters[controller_defs::pjmc_plus::maxon_outOfOffice_itr] == 0) {
+		_controller_data->SPV2_in_step_mode = false;
+	}
+	_controller_data->SPV2_step_old_setpoint = _controller_data->parameters[controller_defs::pjmc_plus::maxon_outOfOffice_itr];
+	
+	if (_controller_data->SPV2_in_step_mode) {
+		Serial.print("\nmillis(): ");
+		Serial.print(millis() - _controller_data->SPV2_step_millis);
+		Serial.print(". Set: ");
+		Serial.print(_controller_data->parameters[controller_defs::pjmc_plus::maxon_outOfOffice_itr]);
+		Serial.print(", measured: ");
+		Serial.print(_controller_data->filtered_torque_reading);
+	}
+	else {
+		Serial.print("\nNot in step response mode.");
+	}
+	float cmd_ff = 0;
+	cmd_ff = _controller_data->parameters[controller_defs::pjmc_plus::maxon_outOfOffice_itr];
+	
+	//Engineering validation ends (step response)
 	
     //PID on Motor Command
     cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 20 * _controller_data->parameters[controller_defs::pjmc_plus::kp], 80 * _controller_data->parameters[controller_defs::pjmc_plus::ki], 20 * _controller_data->parameters[controller_defs::pjmc_plus::kd]);
