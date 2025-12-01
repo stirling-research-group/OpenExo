@@ -79,6 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._param_names = []
         self._t0 = None
         self._csv_path_last = None
+        self._mark_counter = 0  # Trial mark counter
         # Store controller -> params 2D matrix
         self._controller_matrix = []
 
@@ -136,7 +137,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # CSV logging
             if self._csv_writer is not None:
                 if not self._csv_header_written:
-                    header = ["t", "epoch"]
+                    header = ["t", "epoch", "mark"]
                     if self._param_names:
                         header.extend(self._param_names[:len(values)])
                     else:
@@ -151,7 +152,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 # Write row
                 epoch_time = time.time()
                 t = 0.0 if self._t0 is None else (epoch_time - self._t0)
-                row = [f"{t:.3f}", f"{epoch_time:.6f}"] + [f"{v:.6f}" for v in values]
+                row = [f"{t:.3f}", f"{epoch_time:.6f}", str(self._mark_counter)] + [f"{v:.6f}" for v in values]
                 try:
                     self._csv_writer.writerow(row)
                 except Exception:
@@ -254,7 +255,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @QtCore.Slot()
     def _on_mark(self):
-        pass
+        # Increment trial mark counter
+        self._mark_counter += 1
+        try:
+            self.scan_page.status.setText(f"Trial marked: {self._mark_counter}")
+        except Exception:
+            pass
+        try:
+            self.trial_page.update_mark_count(self._mark_counter)
+        except Exception:
+            pass
 
     @QtCore.Slot()
     def _on_end_trial(self):
@@ -442,9 +452,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self._csv_writer = csv.writer(self._csv_file)
             self._csv_header_written = False
             self._t0 = None
+            self._mark_counter = 0  # Reset mark counter for new trial
             self._csv_path_last = fname
             try:
                 self.scan_page.status.setText(f"Logging to {fname}")
+            except Exception:
+                pass
+            try:
+                self.trial_page.update_mark_count(0)
             except Exception:
                 pass
         except Exception:

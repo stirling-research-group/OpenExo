@@ -184,6 +184,13 @@ class ActiveTrialPage(QtWidgets.QWidget):
         except Exception:
             pass
 
+    def update_mark_count(self, count: int):
+        """Update the Mark Trial button to show current count."""
+        try:
+            self.btn_mark.setText(f"Mark Trial ({count})")
+        except Exception:
+            pass
+
     def set_channel_labels(self, param_names: list):
         """Update plot labels with dynamic parameter names from device handshake."""
         try:
