@@ -173,10 +173,58 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.timer.setTimerType(QtCore.Qt.PreciseTimer)
         # Toggle state: which 4-value block to plot (0..3 or 4..7)
         self._block_index = 0  # 0 = data[0..3], 1 = data[4..7]
+        # Store dynamic parameter names from device
+        self._param_names = []
 
     def set_update_controller_enabled(self, enabled: bool):
         try:
             self.btn_update_controller.setEnabled(bool(enabled))
+        except Exception:
+            pass
+
+    def set_channel_labels(self, param_names: list):
+        """Update plot labels with dynamic parameter names from device handshake."""
+        try:
+            self._param_names = list(param_names) if param_names else []
+            # Update labels for current block
+            self._update_labels()
+        except Exception:
+            pass
+
+    def _update_labels(self):
+        """Update plot titles and legend names based on current block index."""
+        if not self._param_names or len(self._param_names) < 4:
+            return
+        
+        base = 4 * self._block_index
+        # Ensure we have enough parameter names for the selected block
+        if len(self._param_names) < base + 4:
+            return
+        
+        try:
+            # Update top plot title and curve names
+            top_cmd_name = self._param_names[base + 0] if base + 0 < len(self._param_names) else 'Top Cmd'
+            top_meas_name = self._param_names[base + 1] if base + 1 < len(self._param_names) else 'Top Meas'
+            self.plot_top.setTitle(f"{top_cmd_name} vs {top_meas_name}")
+            
+            # Update legend items
+            self.plot_top.legend.clear()
+            self.curve_top_cmd.opts['name'] = top_cmd_name
+            self.curve_top_meas.opts['name'] = top_meas_name
+            self.plot_top.legend.addItem(self.curve_top_cmd, top_cmd_name)
+            self.plot_top.legend.addItem(self.curve_top_meas, top_meas_name)
+            
+            # Update bottom plot title and curve names
+            bot_a_name = self._param_names[base + 2] if base + 2 < len(self._param_names) else 'Bottom A'
+            bot_b_name = self._param_names[base + 3] if base + 3 < len(self._param_names) else 'Bottom B'
+            self.plot_bottom.setTitle(f"{bot_a_name} vs {bot_b_name}")
+            
+            # Update legend items
+            self.plot_bottom.legend.clear()
+            self.curve_bot_a.opts['name'] = bot_a_name
+            self.curve_bot_b.opts['name'] = bot_b_name
+            self.plot_bottom.legend.addItem(self.curve_bot_a, bot_a_name)
+            self.plot_bottom.legend.addItem(self.curve_bot_b, bot_b_name)
         except Exception:
             pass
 
@@ -200,6 +248,8 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_toggle_points.setText(
             "Show Data 0-3" if self._block_index == 1 else "Show Data 4-7"
         )
+        # Update labels for the new block
+        self._update_labels()
 
     def apply_values(self, values: list):
         """Update plots from incoming rtDataUpdated(values).
