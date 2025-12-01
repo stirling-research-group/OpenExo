@@ -221,14 +221,17 @@ class QtExoDeviceManager(QtCore.QObject):
     @QtCore.Slot(bytes)
     def write(self, payload: bytes):
         if not self._client or not self._loop:
-            self.error.emit("Not connected")
+            # Silently fail if not connected (avoids errors during disconnect)
             return
 
         async def _run_write():
             try:
-                await self._client.write_gatt_char(UART_TX_UUID, payload, response=False)
+                if self._client:  # Double-check client still exists
+                    await self._client.write_gatt_char(UART_TX_UUID, payload, response=False)
             except Exception as ex:
-                self.error.emit(str(ex))
+                # Only emit error if we're still supposed to be connected
+                if self._is_connected:
+                    self.error.emit(str(ex))
 
         asyncio.run_coroutine_threadsafe(_run_write(), self._loop)
 

@@ -191,6 +191,28 @@ class ActiveTrialPage(QtWidgets.QWidget):
         except Exception:
             pass
 
+    def clear_plots(self):
+        """Clear all plot data and reset timing."""
+        try:
+            # Clear all data buffers
+            self.t_vals.clear()
+            self.top_cmd_vals.clear()
+            self.top_meas_vals.clear()
+            self.bot_a_vals.clear()
+            self.bot_b_vals.clear()
+            
+            # Reset timing
+            self._real_data_t0 = None
+            self.t0 = time.time()
+            
+            # Update plots to show empty data
+            self.curve_top_cmd.setData([], [])
+            self.curve_top_meas.setData([], [])
+            self.curve_bot_a.setData([], [])
+            self.curve_bot_b.setData([], [])
+        except Exception:
+            pass
+
     def set_channel_labels(self, param_names: list):
         """Update plot labels with dynamic parameter names from device handshake."""
         try:

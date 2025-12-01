@@ -110,6 +110,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stack.setCurrentWidget(self.trial_page)
         # Stop simulation so live data drives plots if available
         self.trial_page.stop_sim()
+        # Clear old plot data
+        try:
+            self.trial_page.clear_plots()
+        except Exception:
+            pass
         # Ensure CSV logging is started automatically with timestamped filename
         try:
             if self._csv_file is None:
@@ -225,6 +230,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_device_start(self):
         # Begin trial sequence (ensure FSR calibration and presets)
         try:
+            # Clear old plot data
+            self.trial_page.clear_plots()
             self.qt_dev.beginTrial()
             # Also stop local sim
             self.trial_page.stop_sim()
@@ -269,9 +276,13 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot()
     def _on_end_trial(self):
         try:
-            self.qt_dev.motorOff()
-            self.qt_dev.stopTrial()
-            self.qt_dev.disconnect()
+            # Send stop trial and motor off commands, then wait briefly before disconnect
+            try:
+                self.qt_dev.write(b'G')  # Stop trial
+                QtCore.QTimer.singleShot(100, lambda: self.qt_dev.write(b'w'))  # Motor off after delay
+                QtCore.QTimer.singleShot(500, self.qt_dev.disconnect)  # Disconnect after commands sent
+            except Exception:
+                pass
             # Stop CSV if running
             if self._csv_file is not None:
                 try:
@@ -401,6 +412,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scan_page.status.setText(f"Connected: {name} {addr}")
             self.scan_page.btn_save_connect.setEnabled(True)
             self.scan_page.btn_start_trial.setEnabled(True)
+        except Exception:
+            pass
+        # Clear old plot data on reconnect
+        try:
+            self.trial_page.clear_plots()
         except Exception:
             pass
 
