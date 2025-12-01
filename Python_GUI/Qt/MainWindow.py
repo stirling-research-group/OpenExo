@@ -136,7 +136,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # CSV logging
             if self._csv_writer is not None:
                 if not self._csv_header_written:
-                    header = ["t"]
+                    header = ["t", "epoch"]
                     if self._param_names:
                         header.extend(self._param_names[:len(values)])
                     else:
@@ -149,8 +149,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     except Exception:
                         pass
                 # Write row
-                t = 0.0 if self._t0 is None else (time.time() - self._t0)
-                row = [f"{t:.3f}"] + [f"{v:.6f}" for v in values]
+                epoch_time = time.time()
+                t = 0.0 if self._t0 is None else (epoch_time - self._t0)
+                row = [f"{t:.3f}", f"{epoch_time:.6f}"] + [f"{v:.6f}" for v in values]
                 try:
                     self._csv_writer.writerow(row)
                 except Exception:

@@ -175,6 +175,8 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self._block_index = 0  # 0 = data[0..3], 1 = data[4..7]
         # Store dynamic parameter names from device
         self._param_names = []
+        # Track real data start time
+        self._real_data_t0 = None
 
     def set_update_controller_enabled(self, enabled: bool):
         try:
@@ -232,6 +234,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     def start_sim(self):
         if not self.timer.isActive():
             self.t0 = time.time()
+            self._real_data_t0 = None  # Reset real data timing when starting sim
             self.timer.start(int(1000 / self.rate_hz))
             self.btn_start.setEnabled(False)
             self.btn_stop.setEnabled(True)
@@ -241,6 +244,8 @@ class ActiveTrialPage(QtWidgets.QWidget):
             self.timer.stop()
             self.btn_start.setEnabled(True)
             self.btn_stop.setEnabled(False)
+        # Reset real data timing when switching from sim to real data
+        self._real_data_t0 = None
 
     def _toggle_points(self):
         # Toggle which 4-value block we plot
@@ -261,8 +266,10 @@ class ActiveTrialPage(QtWidgets.QWidget):
         # Ensure we have enough values for selected block
         if len(values) < base + 4:
             return
-        # Advance synthetic time
-        t_next = (self.t_vals[-1] + 1.0 / self.rate_hz) if self.t_vals else 0.0
+        # Use actual wall-clock time instead of synthetic increments
+        if self._real_data_t0 is None:
+            self._real_data_t0 = time.time()
+        t_next = time.time() - self._real_data_t0
         self.t_vals.append(t_next)
         # Map to curves
         self.top_cmd_vals.append(values[base + 0])
