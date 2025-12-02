@@ -34,9 +34,9 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
             // Inner switch: Selects the specific column name for this mode (0-based)
             switch (column_index) {
                 case 0:  return "Desired Torque (L)";
-                case 1:  return "Meaured Torque (L)";
+                case 1:  return "Measured Torque (L)";
                 case 2:  return "Desired Torque (R)";
-                case 3:  return "Meaured Torque (R)";
+                case 3:  return "Measured Torque (R)";
                 case 4:  return "Toe FSR (L)";
                 case 5:  return "Stance Phase (L)";
                 case 6:  return "Toe FSR (R)";
@@ -52,9 +52,9 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
         {
             // Inner switch: Selects the specific column name for this mode (0-based)
             switch (column_index) {
-                case 0:  return "Meaured Torque (R)";
+                case 0:  return "Measured Torque (R)";
                 case 1:  return "Desired Torque (R)";
-                case 2:  return "Meaured Torque (L)";
+                case 2:  return "Measured Torque (L)";
                 case 3:  return "Desired Torque (L)";
                 case 4:  return "Gait/100 (R)";
                 case 5:  return "Toe FSR (R)";

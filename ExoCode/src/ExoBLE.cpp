@@ -21,7 +21,7 @@ namespace
     {
         const char ready_msg[] = "READY";
         characteristic.writeValue(ready_msg);
-        delay(5);
+        delay(20);
 
         const char *raw_payload = rxBuffer_bulkStr;
         if (raw_payload == nullptr || raw_payload[0] == '\0')
@@ -62,7 +62,7 @@ namespace
         {
             size_t chunk_len = ((write_index - offset) > kHandshakeChunkSize) ? kHandshakeChunkSize : (write_index - offset);
             characteristic.writeValue((const uint8_t *)(sanitized_payload + offset), chunk_len);
-            delay(5);
+            delay(20);
             offset += chunk_len;
         }
 
