@@ -18,8 +18,9 @@ void send_bulk_char() {
 		if (Serial8.available() > 0) {
 			digitalWrite(13,LOW);
             char incomingChar = Serial8.read();
-			Serial.println(incomingChar);
+			//Serial.println(incomingChar);
 			if (incomingChar == 'R') {
+				Serial.print("\nNano confirmed to the Teensy that it’s ready to receive the controller parameter list.");
 				while (Serial8.available() > 0) {
 					incomingChar = Serial8.read();//clear the buffer, as the Nano might have sent many "R"
 				}
@@ -51,7 +52,7 @@ void send_bulk_char() {
     // Optional: Add a small delay if the receiving end is slow to process data.
     // delay(5); 
 
-    Serial.println("\n--- Message sent ---");
+    Serial.println("\n--- Controller parameter list has been sent. ---");
 	Serial.print(txBuffer_bulkStr);
 
     // 3. Clear the buffer to prepare for the next assembly.
