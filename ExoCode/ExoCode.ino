@@ -39,7 +39,6 @@ namespace config_info
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial);  
 }
 
 void loop() {
@@ -80,7 +79,7 @@ void loop() {
   {
     /* How to send a UART command */
     #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
-    static float p_gain = 300;
+    static float p_gain = 3000;
     // pack the message that you would like to send
     UART_msg_t tx_msg;
     tx_msg.command = UART_command_names::update_controller_params;

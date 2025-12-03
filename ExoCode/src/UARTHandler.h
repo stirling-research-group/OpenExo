@@ -110,8 +110,6 @@ class UARTHandler
         void _reset_partial_packet();
 
         /* Data */
-        //circular_buffer<uint8_t, 64> _rx_raw;
-
         float _timeout_us = RX_TIMEOUT_US;
         
         uint8_t _partial_packet[MAX_RX_LEN];
