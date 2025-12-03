@@ -160,22 +160,23 @@ class RtBridge(QtCore.QObject):
                     print(f"RtBridge::feed_bytes->Rows with 38:\n{block}\n")
 
                 if controller_rows:
-                    # Build matrix: [JointName, JointID, ControllerName, Param1, Param2, ...]
+                    # Build matrix: [JointName, JointID, ControllerName, ControllerID, Param1, Param2, ...]
                     self._controller_matrix = []
                     for row in controller_rows:
                         if len(row) >= 3:
                             # row[0] = joint name (e.g., "Ankle(L)")
                             # row[1] = joint ID (e.g., "68")
-                            # row[2] = controller name (e.g., "zeroTorqu")
-                            # row[3] = param count
+                            # row[2] = controller name (e.g., "pjmc_plus")
+                            # row[3] = controller ID (e.g., "11")
                             # row[4:] = parameter names
                             joint_name = row[0]
                             joint_id = row[1]
                             controller_name = row[2]
-                            params = row[4:] if len(row) > 4 else []  # Skip param count at index 3
+                            controller_id = row[3] if len(row) > 3 else "0"
+                            params = row[4:] if len(row) > 4 else []
                             
-                            # Create display row: [Joint, Controller, Param1, Param2, ...]
-                            display_row = [f"{joint_name} ({joint_id})", controller_name] + params
+                            # Create display row: [Joint(ID), JointID, ControllerName, ControllerID, Param1, Param2, ...]
+                            display_row = [f"{joint_name} ({joint_id})", joint_id, controller_name, controller_id] + params
                             self._controller_matrix.append(display_row)
                     
                     if self._controller_matrix:

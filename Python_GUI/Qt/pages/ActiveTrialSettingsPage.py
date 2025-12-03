@@ -185,29 +185,40 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                     
                     if matrix_row_idx < len(self._controller_matrix):
                         row = self._controller_matrix[matrix_row_idx]
-                        joint_str = str(row[0])
+                        # Matrix format: [Joint(ID), JointID, ControllerName, ControllerID, Param1, Param2, ...]
+                        # row[0] = "Ankle(L) (68)"
+                        # row[1] = "68" (joint ID)
+                        # row[2] = "pjmc_plus" (controller name)
+                        # row[3] = "11" (controller ID)
+                        # row[4:] = parameters
                         
-                        # Extract joint ID from format "Ankle(L) (68)" -> 68
+                        # Extract joint ID from row[1]
                         joint_id_raw = None
-                        if '(' in joint_str and ')' in joint_str:
-                            parts = joint_str.rsplit('(', 1)
-                            if len(parts) == 2:
-                                id_str = parts[1].rstrip(')')
-                                try:
-                                    joint_id_raw = int(id_str)
-                                except ValueError:
-                                    print(f"Warning: Could not parse joint ID from '{joint_str}'")
+                        if len(row) > 1:
+                            try:
+                                joint_id_raw = int(row[1])
+                            except (ValueError, IndexError):
+                                print(f"Warning: Could not parse joint ID from row[1]='{row[1]}'")
                         
                         # Convert joint ID to joint number (1-8) using the mapping
                         joint_num = self._joint_id_to_num.get(joint_id_raw, 1)
                         if joint_id_raw and joint_id_raw not in self._joint_id_to_num:
                             print(f"Warning: Unknown joint ID {joint_id_raw}, defaulting to joint 1")
                         
-                        # Controller index should be the position in the filtered list (0-based)
-                        controller_idx = controller_local_idx
+                        # Extract actual controller ID from row[3]
+                        controller_id = controller_local_idx  # Default to local index if parsing fails
+                        if len(row) > 3:
+                            try:
+                                controller_id = int(row[3])
+                                print(f"Extracted controller ID {controller_id} from row[3]='{row[3]}'")
+                            except (ValueError, TypeError):
+                                print(f"Warning: Could not parse controller ID from row[3]='{row[3]}', using local idx {controller_local_idx}")
+                        else:
+                            print(f"Warning: Row too short (len={len(row)}), cannot extract controller ID from row[3]")
                         
-                        payload = [is_bilateral, joint_num, controller_idx, parameter_idx, value]
-                        print(f"Payload: is_bilateral={is_bilateral}, joint_num={joint_num} (ID={joint_id_raw}), controller_idx={controller_idx}, param_idx={parameter_idx}, value={value}")
+                        payload = [is_bilateral, joint_num, controller_id, parameter_idx, value]
+                        print(f"Payload: is_bilateral={is_bilateral}, joint_num={joint_num} (joint_id={joint_id_raw}), controller_id={controller_id}, param_idx={parameter_idx}, value={value}")
+                        print(f"Full row: {row}")
                         print(f"======================\n")
                         
                         self.applyRequested.emit(payload)
@@ -230,7 +241,9 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
             # row index in table corresponds to controller index within the joint
             self.combo_controller.setCurrentIndex(row)
             
-            # Set parameter based on column (column 0=controller, 1+=params)
+            # Set parameter based on column
+            # Table columns: 0=Controller, 1+=Params
+            # So param_index is column - 1, with minimum of 0
             param_index = max(0, int(column) - 1)
             self.combo_param.setCurrentIndex(param_index)
         except Exception as e:
@@ -257,27 +270,38 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                     max_cols = 2
                 
                 # Update table with filtered rows
+                # Matrix format: [Joint(ID), JointID, ControllerName, ControllerID, Param1, Param2, ...]
+                # We want to display: [ControllerName, Param1, Param2, ...]
+                # So skip columns 0 (Joint), 1 (JointID), and 3 (ControllerID)
                 self.table.clear()
                 self.table.setRowCount(len(filtered_rows))
-                self.table.setColumnCount(max_cols - 1)  # Exclude joint column since we're filtering by it
+                # Count displayable columns: ControllerName + parameters
+                num_params = max(0, max_cols - 4)  # Subtract Joint, JointID, ControllerName, ControllerID
+                self.table.setColumnCount(1 + num_params)  # Controller + parameters
                 
-                # Headers without "Joint" since we're showing only one joint
-                headers = ["Controller"] + [f"Param {i}" for i in range(1, max_cols - 1)]
+                # Headers: Controller and parameter names
+                headers = ["Controller"] + [f"Param {i}" for i in range(1, num_params + 1)]
                 self.table.setHorizontalHeaderLabels(headers)
                 
                 for r, data in enumerate(filtered_rows):
-                    # Skip the joint name (column 0) and start from controller name (column 1)
-                    for c in range(1, max_cols):
+                    # Display controller name from column 2
+                    if len(data) > 2:
+                        item = QtWidgets.QTableWidgetItem(str(data[2]))
+                        self.table.setItem(r, 0, item)
+                    # Display parameters from column 4 onwards
+                    for param_idx, c in enumerate(range(4, len(data))):
                         text = data[c] if c < len(data) else ""
                         item = QtWidgets.QTableWidgetItem(str(text))
-                        self.table.setItem(r, c - 1, item)
+                        self.table.setItem(r, param_idx + 1, item)
                 
                 self.table.resizeColumnsToContents()
                 
                 # Update controller dropdown
+                # Matrix format: [Joint(ID), JointID, ControllerName, ControllerID, ...]
+                # Controller name is at index 2
                 self.combo_controller.blockSignals(True)
                 self.combo_controller.clear()
-                controller_names = [row[1] if len(row) > 1 else "(unknown)" for row in filtered_rows]
+                controller_names = [row[2] if len(row) > 2 else "(unknown)" for row in filtered_rows]
                 if controller_names:
                     self.combo_controller.addItems(controller_names)
                 else:
@@ -319,8 +343,9 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                     matrix_idx = controller_indices[idx]
                     if matrix_idx < len(self._controller_matrix):
                         row = self._controller_matrix[matrix_idx]
-                        # row[0] is joint, row[1] is controller, row[2:] are parameters
-                        params = row[2:] if len(row) > 2 else []
+                        # Matrix format: [Joint(ID), JointID, ControllerName, ControllerID, Param1, Param2, ...]
+                        # Parameters start at index 4
+                        params = row[4:] if len(row) > 4 else []
                         if not params:
                             params = ["(no params)"]
                         self.combo_param.addItems([str(p) for p in params])
