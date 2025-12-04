@@ -159,8 +159,11 @@ class ScanWindowQt(QtWidgets.QWidget):
                     addr = f.read().strip()
                 if addr:
                     self.selected_address = addr
-                    self.status.setText(f"Loaded saved device: {addr}")
-                    self.btn_save_connect.setEnabled(True)
+                    self.status.setText(f"Connecting to saved device: {addr}")
+                    self.btn_load.setEnabled(False)
+                    self.btn_save_connect.setEnabled(False)
+                    # Auto-connect to saved device
+                    self.connectRequested.emit(addr)
                     return
             except Exception:
                 pass

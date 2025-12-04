@@ -28,6 +28,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     markTrialRequested = QtCore.Signal()
     deviceStartRequested = QtCore.Signal()
     deviceStopRequested = QtCore.Signal()
+    csvPreambleChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -63,6 +64,10 @@ class ActiveTrialPage(QtWidgets.QWidget):
         # Save CSV and start new
         self.btn_save_csv = QtWidgets.QPushButton("Save & New CSV")
         controls.addWidget(self.btn_save_csv)
+        
+        # Set CSV Preamble button
+        self.btn_set_preamble = QtWidgets.QPushButton("Set CSV Prefix")
+        controls.addWidget(self.btn_set_preamble)
         # Bio Feedback (temp)
         self.btn_bio_feedback = QtWidgets.QPushButton("Bio Feedback")
         controls.addWidget(self.btn_bio_feedback)
@@ -80,12 +85,15 @@ class ActiveTrialPage(QtWidgets.QWidget):
         controls.addWidget(self.btn_mark)
         controls.addSpacing(12)
 
-        # Start/Stop controls
-        self.btn_start = QtWidgets.QPushButton("Start")
-        self.btn_stop = QtWidgets.QPushButton("Stop")
-        self.btn_stop.setEnabled(False)
-        controls.addWidget(self.btn_start)
-        controls.addWidget(self.btn_stop)
+        # Pause/Play button (replaces Start/Stop)
+        self.btn_pause_play = QtWidgets.QPushButton("⏸ Pause")
+        self.is_paused = False
+        controls.addWidget(self.btn_pause_play)
+        
+        # Battery level label
+        self.lbl_battery = QtWidgets.QLabel("Battery: --")
+        controls.addWidget(self.lbl_battery)
+        
         controls.addStretch(1)
 
         # Right plots column
@@ -117,12 +125,12 @@ class ActiveTrialPage(QtWidgets.QWidget):
         main.addLayout(plots_col, 1)
 
         # Wiring (device control; sim controls available via methods if needed)
-        self.btn_start.clicked.connect(self.deviceStartRequested.emit)
-        self.btn_stop.clicked.connect(self.deviceStopRequested.emit)
+        self.btn_pause_play.clicked.connect(self._on_pause_play_clicked)
         self.btn_toggle_points.clicked.connect(self._toggle_points)
         # Emit-only wiring; MainWindow can connect these to actual actions
         self.btn_end_trial.clicked.connect(self.endTrialRequested.emit)
         self.btn_save_csv.clicked.connect(self.saveCsvRequested.emit)
+        self.btn_set_preamble.clicked.connect(self._on_set_preamble_clicked)
         self.btn_update_controller.clicked.connect(self.updateControllerRequested.emit)
         self.btn_bio_feedback.clicked.connect(self.bioFeedbackRequested.emit)
         self.btn_ml.clicked.connect(self.machineLearningRequested.emit)
@@ -143,14 +151,14 @@ class ActiveTrialPage(QtWidgets.QWidget):
             self.btn_toggle_points,
             self.btn_end_trial,
             self.btn_save_csv,
+            self.btn_set_preamble,
             self.btn_update_controller,
             self.btn_bio_feedback,
             self.btn_ml,
             self.btn_recal_fsr,
             self.btn_send_preset_fsr,
             self.btn_mark,
-            self.btn_start,
-            self.btn_stop,
+            self.btn_pause_play,
         ):
             _style(b)
 
@@ -191,6 +199,18 @@ class ActiveTrialPage(QtWidgets.QWidget):
         except Exception:
             pass
 
+    def update_battery_level(self, voltage: float):
+        """Update the battery level display."""
+        try:
+            self.lbl_battery.setText(f"Battery: {voltage:.2f}V")
+            # Change color if low (< 11V is typical low for 3S lipo)
+            if voltage < 11.0 and voltage > 0:
+                self.lbl_battery.setStyleSheet("color: red; font-weight: bold;")
+            else:
+                self.lbl_battery.setStyleSheet("color: black;")
+        except Exception:
+            pass
+
     def clear_plots(self):
         """Clear all plot data and reset timing."""
         try:
@@ -204,6 +224,10 @@ class ActiveTrialPage(QtWidgets.QWidget):
             # Reset timing
             self._real_data_t0 = None
             self.t0 = time.time()
+            
+            # Reset pause state when clearing plots
+            self.is_paused = False
+            self.btn_pause_play.setText("⏸ Pause")
             
             # Update plots to show empty data
             self.curve_top_cmd.setData([], [])
@@ -259,20 +283,48 @@ class ActiveTrialPage(QtWidgets.QWidget):
         except Exception:
             pass
 
+    def _on_pause_play_clicked(self):
+        """Toggle between pause and play states."""
+        if not self.is_paused:
+            # Pause
+            self.is_paused = True
+            self.btn_pause_play.setText("▶ Play")
+            self.deviceStopRequested.emit()  # Stop motors
+        else:
+            # Play
+            self.is_paused = False
+            self.btn_pause_play.setText("⏸ Pause")
+            self.deviceStartRequested.emit()  # Start motors
+
+    def _on_set_preamble_clicked(self):
+        """Show dialog to set CSV filename preamble."""
+        text, ok = QtWidgets.QInputDialog.getText(
+            self,
+            "Set CSV Filename Prefix",
+            "Enter prefix for CSV filenames (e.g., 'OutdoorShod'):",
+            QtWidgets.QLineEdit.Normal,
+            ""
+        )
+        if ok and text:
+            # Sanitize filename
+            text = "".join(c for c in text if c.isalnum() or c in ('_', '-'))
+            self.csvPreambleChanged.emit(text)
+            QtWidgets.QMessageBox.information(
+                self,
+                "CSV Prefix Set",
+                f"CSV files will be saved as:\n{text}_trial_YYYYMMDD_HHMMSS.csv"
+            )
+
     # Public API to integrate later with bridges
     def start_sim(self):
         if not self.timer.isActive():
             self.t0 = time.time()
             self._real_data_t0 = None  # Reset real data timing when starting sim
             self.timer.start(int(1000 / self.rate_hz))
-            self.btn_start.setEnabled(False)
-            self.btn_stop.setEnabled(True)
 
     def stop_sim(self):
         if self.timer.isActive():
             self.timer.stop()
-            self.btn_start.setEnabled(True)
-            self.btn_stop.setEnabled(False)
         # Reset real data timing when switching from sim to real data
         self._real_data_t0 = None
 

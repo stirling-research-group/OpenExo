@@ -80,12 +80,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._t0 = None
         self._csv_path_last = None
         self._mark_counter = 0  # Trial mark counter
+        self._csv_preamble = ""  # Preamble for CSV filename
         # Store controller -> params 2D matrix
         self._controller_matrix = []
+        # Track intentional disconnect
+        self._intentional_disconnect = False
 
         # Device control wiring from ActiveTrialPage
         self.trial_page.deviceStartRequested.connect(self._on_device_start)
-        self.trial_page.deviceStopRequested.connect(self._on_device_stop)
+        self.trial_page.deviceStopRequested.connect(self._on_device_stop_motors)
+        self.trial_page.csvPreambleChanged.connect(self._on_csv_preamble_changed)
         self.trial_page.recalibrateFSRRequested.connect(self._on_recal_fsr)
         self.trial_page.sendPresetFSRRequested.connect(self._on_send_preset_fsr)
         self.trial_page.markTrialRequested.connect(self._on_mark)
@@ -142,7 +146,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # CSV logging
             if self._csv_writer is not None:
                 if not self._csv_header_written:
-                    header = ["t", "epoch", "mark"]
+                    header = ["epoch", "mark"]
                     # Only include first 10 parameters (exclude battery and beyond)
                     if self._param_names:
                         header.extend(self._param_names[:10])
@@ -157,13 +161,20 @@ class MainWindow(QtWidgets.QMainWindow):
                         pass
                 # Write row - only include first 10 data values
                 epoch_time = time.time()
-                t = 0.0 if self._t0 is None else (epoch_time - self._t0)
                 data_values = values[:10] if len(values) > 10 else values
-                row = [f"{t:.3f}", f"{epoch_time:.6f}", str(self._mark_counter)] + [f"{v:.6f}" for v in data_values]
+                row = [f"{epoch_time:.6f}", str(self._mark_counter)] + [f"{v:.6f}" for v in data_values]
                 try:
                     self._csv_writer.writerow(row)
                 except Exception:
                     pass
+            
+            # Update battery level (assuming it's in the data somewhere)
+            try:
+                if len(values) > 10:
+                    battery_voltage = values[10]  # Battery is typically at index 10
+                    self.trial_page.update_battery_level(battery_voltage)
+            except Exception:
+                pass
         except Exception:
             pass
 
@@ -230,23 +241,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @QtCore.Slot()
     def _on_device_start(self):
-        # Begin trial sequence (ensure FSR calibration and presets)
+        # Resume motors (play functionality) - just turn motors back on
         try:
-            # Clear old plot data
-            self.trial_page.clear_plots()
-            self.qt_dev.beginTrial()
-            # Also stop local sim
-            self.trial_page.stop_sim()
+            self.qt_dev.motorOn()
         except Exception:
             pass
 
     @QtCore.Slot()
-    def _on_device_stop(self):
-        # Stop device streaming ('G')
+    def _on_device_stop_motors(self):
+        # Turn off motors (pause functionality)
         try:
-            self.qt_dev.write(b'G')
+            self.qt_dev.motorOff()
         except Exception:
             pass
+
+    @QtCore.Slot(str)
+    def _on_csv_preamble_changed(self, preamble: str):
+        """Update CSV filename preamble."""
+        self._csv_preamble = preamble
+        print(f"CSV preamble set to: {preamble}")
 
     @QtCore.Slot()
     def _on_recal_fsr(self):
@@ -278,13 +291,20 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot()
     def _on_end_trial(self):
         try:
-            # Send stop trial and motor off commands, then wait briefly before disconnect
+            # Mark as intentional disconnect
+            self._intentional_disconnect = True
+            
+            # Navigate to scan page immediately
+            self.stack.setCurrentWidget(self.scan_page)
+            
+            # Send stop trial and motor off commands, then disconnect
             try:
                 self.qt_dev.write(b'G')  # Stop trial
                 QtCore.QTimer.singleShot(100, lambda: self.qt_dev.write(b'w'))  # Motor off after delay
                 QtCore.QTimer.singleShot(500, self.qt_dev.disconnect)  # Disconnect after commands sent
             except Exception:
                 pass
+            
             # Stop CSV if running
             if self._csv_file is not None:
                 try:
@@ -298,7 +318,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._mark_counter = 0  # Reset mark counter
                 try:
                     if self._csv_path_last:
-                        self.scan_page.status.setText(f"CSV saved: {self._csv_path_last}")
+                        self.scan_page.status.setText(f"Trial ended. CSV saved: {self._csv_path_last}")
                 except Exception:
                     pass
                 try:
@@ -311,6 +331,12 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot()
     def _on_disconnect(self):
         try:
+            # Mark as intentional disconnect
+            self._intentional_disconnect = True
+            
+            # Navigate to scan page immediately
+            self.stack.setCurrentWidget(self.scan_page)
+            
             self.qt_dev.disconnect()
             # Stop CSV if running
             if self._csv_file is not None:
@@ -325,7 +351,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._mark_counter = 0  # Reset mark counter
                 try:
                     if self._csv_path_last:
-                        self.scan_page.status.setText(f"CSV saved: {self._csv_path_last}")
+                        self.scan_page.status.setText(f"Disconnected. CSV saved: {self._csv_path_last}")
                 except Exception:
                     pass
                 try:
@@ -366,13 +392,23 @@ class MainWindow(QtWidgets.QMainWindow):
             # Start a new CSV file immediately
             self._start_csv_auto()
             
-            # Show status message about the saved file
+            # Show confirmation banner
             try:
                 if saved_path:
-                    self.scan_page.status.setText(f"CSV saved: {saved_path}. New CSV started.")
+                    save_dir = os.path.dirname(saved_path)
+                    filename = os.path.basename(saved_path)
+                    msg = f"✓ CSV saved: {filename}\nDirectory: {save_dir}"
+                    self.scan_page.status.setText(msg)
+                    # Also show a message box for better visibility
+                    QtWidgets.QMessageBox.information(
+                        self,
+                        "CSV Saved",
+                        f"CSV file saved successfully:\n{filename}\n\nLocation: {save_dir}"
+                    )
                 else:
                     self.scan_page.status.setText("New CSV logging started")
-            except Exception:
+            except Exception as e:
+                print(f"Error showing confirmation: {e}")
                 pass
         except Exception as e:
             print(f"Error in _on_save_csv: {e}")
@@ -447,18 +483,29 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot()
     def _on_dev_disconnected(self):
         try:
+            # Check if this was an intentional disconnect
+            is_intentional = self._intentional_disconnect
+            self._intentional_disconnect = False  # Reset flag
+            
             self.scan_page.status.setText("Disconnected")
             self.scan_page.btn_save_connect.setEnabled(True)
             self.scan_page.btn_start_trial.setEnabled(False)
-            self.qt_dev.motorOff()
-            self.qt_dev.stopTrial()
-            # Popup dialog informing user
-            try:
-                QtWidgets.QMessageBox.information(self, "Device Disconnected", "The device has been disconnected.")
-            except Exception:
-                pass
-            # Navigate back to the Scan page on disconnect
-            self.stack.setCurrentWidget(self.scan_page)
+            
+            # Only show popup for unintentional disconnects
+            if not is_intentional:
+                try:
+                    self.qt_dev.motorOff()
+                    self.qt_dev.stopTrial()
+                except Exception:
+                    pass
+                # Popup dialog informing user of unexpected disconnect
+                try:
+                    QtWidgets.QMessageBox.warning(self, "Device Disconnected", "The device has been unexpectedly disconnected.")
+                except Exception:
+                    pass
+                # Navigate back to the Scan page on unexpected disconnect
+                self.stack.setCurrentWidget(self.scan_page)
+            
             # Ensure CSV is closed and announce saved path
             if self._csv_file is not None:
                 try:
@@ -471,8 +518,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._t0 = None
                 self._mark_counter = 0  # Reset mark counter
                 try:
-                    if self._csv_path_last:
-                        self.scan_page.status.setText(f"CSV saved: {self._csv_path_last}")
+                    if self._csv_path_last and not is_intentional:
+                        self.scan_page.status.setText(f"Unexpected disconnect. CSV saved: {self._csv_path_last}")
                 except Exception:
                     pass
                 try:
@@ -491,7 +538,11 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception:
             pass
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        fname = os.path.join(save_dir, f"trial_{ts}.csv")
+        # Add preamble if set
+        if self._csv_preamble:
+            fname = os.path.join(save_dir, f"{self._csv_preamble}_trial_{ts}.csv")
+        else:
+            fname = os.path.join(save_dir, f"trial_{ts}.csv")
         try:
             self._csv_file = open(fname, "w", newline="")
             self._csv_writer = csv.writer(self._csv_file)

@@ -28,7 +28,9 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
             40: 7,  # Left Elbow
             72: 8,  # Right Elbow
         }
+        self._bilateral_state = False  # Store bilateral state
         self._build_ui()
+        self._load_settings()  # Load saved settings
 
     def _build_ui(self):
         layout = QtWidgets.QVBoxLayout(self)
@@ -70,6 +72,8 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
 
         self.chk_bilateral = QtWidgets.QCheckBox("Bilateral mode")
         bf = self.chk_bilateral.font(); bf.setPointSize(18); self.chk_bilateral.setFont(bf)
+        self.chk_bilateral.setChecked(self._bilateral_state)  # Load saved state
+        self.chk_bilateral.stateChanged.connect(self._on_bilateral_changed)
         form.addWidget(self.chk_bilateral, row, 0, 1, 2)
         row += 1
 
@@ -154,6 +158,36 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
         except Exception as e:
             print(f"Error populating joint combo: {e}")
             pass
+
+    def _load_settings(self):
+        """Load saved settings from file."""
+        import os
+        settings_file = "Qt/Saved_Data/gui_settings.txt"
+        try:
+            if os.path.exists(settings_file):
+                with open(settings_file, 'r') as f:
+                    lines = f.readlines()
+                    for line in lines:
+                        if line.startswith("bilateral="):
+                            self._bilateral_state = line.split("=")[1].strip() == "True"
+        except Exception as e:
+            print(f"Error loading settings: {e}")
+
+    def _save_settings(self):
+        """Save settings to file."""
+        import os
+        settings_file = "Qt/Saved_Data/gui_settings.txt"
+        try:
+            os.makedirs(os.path.dirname(settings_file), exist_ok=True)
+            with open(settings_file, 'w') as f:
+                f.write(f"bilateral={self._bilateral_state}\n")
+        except Exception as e:
+            print(f"Error saving settings: {e}")
+
+    def _on_bilateral_changed(self, state):
+        """Save bilateral state when checkbox changes."""
+        self._bilateral_state = bool(state)
+        self._save_settings()
 
     @QtCore.Slot()
     def _on_apply(self):
