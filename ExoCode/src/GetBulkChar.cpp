@@ -48,7 +48,7 @@ void readSingleMessageBlocking() {
 		digitalWrite(LEDG, LOW);
 		digitalWrite(LEDB, HIGH);
 		delay(20);
-		if (millis() - initialTime > 5000) {
+		if (millis() - initialTime > 10000) {
 			break;
 		}
 	}

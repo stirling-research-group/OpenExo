@@ -42,7 +42,7 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
                 case 6:  return "Toe FSR (R)";
                 case 7:  return "Stance Phase (R)";
                 case 8:  return "Channel 8";
-                case 9:  return "Channel 9";
+                case 9:  return "Exoskeleton time (seconds)";
                 case 10: return "Battery Level (Volts)";
                 default: return "INVALID_COL";
             }
@@ -80,7 +80,7 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
                 case 6:  return "Channel 6";
                 case 7:  return "Channel 7";
                 case 8:  return "Channel 8";
-                case 9:  return "Channel 9";
+                case 9:  return "Exoskeleton time (seconds)";
                 case 10: return "Battery Level (Volts)";
                 default: return "INVALID_COL";
             }
