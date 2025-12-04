@@ -143,10 +143,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._csv_writer is not None:
                 if not self._csv_header_written:
                     header = ["t", "epoch", "mark"]
+                    # Only include first 10 parameters (exclude battery and beyond)
                     if self._param_names:
-                        header.extend(self._param_names[:len(values)])
+                        header.extend(self._param_names[:10])
                     else:
-                        header.extend([f"data{i}" for i in range(len(values))])
+                        header.extend([f"data{i}" for i in range(min(10, len(values)))])
                     try:
                         self._csv_writer.writerow(header)
                         self._csv_header_written = True
@@ -154,10 +155,11 @@ class MainWindow(QtWidgets.QMainWindow):
                             self._t0 = time.time()
                     except Exception:
                         pass
-                # Write row
+                # Write row - only include first 10 data values
                 epoch_time = time.time()
                 t = 0.0 if self._t0 is None else (epoch_time - self._t0)
-                row = [f"{t:.3f}", f"{epoch_time:.6f}", str(self._mark_counter)] + [f"{v:.6f}" for v in values]
+                data_values = values[:10] if len(values) > 10 else values
+                row = [f"{t:.3f}", f"{epoch_time:.6f}", str(self._mark_counter)] + [f"{v:.6f}" for v in data_values]
                 try:
                     self._csv_writer.writerow(row)
                 except Exception:
@@ -293,9 +295,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._csv_writer = None
                 self._csv_header_written = False
                 self._t0 = None
+                self._mark_counter = 0  # Reset mark counter
                 try:
                     if self._csv_path_last:
                         self.scan_page.status.setText(f"CSV saved: {self._csv_path_last}")
+                except Exception:
+                    pass
+                try:
+                    self.trial_page.update_mark_count(0)
                 except Exception:
                     pass
         except Exception:
@@ -315,9 +322,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._csv_writer = None
                 self._csv_header_written = False
                 self._t0 = None
+                self._mark_counter = 0  # Reset mark counter
                 try:
                     if self._csv_path_last:
                         self.scan_page.status.setText(f"CSV saved: {self._csv_path_last}")
+                except Exception:
+                    pass
+                try:
+                    self.trial_page.update_mark_count(0)
                 except Exception:
                     pass
         except Exception:
@@ -333,25 +345,37 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @QtCore.Slot()
     def _on_save_csv(self):
+        """Save current CSV file and immediately start a new one."""
         try:
-            if self._csv_file is None:
-                # Start logging automatically to Qt/Saved_Data
-                self._start_csv_auto()
-            else:
-                # Stop logging
+            saved_path = None
+            # Close current CSV if open
+            if self._csv_file is not None:
+                print("Saving current CSV and starting new one")
                 try:
-                    self._csv_file.flush(); self._csv_file.close()
+                    self._csv_file.flush()
+                    self._csv_file.close()
+                    saved_path = self._csv_path_last
                 except Exception:
                     pass
                 self._csv_file = None
                 self._csv_writer = None
                 self._csv_header_written = False
                 self._t0 = None
-                try:
-                    self.scan_page.status.setText("CSV logging stopped")
-                except Exception:
-                    pass
-        except Exception:
+                self._csv_path_last = None
+            
+            # Start a new CSV file immediately
+            self._start_csv_auto()
+            
+            # Show status message about the saved file
+            try:
+                if saved_path:
+                    self.scan_page.status.setText(f"CSV saved: {saved_path}. New CSV started.")
+                else:
+                    self.scan_page.status.setText("New CSV logging started")
+            except Exception:
+                pass
+        except Exception as e:
+            print(f"Error in _on_save_csv: {e}")
             pass
 
     @QtCore.Slot()
@@ -445,9 +469,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._csv_writer = None
                 self._csv_header_written = False
                 self._t0 = None
+                self._mark_counter = 0  # Reset mark counter
                 try:
                     if self._csv_path_last:
                         self.scan_page.status.setText(f"CSV saved: {self._csv_path_last}")
+                except Exception:
+                    pass
+                try:
+                    self.trial_page.update_mark_count(0)
                 except Exception:
                     pass
         except Exception:

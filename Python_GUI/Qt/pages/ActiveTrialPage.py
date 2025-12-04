@@ -60,8 +60,8 @@ class ActiveTrialPage(QtWidgets.QWidget):
         # End Trial
         self.btn_end_trial = QtWidgets.QPushButton("End Trial")
         controls.addWidget(self.btn_end_trial)
-        # Save CSV (temp)
-        self.btn_save_csv = QtWidgets.QPushButton("Save CSV")
+        # Save CSV and start new
+        self.btn_save_csv = QtWidgets.QPushButton("Save & New CSV")
         controls.addWidget(self.btn_save_csv)
         # Bio Feedback (temp)
         self.btn_bio_feedback = QtWidgets.QPushButton("Bio Feedback")
