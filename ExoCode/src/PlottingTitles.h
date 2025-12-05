@@ -1,5 +1,5 @@
-#ifndef FIGURETITLES_H
-#define FIGURETITLES_H
+#ifndef PLOTTINGTITLES_H
+#define PLOTTINGTITLES_H
 
 #if defined(ARDUINO_TEENSY36)  || defined(ARDUINO_TEENSY41)
 #include "StatusDefs.h"
@@ -92,8 +92,8 @@ inline const char* getColumnHeader(uint8_t column_index, uint8_t* config_to_send
 /**
  * @brief Function declaration to combine the column strings into a single delimited C-string.
  */
-//bool create_figure_titles(char* output_buffer, size_t buffer_size, uint8_t* config_to_send);
-void create_figure_titles(uint8_t* config_to_send);
+//bool create_plotting_titles(char* output_buffer, size_t buffer_size, uint8_t* config_to_send);
+void create_plotting_titles(uint8_t* config_to_send);
 
 #endif
 #endif
