@@ -101,8 +101,11 @@ class ActiveTrialPage(QtWidgets.QWidget):
 
         # ═══════ PRIORITY: CRITICAL CONTROLS ═══════
         # End Trial - Big prominent button at top
-        self.btn_end_trial = QtWidgets.QPushButton("⏹ END TRIAL")
+        self.btn_end_trial = QtWidgets.QPushButton("END TRIAL")
         controls.addWidget(self.btn_end_trial)
+        
+        # Add more spacing between End Trial and Pause
+        controls.addSpacing(12)
         
         # Pause/Play button
         self.btn_pause_play = QtWidgets.QPushButton("Pause")
