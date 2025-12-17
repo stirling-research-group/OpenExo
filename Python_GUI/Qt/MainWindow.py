@@ -21,7 +21,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("OpenExo - Qt")
-        self.resize(1000, 700)
+        # Compact default window size (resizable)
+        self.setMinimumSize(700, 400)
+        self.resize(900, 500)
 
         self.stack = QtWidgets.QStackedWidget()
         self.setCentralWidget(self.stack)
@@ -234,8 +236,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.settings_page.set_controller_matrix(self._controller_matrix if has_matrix else [])
         except Exception:
             pass
+        # Update Controller button is always enabled
+        # If no matrix, it will show the legacy basic settings page
         try:
-            self.trial_page.set_update_controller_enabled(has_matrix)
+            self.trial_page.set_update_controller_enabled(True)
         except Exception:
             pass
 
@@ -470,7 +474,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_dev_connected(self, name: str, addr: str):
         try:
             self.scan_page.status.setText(f"Connected: {name} {addr}")
-            self.scan_page.btn_save_connect.setEnabled(True)
+            # Don't enable Save & Connect after connection - it's already connected
+            self.scan_page.btn_save_connect.setEnabled(False)
             self.scan_page.btn_start_trial.setEnabled(True)
         except Exception:
             pass

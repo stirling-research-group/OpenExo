@@ -29,6 +29,13 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
             72: 8,  # Right Elbow
         }
         self._bilateral_state = False  # Store bilateral state
+        self._last_selection = {
+            "bilateral": False,
+            "joint": None,
+            "controller": None,
+            "parameter": None,
+            "value": 0.0,
+        }
         self._build_ui()
         self._load_settings()  # Load saved settings
 
@@ -155,6 +162,8 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
             self.combo_joint.blockSignals(False)
             # Trigger joint change to populate table and controllers for first joint
             self._on_joint_changed(0)
+            # Restore last selection after populating
+            self._restore_last_selection()
         except Exception as e:
             print(f"Error populating joint combo: {e}")
             pass
@@ -162,7 +171,8 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
     def _load_settings(self):
         """Load saved settings from file."""
         import os
-        settings_file = "Qt/Saved_Data/gui_settings.txt"
+        base_dir = os.path.dirname(os.path.dirname(__file__))  # Qt directory
+        settings_file = os.path.join(base_dir, "Saved_Data", "gui_settings.txt")
         try:
             if os.path.exists(settings_file):
                 with open(settings_file, 'r') as f:
@@ -170,17 +180,72 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                     for line in lines:
                         if line.startswith("bilateral="):
                             self._bilateral_state = line.split("=")[1].strip() == "True"
+                            self._last_selection["bilateral"] = self._bilateral_state
+                            print(f"[Settings] Loaded bilateral state: {self._bilateral_state}")
+                        elif line.startswith("last_joint="):
+                            val = line.split("=")[1].strip()
+                            if val and val != "None":
+                                self._last_selection["joint"] = val
+                        elif line.startswith("last_controller="):
+                            val = line.split("=")[1].strip()
+                            if val and val != "None":
+                                self._last_selection["controller"] = val
+                        elif line.startswith("last_parameter="):
+                            try:
+                                val = line.split("=")[1].strip()
+                                if val and val != "None":
+                                    self._last_selection["parameter"] = int(val)
+                            except:
+                                pass
+                        elif line.startswith("last_value="):
+                            try:
+                                val = line.split("=")[1].strip()
+                                if val and val != "None":
+                                    self._last_selection["value"] = float(val)
+                            except:
+                                pass
         except Exception as e:
             print(f"Error loading settings: {e}")
 
     def _save_settings(self):
         """Save settings to file."""
         import os
-        settings_file = "Qt/Saved_Data/gui_settings.txt"
+        base_dir = os.path.dirname(os.path.dirname(__file__))  # Qt directory
+        save_dir = os.path.join(base_dir, "Saved_Data")
+        settings_file = os.path.join(save_dir, "gui_settings.txt")
         try:
-            os.makedirs(os.path.dirname(settings_file), exist_ok=True)
+            os.makedirs(save_dir, exist_ok=True)
+            # Read existing settings to preserve them
+            existing = {}
+            if os.path.exists(settings_file):
+                with open(settings_file, 'r') as f:
+                    for line in f.readlines():
+                        if '=' in line:
+                            key, val = line.strip().split('=', 1)
+                            existing[key] = val
+            # Update with current values (only save non-None values)
+            existing["bilateral"] = str(self._bilateral_state)
+            
+            joint = self._last_selection.get("joint")
+            if joint and joint != "None":
+                existing["last_joint"] = str(joint)
+            
+            controller = self._last_selection.get("controller")
+            if controller and controller != "None":
+                existing["last_controller"] = str(controller)
+            
+            parameter = self._last_selection.get("parameter")
+            if parameter is not None:
+                existing["last_parameter"] = str(parameter)
+            
+            value = self._last_selection.get("value")
+            if value is not None:
+                existing["last_value"] = str(value)
+            # Write all settings
             with open(settings_file, 'w') as f:
-                f.write(f"bilateral={self._bilateral_state}\n")
+                for key, val in existing.items():
+                    f.write(f"{key}={val}\n")
+            print(f"[Settings] Saved settings to {settings_file}")
         except Exception as e:
             print(f"Error saving settings: {e}")
 
@@ -188,6 +253,66 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
         """Save bilateral state when checkbox changes."""
         self._bilateral_state = bool(state)
         self._save_settings()
+
+    def _restore_last_selection(self):
+        """Restore UI controls to last saved selection."""
+        try:
+            print(f"[Settings] Attempting to restore last selection: {self._last_selection}")
+            
+            # Restore bilateral checkbox
+            bilateral = self._last_selection.get("bilateral", False)
+            self.chk_bilateral.blockSignals(True)
+            self.chk_bilateral.setChecked(bilateral)
+            self.chk_bilateral.blockSignals(False)
+            
+            # Restore joint selection
+            joint_name = self._last_selection.get("joint")
+            if joint_name:
+                self.combo_joint.blockSignals(True)
+                idx = self.combo_joint.findText(joint_name)
+                if idx >= 0:
+                    self.combo_joint.setCurrentIndex(idx)
+                    self.combo_joint.blockSignals(False)
+                    self._on_joint_changed(idx)
+                else:
+                    self.combo_joint.blockSignals(False)
+                    print(f"[Settings] Joint '{joint_name}' not found in dropdown")
+            
+            # Restore controller selection
+            controller_name = self._last_selection.get("controller")
+            if controller_name:
+                self.combo_controller.blockSignals(True)
+                idx = self.combo_controller.findText(controller_name)
+                if idx >= 0:
+                    self.combo_controller.setCurrentIndex(idx)
+                    self.combo_controller.blockSignals(False)
+                    self._on_controller_changed(idx)
+                    print(f"[Settings] Restored controller: {controller_name} at index {idx}")
+                else:
+                    self.combo_controller.blockSignals(False)
+                    print(f"[Settings] Controller '{controller_name}' not found in dropdown")
+            
+            # Restore parameter selection
+            param_idx = self._last_selection.get("parameter", 0)
+            if param_idx is None:
+                param_idx = 0
+            self.combo_param.blockSignals(True)
+            if param_idx < self.combo_param.count() and param_idx >= 0:
+                self.combo_param.setCurrentIndex(param_idx)
+                print(f"[Settings] Restored parameter index: {param_idx}")
+            self.combo_param.blockSignals(False)
+            
+            # Restore value
+            value = self._last_selection.get("value", 0.0)
+            if value is None:
+                value = 0.0
+            self.spin_value.setValue(float(value))
+            
+            print(f"[Settings] Successfully restored last selection")
+        except Exception as e:
+            print(f"[Settings] Error restoring last selection: {e}")
+            import traceback
+            traceback.print_exc()
 
     @QtCore.Slot()
     def _on_apply(self):
@@ -254,6 +379,17 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                         print(f"Payload: is_bilateral={is_bilateral}, joint_num={joint_num} (joint_id={joint_id_raw}), controller_id={controller_id}, param_idx={parameter_idx}, value={value}")
                         print(f"Full row: {row}")
                         print(f"======================\n")
+                        
+                        # Save last selection for next time
+                        self._last_selection = {
+                            "bilateral": is_bilateral,
+                            "joint": joint_name,
+                            "controller": controller_name,
+                            "parameter": parameter_idx,
+                            "value": value,
+                        }
+                        print(f"[Settings] Saving last selection: {self._last_selection}")
+                        self._save_settings()
                         
                         self.applyRequested.emit(payload)
                         return

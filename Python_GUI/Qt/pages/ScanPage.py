@@ -44,7 +44,9 @@ class ScanWindowQt(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("OpenExo - Scan (Qt)")
-        self.resize(900, 600)
+        # Compact default size (resizable)
+        self.setMinimumSize(700, 400)
+        self.resize(900, 500)
 
         self.selected_address: str | None = None
         self.selected_name: str | None = None
@@ -59,43 +61,106 @@ class ScanWindowQt(QtWidgets.QWidget):
 
     def _build_ui(self):
         layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(12)
+        layout.setContentsMargins(8, 0, 8, 3)  # Zero top margin - start at very top
+        layout.setSpacing(0)  # No automatic spacing
+        
+        # Add spacing at the top
+        layout.addSpacing(20)
 
+        # Header row with logos and centered title
+        header_row = QtWidgets.QHBoxLayout()
+        header_row.setContentsMargins(0, 0, 0, 0)
+        header_row.setSpacing(4)
+        
+        # Add OpenExo logo at left (smaller)
+        try:
+            from PySide6 import QtGui
+            openexo_logo_label = QtWidgets.QLabel()
+            openexo_logo_label.setContentsMargins(0, 0, 0, 0)
+            base_dir = os.path.dirname(os.path.dirname(__file__))  # Qt directory
+            logo_path = os.path.join(base_dir, "Images", "OpenExo.png")
+            logo_pixmap = QtGui.QPixmap(logo_path)
+            if not logo_pixmap.isNull():
+                scaled_logo = logo_pixmap.scaled(160, 40, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+                openexo_logo_label.setPixmap(scaled_logo)
+                openexo_logo_label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+                header_row.addWidget(openexo_logo_label)
+            else:
+                print(f"Failed to load OpenExo logo from: {logo_path}")
+        except Exception as e:
+            print(f"Error loading OpenExo logo: {e}")
+        
+        # Add centered title
         self.title = QtWidgets.QLabel("OpenExo GUI - Qt Scan")
         self.title.setAlignment(QtCore.Qt.AlignCenter)
+        self.title.setContentsMargins(0, 0, 0, 0)
         font = self.title.font()
-        font.setPointSize(22)
+        font.setPointSize(20)  # Larger title
         self.title.setFont(font)
-        layout.addWidget(self.title)
+        header_row.addWidget(self.title, 1)  # Stretch factor to center
+        
+        try:
+            from PySide6 import QtGui
+            lab_logo_label = QtWidgets.QLabel()
+            lab_logo_label.setContentsMargins(0, 0, 0, 0)
+            base_dir = os.path.dirname(os.path.dirname(__file__))  # Qt directory
+            lab_logo_path = os.path.join(base_dir, "Images", "LabLogo.png")
+            lab_logo_pixmap = QtGui.QPixmap(lab_logo_path)
+            if not lab_logo_pixmap.isNull():
+                scaled_lab_logo = lab_logo_pixmap.scaled(200, 32, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+                lab_logo_label.setPixmap(scaled_lab_logo)
+                lab_logo_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+                header_row.addWidget(lab_logo_label)
+            else:
+                print(f"Failed to load Lab logo from: {lab_logo_path}")
+        except Exception as e:
+            print(f"Error loading Lab logo: {e}")
+        
+        layout.addLayout(header_row)
+        layout.addSpacing(35)  # Add more spacing between header and status to push content down
 
         self.status = QtWidgets.QLabel("Not Connected")
         self.status.setAlignment(QtCore.Qt.AlignCenter)
+        self.status.setContentsMargins(0, 0, 0, 0)
         f2 = self.status.font(); f2.setPointSize(14); self.status.setFont(f2)
         layout.addWidget(self.status)
+        layout.addSpacing(8)  # Add spacing between status and buttons
 
         # Button row
         btn_row = QtWidgets.QHBoxLayout()
+        btn_row.setSpacing(6)
+        btn_row.setContentsMargins(0, 0, 0, 0)
         self.btn_scan = QtWidgets.QPushButton("Start Scan")
         self.btn_load = QtWidgets.QPushButton("Load Saved Device")
         btn_row.addWidget(self.btn_scan)
         btn_row.addWidget(self.btn_load)
         layout.addLayout(btn_row)
+        layout.addSpacing(2)
 
-        # Devices list
+        # Devices list - fills space between top and bottom buttons
         self.list_devices = QtWidgets.QListWidget()
-        lf = self.list_devices.font(); lf.setPointSize(16); self.list_devices.setFont(lf)
-        self.list_devices.setStyleSheet("QListWidget::item{ height: 44px; padding: 6px 10px; }")
-        layout.addWidget(self.list_devices, 1)
+        self.list_devices.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        lf = self.list_devices.font(); lf.setPointSize(14); self.list_devices.setFont(lf)
+        self.list_devices.setStyleSheet("QListWidget::item{ height: 36px; padding: 3px 6px; }")
+        self.list_devices.setMinimumHeight(100)  # Minimum height
+        layout.addWidget(self.list_devices, 1)  # Stretch factor 1 to fill space
+        
+        layout.addSpacing(5)
 
-        # Action row (Save & Connect on left, Start Trial next)
+        # Action row (Save & Connect on left, Start Trial next) - at bottom
         action_row = QtWidgets.QHBoxLayout()
+        action_row.setSpacing(6)
+        action_row.setContentsMargins(0, 0, 0, 0)
         self.btn_save_connect = QtWidgets.QPushButton("Save & Connect")
+        self.btn_save_connect.setEnabled(False)  # Disabled initially
         self.btn_start_trial = QtWidgets.QPushButton("Start Trial")
         self.btn_start_trial.setEnabled(False)
         action_row.addWidget(self.btn_save_connect)
         action_row.addWidget(self.btn_start_trial)
         layout.addLayout(action_row)
+        
+        # Add spacing at the bottom
+        layout.addSpacing(20)
 
         # Signals
         self.btn_scan.clicked.connect(self.on_scan)
@@ -103,12 +168,13 @@ class ScanWindowQt(QtWidgets.QWidget):
         self.btn_save_connect.clicked.connect(self.on_save_and_connect)
         self.list_devices.itemSelectionChanged.connect(self.on_selected)
 
-        # Touch-friendly styling for iPad
+        # Touch-friendly styling for iPad (compact)
         def _style(btn: QtWidgets.QPushButton):
-            fb = btn.font(); fb.setPointSize(16); btn.setFont(fb)
-            btn.setMinimumHeight(56)
-            btn.setMinimumWidth(220)
-            btn.setStyleSheet("padding: 12px 20px;")
+            fb = btn.font(); fb.setPointSize(14); btn.setFont(fb)
+            btn.setMinimumHeight(44)  # More compact
+            btn.setMaximumHeight(44)  # Lock height
+            btn.setMinimumWidth(160)  # Smaller width
+            btn.setStyleSheet("padding: 6px 12px; margin: 0px;")  # Minimal padding
 
         for b in (self.btn_scan, self.btn_load, self.btn_save_connect, self.btn_start_trial):
             _style(b)
@@ -160,6 +226,8 @@ class ScanWindowQt(QtWidgets.QWidget):
                 if addr:
                     self.selected_address = addr
                     self.status.setText(f"Connecting to saved device: {addr}")
+                    # Disable Load and Save & Connect buttons during connection
+                    # Keep Start Scan enabled so user can disconnect and start new scan
                     self.btn_load.setEnabled(False)
                     self.btn_save_connect.setEnabled(False)
                     # Auto-connect to saved device
@@ -216,6 +284,16 @@ class ScanWindowQt(QtWidgets.QWidget):
         self._pending_scan = False
         self.btn_scan.setEnabled(True)
         self.list_devices.clear()
+        
+        # Always re-enable Load button if saved device exists
+        if os.path.exists(self.SETTINGS_FILE):
+            try:
+                with open(self.SETTINGS_FILE, "r") as f:
+                    if f.read().strip():
+                        self.btn_load.setEnabled(True)
+            except Exception:
+                pass
+        
         if not results:
             self.status.setText("No devices found")
             return
@@ -228,6 +306,8 @@ class ScanWindowQt(QtWidgets.QWidget):
     @QtCore.Slot(str, str)
     def _on_device_connected(self, name: str, address: str):
         self._connected = True
+        # Keep Save & Connect disabled after connection
+        self.btn_save_connect.setEnabled(False)
 
     @QtCore.Slot()
     def _on_device_disconnected(self):

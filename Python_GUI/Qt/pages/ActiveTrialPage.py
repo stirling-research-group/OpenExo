@@ -4,7 +4,7 @@ import time
 from collections import deque
 
 try:
-    from PySide6 import QtCore, QtWidgets
+    from PySide6 import QtCore, QtWidgets, QtGui
 except ImportError as e:
     raise SystemExit("PySide6 is required. Install with: pip install PySide6") from e
 
@@ -33,30 +33,82 @@ class ActiveTrialPage(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("ActiveTrialPage")
+        self._base_button_font_size = 13  # Store base size for scaling
         self._build_ui()
         self._init_state()
+    
+    def resizeEvent(self, event):
+        """Dynamically adjust font sizes based on window width"""
+        super().resizeEvent(event)
+        # Scale font based on window width (base: 900px)
+        width = self.width()
+        scale_factor = max(0.7, min(1.5, width / 900.0))  # Keep between 70% and 150%
+        
+        # Update button font sizes
+        new_font_size = int(self._base_button_font_size * scale_factor)
+        for btn in [self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
+                    self.btn_set_preamble, self.btn_update_controller, self.btn_bio_feedback,
+                    self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr,
+                    self.btn_mark, self.btn_pause_play]:
+            f = btn.font()
+            f.setPointSize(new_font_size)
+            btn.setFont(f)
 
     def _build_ui(self):
         # Main horizontal layout: left controls, right plots
         main = QtWidgets.QHBoxLayout(self)
+        main.setContentsMargins(8, 8, 8, 8)  # Add margins around the page
+        main.setSpacing(10)  # Spacing between controls and plots
 
         # Left controls column
         controls = QtWidgets.QVBoxLayout()
+        controls.setSpacing(6)  # Consistent spacing between control elements (minimum 6px)
+        
+        # Top row with OpenExo logo only
+        logo_row = QtWidgets.QHBoxLayout()
+        
+        # OpenExo logo on left - smaller for compact layout
+        try:
+            import os
+            openexo_label = QtWidgets.QLabel()
+            base_dir = os.path.dirname(os.path.dirname(__file__))  # Qt directory
+            openexo_path = os.path.join(base_dir, "Images", "OpenExo.png")
+            openexo_pixmap = QtGui.QPixmap(openexo_path)
+            if not openexo_pixmap.isNull():
+                scaled_openexo = openexo_pixmap.scaled(140, 28, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+                openexo_label.setPixmap(scaled_openexo)
+                logo_row.addWidget(openexo_label)
+            else:
+                print(f"Failed to load OpenExo logo from: {openexo_path}")
+        except Exception as e:
+            print(f"Error loading OpenExo logo: {e}")
+        
+        logo_row.addStretch(1)
+        
+        # Battery level label on the right
+        self.lbl_battery = QtWidgets.QLabel("Battery: --")
+        self.lbl_battery.setStyleSheet("font-size: 12pt; color: #4CAF50; font-weight: bold;")  # Green color
+        self.lbl_battery.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        logo_row.addWidget(self.lbl_battery)
+        
+        controls.addLayout(logo_row)
+        controls.addSpacing(4)
+        
         title = QtWidgets.QLabel("Active Trial")
-        f = title.font(); f.setPointSize(14); title.setFont(f)
+        f = title.font(); f.setPointSize(16); title.setFont(f)  # Larger title
         controls.addWidget(title)
-        controls.addSpacing(8)
+        controls.addSpacing(6)
 
         # Update Controller at the top
         self.btn_update_controller = QtWidgets.QPushButton("Update Controller")
         controls.addWidget(self.btn_update_controller)
-        self.btn_update_controller.setEnabled(False)
-        controls.addSpacing(8)
+        self.btn_update_controller.setEnabled(True)  # Always enabled - shows legacy if no dynamic params
+        controls.addSpacing(4)
 
         # Toggle plotted data visibility
         self.btn_toggle_points = QtWidgets.QPushButton("Toggle Data Points")
         controls.addWidget(self.btn_toggle_points)
-        controls.addSpacing(12)
+        controls.addSpacing(6)
 
         # End Trial
         self.btn_end_trial = QtWidgets.QPushButton("End Trial")
@@ -83,16 +135,12 @@ class ActiveTrialPage(QtWidgets.QWidget):
         # Mark Trial (temp)
         self.btn_mark = QtWidgets.QPushButton("Mark Trial")
         controls.addWidget(self.btn_mark)
-        controls.addSpacing(12)
+        controls.addSpacing(6)
 
         # Pause/Play button (replaces Start/Stop)
         self.btn_pause_play = QtWidgets.QPushButton("⏸ Pause")
         self.is_paused = False
         controls.addWidget(self.btn_pause_play)
-        
-        # Battery level label
-        self.lbl_battery = QtWidgets.QLabel("Battery: --")
-        controls.addWidget(self.lbl_battery)
         
         controls.addStretch(1)
 
@@ -120,9 +168,14 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.curve_bot_a = self.plot_bottom.plot(pen=pg.mkPen('g', width=2), name='Signal A')
         self.curve_bot_b = self.plot_bottom.plot(pen=pg.mkPen('m', width=2), name='Signal B')
 
-        # Assemble
-        main.addLayout(controls, 0)
-        main.addLayout(plots_col, 1)
+        # Wrap controls in a widget
+        controls_widget = QtWidgets.QWidget()
+        controls_widget.setLayout(controls)
+        # No max width - let it grow with window
+        
+        # Assemble - controls and plots both expand proportionally
+        main.addWidget(controls_widget, 1)  # Stretch factor 1 - controls can grow
+        main.addLayout(plots_col, 3)  # Stretch factor 3 - plots get more space
 
         # Wiring (device control; sim controls available via methods if needed)
         self.btn_pause_play.clicked.connect(self._on_pause_play_clicked)
@@ -138,14 +191,16 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_send_preset_fsr.clicked.connect(self.sendPresetFSRRequested.emit)
         self.btn_mark.clicked.connect(self.markTrialRequested.emit)
 
-        # Make buttons touch-friendly (iPad): larger font, padding, and height
+        # Make buttons dynamically resize with window
         def _style(btn: QtWidgets.QPushButton):
             f = btn.font()
-            f.setPointSize(16)
+            f.setPointSize(13)  # Larger base font size for readability
             btn.setFont(f)
-            btn.setMinimumHeight(56)
-            btn.setMinimumWidth(220)
-            btn.setStyleSheet("padding: 12px 20px;")
+            btn.setMinimumHeight(38)  # Good button height
+            # No minimum width - let it resize with layout
+            btn.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+            # Use margins to ensure spacing even at smallest size
+            btn.setStyleSheet("padding: 6px 10px; margin-bottom: 2px;")  # Add bottom margin for spacing
 
         for b in (
             self.btn_toggle_points,
@@ -203,11 +258,11 @@ class ActiveTrialPage(QtWidgets.QWidget):
         """Update the battery level display."""
         try:
             self.lbl_battery.setText(f"Battery: {voltage:.2f}V")
-            # Change color if low (< 11V is typical low for 3S lipo)
-            if voltage < 11.0 and voltage > 0:
-                self.lbl_battery.setStyleSheet("color: red; font-weight: bold;")
+            # Change color if low (< 11V is typical low for 3S lipo, or 0V)
+            if voltage < 11.0:
+                self.lbl_battery.setStyleSheet("font-size: 12pt; color: #FF5252; font-weight: bold;")  # Red for low or zero
             else:
-                self.lbl_battery.setStyleSheet("color: black;")
+                self.lbl_battery.setStyleSheet("font-size: 12pt; color: #4CAF50; font-weight: bold;")  # Green for good
         except Exception:
             pass
 
@@ -227,7 +282,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
             
             # Reset pause state when clearing plots
             self.is_paused = False
-            self.btn_pause_play.setText("⏸ Pause")
+            self.btn_pause_play.setText("Pause")
             
             # Update plots to show empty data
             self.curve_top_cmd.setData([], [])
@@ -288,7 +343,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         if not self.is_paused:
             # Pause
             self.is_paused = True
-            self.btn_pause_play.setText("▶ Play")
+            self.btn_pause_play.setText("Play")
             self.deviceStopRequested.emit()  # Stop motors
         else:
             # Play
