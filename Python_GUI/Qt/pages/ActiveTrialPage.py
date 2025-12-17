@@ -97,50 +97,84 @@ class ActiveTrialPage(QtWidgets.QWidget):
         title = QtWidgets.QLabel("Active Trial")
         f = title.font(); f.setPointSize(16); title.setFont(f)  # Larger title
         controls.addWidget(title)
-        controls.addSpacing(6)
+        controls.addSpacing(8)
 
-        # Update Controller at the top
+        # ═══════ PRIORITY: CRITICAL CONTROLS ═══════
+        # End Trial - Big prominent button at top
+        self.btn_end_trial = QtWidgets.QPushButton("⏹ END TRIAL")
+        controls.addWidget(self.btn_end_trial)
+        
+        # Pause/Play button
+        self.btn_pause_play = QtWidgets.QPushButton("Pause")
+        self.is_paused = False
+        controls.addWidget(self.btn_pause_play)
+        
+        # Separator
+        controls.addSpacing(10)
+        separator1 = QtWidgets.QFrame()
+        separator1.setFrameShape(QtWidgets.QFrame.HLine)
+        separator1.setStyleSheet("background-color: #555;")
+        controls.addWidget(separator1)
+        
+        # ═══════ COMMON ACTIONS ═══════
+        lbl_common = QtWidgets.QLabel("Common Actions")
+        lbl_common.setStyleSheet("font-weight: bold; color: #AAA; font-size: 10pt;")
+        controls.addWidget(lbl_common)
+        controls.addSpacing(4)
+        
         self.btn_update_controller = QtWidgets.QPushButton("Update Controller")
         controls.addWidget(self.btn_update_controller)
-        self.btn_update_controller.setEnabled(True)  # Always enabled - shows legacy if no dynamic params
-        controls.addSpacing(4)
-
-        # Toggle plotted data visibility
-        self.btn_toggle_points = QtWidgets.QPushButton("Toggle Data Points")
-        controls.addWidget(self.btn_toggle_points)
-        controls.addSpacing(6)
-
-        # End Trial
-        self.btn_end_trial = QtWidgets.QPushButton("End Trial")
-        controls.addWidget(self.btn_end_trial)
-        # Save CSV and start new
+        self.btn_update_controller.setEnabled(True)
+        
+        self.btn_mark = QtWidgets.QPushButton("Mark Trial (0)")
+        controls.addWidget(self.btn_mark)
+        
         self.btn_save_csv = QtWidgets.QPushButton("Save & New CSV")
         controls.addWidget(self.btn_save_csv)
         
-        # Set CSV Preamble button
+        # Separator
+        controls.addSpacing(10)
+        separator2 = QtWidgets.QFrame()
+        separator2.setFrameShape(QtWidgets.QFrame.HLine)
+        separator2.setStyleSheet("background-color: #555;")
+        controls.addWidget(separator2)
+        
+        # ═══════ SETTINGS ═══════
+        lbl_settings = QtWidgets.QLabel("Settings")
+        lbl_settings.setStyleSheet("font-weight: bold; color: #AAA; font-size: 10pt;")
+        controls.addWidget(lbl_settings)
+        controls.addSpacing(4)
+        
         self.btn_set_preamble = QtWidgets.QPushButton("Set CSV Prefix")
         controls.addWidget(self.btn_set_preamble)
-        # Bio Feedback (temp)
+        
+        self.btn_toggle_points = QtWidgets.QPushButton("Toggle Data Points")
+        controls.addWidget(self.btn_toggle_points)
+        
+        # Separator
+        controls.addSpacing(10)
+        separator3 = QtWidgets.QFrame()
+        separator3.setFrameShape(QtWidgets.QFrame.HLine)
+        separator3.setStyleSheet("background-color: #555;")
+        controls.addWidget(separator3)
+        
+        # ═══════ ADVANCED ═══════
+        lbl_advanced = QtWidgets.QLabel("Advanced")
+        lbl_advanced.setStyleSheet("font-weight: bold; color: #AAA; font-size: 10pt;")
+        controls.addWidget(lbl_advanced)
+        controls.addSpacing(4)
+        
         self.btn_bio_feedback = QtWidgets.QPushButton("Bio Feedback")
         controls.addWidget(self.btn_bio_feedback)
-        # Machine Learning (temp)
+        
         self.btn_ml = QtWidgets.QPushButton("Machine Learning")
         controls.addWidget(self.btn_ml)
-        # Recalibrate FSRs
+        
         self.btn_recal_fsr = QtWidgets.QPushButton("Recalibrate FSRs")
         controls.addWidget(self.btn_recal_fsr)
-        # Send Preset FSR Values
-        self.btn_send_preset_fsr = QtWidgets.QPushButton("Send Preset FSR Values")
+        
+        self.btn_send_preset_fsr = QtWidgets.QPushButton("Send Preset FSR")
         controls.addWidget(self.btn_send_preset_fsr)
-        # Mark Trial (temp)
-        self.btn_mark = QtWidgets.QPushButton("Mark Trial")
-        controls.addWidget(self.btn_mark)
-        controls.addSpacing(6)
-
-        # Pause/Play button (replaces Start/Stop)
-        self.btn_pause_play = QtWidgets.QPushButton("⏸ Pause")
-        self.is_paused = False
-        controls.addWidget(self.btn_pause_play)
         
         controls.addStretch(1)
 
@@ -216,6 +250,23 @@ class ActiveTrialPage(QtWidgets.QWidget):
             self.btn_pause_play,
         ):
             _style(b)
+        
+        # Special styling for End Trial button - make it prominent and red
+        f = self.btn_end_trial.font()
+        f.setPointSize(14)
+        f.setBold(True)
+        self.btn_end_trial.setFont(f)
+        self.btn_end_trial.setMinimumHeight(48)  # Taller
+        self.btn_end_trial.setStyleSheet(
+            "background-color: #D32F2F; color: white; padding: 10px; "
+            "margin-bottom: 4px; font-weight: bold; border-radius: 4px;"
+        )
+        
+        # Special styling for Pause button - make it blue
+        self.btn_pause_play.setStyleSheet(
+            "background-color: #1976D2; color: white; padding: 8px; "
+            "margin-bottom: 4px; font-weight: bold; border-radius: 4px;"
+        )
 
     def _init_state(self):
         # Fixed-size buffers for plotting (seconds-window * rate)
