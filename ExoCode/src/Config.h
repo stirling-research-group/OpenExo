@@ -39,7 +39,7 @@
 
     namespace logging
     {
-        const LogLevel level = LogLevel::Debug; //Release or Debug (Note: Enter Debug to have Logger print to serial monitor)
+        const LogLevel level = LogLevel::Release; //Release or Debug (Note: Enter Debug to have Logger print to serial monitor)
         const int baud_rate = 115200;
     }
     
@@ -97,7 +97,7 @@
     {
         const float UPDATE_PERIOD = 1000;       //Microseconds, time between updating data over uart
         const float COMS_MCU_TIMEOUT = 5000;    //Microseconds
-        const float CONT_MCU_TIMEOUT = 5000;    //Microseconds
+        const float CONT_MCU_TIMEOUT = 1000;    //Microseconds
         const float CONFIG_TIMEOUT = 8000;      //Milliseconds
     }
 
