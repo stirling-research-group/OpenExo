@@ -2454,13 +2454,13 @@ float SPV2::calc_motor_cmd()
 	cmd_pjmc = min(dorsi_setpoint, cmd_pjmc);//cap the dorsiflexion setpoint
 	
 	float cmd_ff = cmd_pjmc;
-	cmd_ff = constrain(cmd_ff, -45, 3);
+	cmd_ff = constrain(cmd_ff, -50, 3);
 
-	_controller_data->cmd_ff2plot = _controller_data->cmd_ff_generic;
+	//_controller_data->cmd_ff2plot = _controller_data->cmd_ff_generic;
 
     //Low pass filter torque_reading
     const float torque = _joint_data->torque_reading;
-    const float alpha = 0.5;
+    const float alpha = 1;
     _controller_data->filtered_torque_reading = utils::ewma(torque, _controller_data->filtered_torque_reading, alpha);
 	
 	if (_controller_data->parameters[controller_defs::spv2::turn_on_peak_limiter]) 
@@ -2485,7 +2485,7 @@ float SPV2::calc_motor_cmd()
 
 		if (cmd_ff < -0.5)
         {
-			cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 20 * _controller_data->parameters[controller_defs::spv2::kp], 80 * _controller_data->parameters[controller_defs::spv2::ki], 20 * _controller_data->parameters[controller_defs::spv2::kd]);
+			cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 30 * _controller_data->parameters[controller_defs::spv2::kp], 80 * _controller_data->parameters[controller_defs::spv2::ki], 20 * _controller_data->parameters[controller_defs::spv2::kd]);
 			// cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 20 * _controller_data->parameters[controller_defs::spv2::kp], 0 * _controller_data->parameters[controller_defs::spv2::ki], 20 * _controller_data->parameters[controller_defs::spv2::kd]);
 		}
 		else
@@ -2664,7 +2664,7 @@ float PJMC_PLUS::calc_motor_cmd()
     
     //Low-pass filter on torque_reading
     const float torque = _joint_data->torque_reading;
-    const float alpha = 0.8;
+    const float alpha = 1;
     _controller_data->filtered_torque_reading = utils::ewma(torque, _controller_data->filtered_torque_reading, alpha);
 	
 	float cmd;
@@ -2699,7 +2699,7 @@ float PJMC_PLUS::calc_motor_cmd()
 	//Engineering validation ends (step response)
 	
     //PID on Motor Command
-    cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 20 * _controller_data->parameters[controller_defs::pjmc_plus::kp], 80 * _controller_data->parameters[controller_defs::pjmc_plus::ki], 20 * _controller_data->parameters[controller_defs::pjmc_plus::kd]);
+    cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 30 * _controller_data->parameters[controller_defs::pjmc_plus::kp], 80 * _controller_data->parameters[controller_defs::pjmc_plus::ki], 20 * _controller_data->parameters[controller_defs::pjmc_plus::kd]);
 
     #ifdef CONTROLLER_DEBUG
     logger::println("pjmcPlus::calc_motor_cmd : stop");
