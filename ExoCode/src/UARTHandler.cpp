@@ -3,7 +3,6 @@
 #include "Logger.h"
 
 #define MAX_NUM_LEGS 2
-#define MAX_NUM_JOINTS_PER_LEG 2 //Current PCB can only do 2 motors per side, if you have made a new PCB, update.
 #define UART_DATA_TYPE short int //If type is changes you will need to comment/uncomment lines in pack_float and unpack_float
 #define FIXED_POINT_FACTOR 100
 
@@ -20,7 +19,6 @@ typedef enum
 
 UARTHandler::UARTHandler()
 {
-  //_rx_raw = CircularBuffer_<char>(_rx_raw_buffer, _k_bufferSize);
   MY_SERIAL.begin(UART_BAUD);
   MY_SERIAL.setTimeout(0);
 }
@@ -161,12 +159,20 @@ void UARTHandler::_pack(uint8_t msg_id, uint8_t len, uint8_t joint_id, float *da
     
     //Convert float array to short int array
     uint8_t _num_bytes = sizeof(float)/sizeof(UART_DATA_TYPE);
+    #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
+      _num_bytes = sizeof(float);
+    #endif
     uint8_t buf[_num_bytes];
     for (int i=0; i<len; i++)
     {
+      #if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
         utils::float_to_short_fixed_point_bytes(data[i], buf, FIXED_POINT_FACTOR);
         uint8_t _offset = (DATA_START) + _num_bytes*i;
         memcpy((data_to_pack + _offset), buf, _num_bytes);
+      #elif defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
+        uint8_t _offset = (DATA_START) + _num_bytes*i;
+        memcpy((data_to_pack + _offset), &data[i], _num_bytes);
+      #endif
     }
 }
 
@@ -178,15 +184,25 @@ UART_msg_t UARTHandler::_unpack(uint8_t* data, uint8_t len)
     float _total_len = len*sizeof(uint8_t);
     float _meta_len = sizeof(msg.command)+sizeof(msg.joint_id);
     float _conv_factor = ((float)sizeof(UART_DATA_TYPE)/(float)sizeof(float));
+    #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
+      _conv_factor = 1.0;
+    #endif
     msg.len = (_total_len - _meta_len) * _conv_factor;
 
     //Fill msg.data, converting the short ints to floats
     for (int i=0; i<len; i++)
     {
-        uint8_t _data_offset = (DATA_START) + (i*2);
-        float tmp = 0;
-        utils::short_fixed_point_bytes_to_float((uint8_t*)data+_data_offset, &tmp, FIXED_POINT_FACTOR);
-        msg.data[i] = tmp;
+        #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
+          uint8_t _data_offset = (DATA_START) + (i*sizeof(short int));
+          float tmp = 0;
+          utils::short_fixed_point_bytes_to_float((uint8_t*)data+_data_offset, &tmp, FIXED_POINT_FACTOR);
+          msg.data[i] = tmp;
+        #elif defined(ARDUINO_TEENSY36) | defined(ARDUINO_TEENSY41)
+          uint8_t _data_offset = (DATA_START) + (i*sizeof(float));
+          float tmp;
+          memcpy(&tmp, (uint8_t*)data+_data_offset, sizeof(float));
+          msg.data[i] = tmp;
+        #endif
     }
 
     return msg;
@@ -196,7 +212,11 @@ uint8_t UARTHandler::_get_packed_length(uint8_t msg_id, uint8_t len, uint8_t joi
 {
     uint8_t _val = 0;
     //We are converting from float to short int, we must multiply by the size difference
-    _val += (float)len * (sizeof(float)/sizeof(UART_DATA_TYPE));
+    #if defined(ARDUINO_TEENSY36) | defined(ARDUINO_TEENSY41)
+      _val += (float)len * (sizeof(float)/sizeof(UART_DATA_TYPE));
+    #elif defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
+      _val += (float)len * (sizeof(float));
+    #endif
     _val += sizeof(msg_id);
     _val += sizeof(joint_id); 
     return _val;

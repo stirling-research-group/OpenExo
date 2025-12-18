@@ -39,12 +39,11 @@ namespace config_info
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial);  
 }
 
 void loop() {
   logger::println("===============================================================================================");
-  
+  static ExoData exo_data(config_info::config_to_send);
   UARTHandler* inst = UARTHandler::get_instance();
 
   static uint8_t first_run{1};
@@ -53,7 +52,7 @@ void loop() {
     /* Nano needs the config data */
     #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
     logger::println("Loop->Getting config");
-    UART_command_utils::get_config(inst, config_info::config_to_send);
+    const bool timed_out = UART_command_utils::get_config(inst, config_info::config_to_send, (float)UART_times::CONFIG_TIMEOUT);
     logger::println("Loop->Got config: ");
     for (int i=0; i<ini_config::number_of_keys; i++)
     {
@@ -62,11 +61,10 @@ void loop() {
     logger::println(k_timeout_us);
     
     #elif defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
-    UART_command_utils::wait_for_get_config(inst, config_info::config_to_send);
+    UART_command_utils::wait_for_get_config(inst, &exo_data, UART_times::CONFIG_TIMEOUT);
     #endif
   }
-  
-  static ExoData exo_data(config_info::config_to_send);
+
   
   /* How to check for, receive, and handle a UART command */
   UART_msg_t msg = inst->poll(k_timeout_us);
@@ -81,7 +79,7 @@ void loop() {
   {
     /* How to send a UART command */
     #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
-    static float p_gain = 300;
+    static float p_gain = 3000;
     // pack the message that you would like to send
     UART_msg_t tx_msg;
     tx_msg.command = UART_command_names::update_controller_params;
@@ -101,7 +99,9 @@ void loop() {
     UART_msg_t tx_msg;
     tx_msg.command = UART_command_names::update_status;
     tx_msg.joint_id = 0;
-    tx_msg.data[(uint8_t)UART_command_enums::status::STATUS] = exo_data.status++;
+    const uint16_t status = exo_data.get_status();
+    tx_msg.data[(uint8_t)UART_command_enums::status::STATUS] = status;
+    exo_data.set_status(status + 1);
     tx_msg.len = (uint8_t)UART_command_enums::status::LENGTH;
     inst->UART_msg(tx_msg);
     logger::println("Loop->Updated status");
@@ -110,3 +110,6 @@ void loop() {
     old_time = now;
   }
 }
+
+
+
