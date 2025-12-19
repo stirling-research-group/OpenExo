@@ -30,7 +30,7 @@
 #include "src/ParamsFromSD.h"
 #include "src/ListCtrlParams.h"
 #include "src/SendBulkChar.h"
-#include "src/FigureTitles.h"
+#include "src/PlottingTitles.h"
 
 //Board to board coms
 #include "src/UARTHandler.h"
@@ -68,7 +68,7 @@ void setup()
 	//Debugging ListCtrlParams
 	long initialTime = millis();
 	ctrl_param_array_gen(config_info::config_to_send);
-	create_figure_titles(config_info::config_to_send);
+	create_plotting_titles(config_info::config_to_send);
 	send_bulk_char();
 	long time_spent = millis() - initialTime;
 	Serial.print("\nTeensy Boot time added: ");

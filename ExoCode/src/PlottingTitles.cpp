@@ -1,4 +1,4 @@
-#include "FigureTitles.h"
+#include "PlottingTitles.h"
 
 #if defined(ARDUINO_TEENSY36)  || defined(ARDUINO_TEENSY41)
 #include <Arduino.h>
@@ -13,7 +13,7 @@
  * @param buffer_size The maximum size of the output_buffer.
  * @return true if the string was created successfully, false otherwise.
  */
-void create_figure_titles(uint8_t* config_to_send) {
+void create_plotting_titles(uint8_t* config_to_send) {
 	char output_buffer[MAX_COMBINED_HEADER_LENGTH];
 	size_t buffer_size = sizeof(output_buffer);
     // Delimiter strings
