@@ -499,8 +499,8 @@ class QtExoDeviceManager(QtCore.QObject):
                 await asyncio.sleep(1)
                 # Start motors/stream
                 await self._client.write_gatt_char(UART_TX_UUID, b"E", response=False)
-                # Calibrate torque sensors
-                await self._client.write_gatt_char(UART_TX_UUID, b"H", response=False)
+                # Calibrate torque sensors 
+                # await self._client.write_gatt_char(UART_TX_UUID, b"H", response=False) # Commented out by ZL because added new button for torque calibration
                 # Calibrate FSRs
                 await self._client.write_gatt_char(UART_TX_UUID, b"L", response=False)
                 # Send preset FSR values
