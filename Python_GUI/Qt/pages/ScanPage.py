@@ -147,15 +147,18 @@ class ScanWindowQt(QtWidgets.QWidget):
         
         layout.addSpacing(5)
 
-        # Action row (Save & Connect on left, Start Trial next) - at bottom
+        # Action row (Connect, Calibrate Torque, Start Trial) - at bottom
         action_row = QtWidgets.QHBoxLayout()
         action_row.setSpacing(6)
         action_row.setContentsMargins(0, 0, 0, 0)
-        self.btn_save_connect = QtWidgets.QPushButton("Save & Connect")
+        self.btn_save_connect = QtWidgets.QPushButton("Connect")
         self.btn_save_connect.setEnabled(False)  # Disabled initially
         self.btn_start_trial = QtWidgets.QPushButton("Start Trial")
         self.btn_start_trial.setEnabled(False)
+        self.btn_calibrate_torque = QtWidgets.QPushButton("Calibrate Torque")
+        self.btn_calibrate_torque.setEnabled(False)
         action_row.addWidget(self.btn_save_connect)
+        action_row.addWidget(self.btn_calibrate_torque)
         action_row.addWidget(self.btn_start_trial)
         layout.addLayout(action_row)
         
@@ -166,6 +169,7 @@ class ScanWindowQt(QtWidgets.QWidget):
         self.btn_scan.clicked.connect(self.on_scan)
         self.btn_load.clicked.connect(self.on_load_saved)
         self.btn_save_connect.clicked.connect(self.on_save_and_connect)
+        self.btn_calibrate_torque.clicked.connect(self.on_calibrate_torque)
         self.list_devices.itemSelectionChanged.connect(self.on_selected)
 
         # Touch-friendly styling for iPad (compact)
@@ -176,7 +180,7 @@ class ScanWindowQt(QtWidgets.QWidget):
             btn.setMinimumWidth(160)  # Smaller width
             btn.setStyleSheet("padding: 6px 12px; margin: 0px;")  # Minimal padding
 
-        for b in (self.btn_scan, self.btn_load, self.btn_save_connect, self.btn_start_trial):
+        for b in (self.btn_scan, self.btn_load, self.btn_save_connect, self.btn_start_trial, self.btn_calibrate_torque):
             _style(b)
 
     def _wire_workers(self):
@@ -268,6 +272,29 @@ class ScanWindowQt(QtWidgets.QWidget):
         self.btn_save_connect.setEnabled(False)
         # Emit request for Qt device manager to handle connection
         self.connectRequested.emit(self.selected_address)
+
+    @QtCore.Slot()
+    def on_calibrate_torque(self):
+        if self._qt_dev is None:
+            self.status.setText("Device manager not ready")
+            return
+        try:
+            # Send torque calibration command
+            self._qt_dev.calibrateTorque()
+
+            # Keep Start Trial disabled for a short delay to allow calibration to settle
+            self.btn_start_trial.setEnabled(False)
+
+            self.status.setText("Torque calibration sent. Start Trial will be enabled in 3 seconds...")
+
+            # Enable Start Trial after 3 seconds (only if still connected)
+            def _enable_start_trial_if_connected():
+                if self._connected and self._qt_dev is not None:
+                    self.btn_start_trial.setEnabled(True)
+
+            QtCore.QTimer.singleShot(3000, _enable_start_trial_if_connected)
+        except Exception as ex:
+            self.status.setText(f"Torque calibration failed: {ex}")
 
     # Called by MainWindow after it creates QtExoDeviceManager
     def bind_device_manager(self, qt_dev: QtExoDeviceManager):

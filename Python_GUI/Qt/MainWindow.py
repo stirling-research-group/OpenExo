@@ -467,6 +467,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scan_page.status.setText(f"Connection failed: {msg}")
             self.scan_page.btn_save_connect.setEnabled(True)
             self.scan_page.btn_start_trial.setEnabled(False)
+            try:
+                self.scan_page.btn_calibrate_torque.setEnabled(False)
+            except Exception:
+                pass
         except Exception:
             pass
 
@@ -476,7 +480,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scan_page.status.setText(f"Connected: {name} {addr}")
             # Don't enable Save & Connect after connection - it's already connected
             self.scan_page.btn_save_connect.setEnabled(False)
-            self.scan_page.btn_start_trial.setEnabled(True)
+            self.scan_page.btn_start_trial.setEnabled(False)  # Enabled after torque calibration
+            try:
+                self.scan_page.btn_calibrate_torque.setEnabled(True)
+            except Exception:
+                pass
         except Exception:
             pass
         # Clear old plot data on reconnect
@@ -495,6 +503,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scan_page.status.setText("Disconnected")
             self.scan_page.btn_save_connect.setEnabled(True)
             self.scan_page.btn_start_trial.setEnabled(False)
+            try:
+                self.scan_page.btn_calibrate_torque.setEnabled(False)
+            except Exception:
+                pass
             
             # Only show popup for unintentional disconnects
             if not is_intentional:
