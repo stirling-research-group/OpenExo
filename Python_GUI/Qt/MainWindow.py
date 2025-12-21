@@ -264,6 +264,29 @@ class MainWindow(QtWidgets.QMainWindow):
         """Update CSV filename preamble."""
         self._csv_preamble = preamble
         print(f"CSV preamble set to: {preamble}")
+         # If we're currently logging, roll over immediately (no popup)
+        if self._csv_file is not None:
+            try:
+                self._csv_file.flush()
+                self._csv_file.close()
+            except Exception:
+                pass
+
+            # reset state (same reset you already do in _on_save_csv)
+            self._csv_file = None
+            self._csv_writer = None
+            self._csv_header_written = False
+            self._t0 = None
+            self._csv_path_last = None
+
+            # start a new CSV using the new prefix
+            self._start_csv_auto()
+
+            # optional: show a non-blocking confirmation somewhere
+            try:
+                self.trial_page.set_status_text(f"CSV prefix set. New file started: {self._csv_path_last}")
+            except Exception:
+                pass
 
     @QtCore.Slot()
     def _on_recal_fsr(self):
