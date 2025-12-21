@@ -1,68 +1,251 @@
-import tkinter as tk
+import sys
 
-from async_tkinter_loop import async_handler, async_mainloop
+try:
+    from PySide6 import QtWidgets
+except ImportError as e:
+    raise SystemExit("PySide6 is required. Install with: pip install PySide6") from e
 
-from Device import exoDeviceManager, exoTrial
-from views.activeTrial import ActiveTrial
-from views.activeTrialSettings import UpdateTorque
-from views.bioFeedback import BioFeedback
-from views.machineLearning import MachineLearning
-
-from views.scanWindow import ScanWindow
-
-class ControllerApp(tk.Tk):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.trial = exoTrial.ExoTrial(True, 1, True)
-        self.deviceManager = exoDeviceManager.ExoDeviceManager()
-        self.title("OpenExo GUI")
-        self.geometry("920x720")
-        self.minsize(900, 700)
-
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
-        self.frames = {}
-        # Names of each frame goes here
-        for F in (ScanWindow, ActiveTrial, UpdateTorque, BioFeedback, MachineLearning):
-            page_name = F.__name__
-            frame = F(parent=container, controller=self)
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
-
-        self.show_frame("ScanWindow")  # Switch to Scan Window Frame
-
-    def show_frame(self, page_name):  # Method to switch frames
-        # Stop plot updates for any frame that has ongoing plotting
-        for frame_name, frame in self.frames.items():
-            if hasattr(frame, "hide"):
-                frame.stop_plot_updates()
-                print(f"Stopped plot updates for {frame_name}")
-
-        # Get the frame to switch to
-        frame = self.frames[page_name]
-
-        # Set the new frame to be shown
-        frame.tkraise()
-
-        # Additional logic for the ActiveTrial or similar frames that need specific handling
-        if hasattr(frame, "show"):
-            frame.show()
-
-        # Set the disconnect handler for the new frame
-        disconnect_handler_name = f"{page_name}_on_device_disconnected"
-        self.deviceManager.on_disconnect = getattr(frame, disconnect_handler_name, None)
-
-    def change_title(self, newName):
-        self.title(newName)
+from MainWindow import MainWindow
 
 
-def exec():
-    controller = ControllerApp()
-    async_mainloop(controller)
+def main():
+    app = QtWidgets.QApplication(sys.argv)
+    
+    # Apply permanent dark mode stylesheet
+    dark_stylesheet = """
+        QWidget {
+            background-color: #1E1E1E;
+            color: #E0E0E0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        QMainWindow {
+            background-color: #1E1E1E;
+        }
+        
+        QPushButton {
+            background-color: #2D2D2D;
+            color: #FFFFFF;
+            border: 1px solid #3D3D3D;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 11pt;
+        }
+        
+        QPushButton:hover {
+            background-color: #3D3D3D;
+            border: 1px solid #4D4D4D;
+        }
+        
+        QPushButton:pressed {
+            background-color: #252525;
+        }
+        
+        QPushButton:disabled {
+            background-color: #252525;
+            color: #666666;
+        }
+        
+        QLabel {
+            background-color: transparent;
+            color: #E0E0E0;
+        }
+        
+        QLineEdit, QSpinBox, QDoubleSpinBox {
+            background-color: #2D2D2D;
+            color: #FFFFFF;
+            border: 1px solid #3D3D3D;
+            border-radius: 4px;
+            padding: 6px;
+        }
+        
+        QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus {
+            border: 1px solid #0078D4;
+        }
+        
+        QComboBox {
+            background-color: #2D2D2D;
+            color: #FFFFFF;
+            border: 1px solid #3D3D3D;
+            border-radius: 4px;
+            padding: 6px;
+        }
+        
+        QComboBox:hover {
+            border: 1px solid #4D4D4D;
+        }
+        
+        QComboBox::drop-down {
+            border: none;
+        }
+        
+        QComboBox QAbstractItemView {
+            background-color: #2D2D2D;
+            color: #FFFFFF;
+            selection-background-color: #0078D4;
+        }
+        
+        QListWidget {
+            background-color: #2D2D2D;
+            color: #FFFFFF;
+            border: 1px solid #3D3D3D;
+            border-radius: 4px;
+        }
+        
+        QListWidget::item:selected {
+            background-color: #0078D4;
+        }
+        
+        QListWidget::item:hover {
+            background-color: #3D3D3D;
+        }
+        
+        QTableWidget {
+            background-color: #2D2D2D;
+            color: #FFFFFF;
+            gridline-color: #3D3D3D;
+            border: 1px solid #3D3D3D;
+        }
+        
+        QTableWidget::item:selected {
+            background-color: #0078D4;
+        }
+        
+        QHeaderView::section {
+            background-color: #252525;
+            color: #FFFFFF;
+            padding: 6px;
+            border: 1px solid #3D3D3D;
+        }
+        
+        QScrollBar:vertical {
+            background-color: #2D2D2D;
+            width: 14px;
+            border-radius: 7px;
+        }
+        
+        QScrollBar::handle:vertical {
+            background-color: #4D4D4D;
+            border-radius: 7px;
+            min-height: 30px;
+        }
+        
+        QScrollBar::handle:vertical:hover {
+            background-color: #5D5D5D;
+        }
+        
+        QScrollBar:horizontal {
+            background-color: #2D2D2D;
+            height: 14px;
+            border-radius: 7px;
+        }
+        
+        QScrollBar::handle:horizontal {
+            background-color: #4D4D4D;
+            border-radius: 7px;
+            min-width: 30px;
+        }
+        
+        QScrollBar::handle:horizontal:hover {
+            background-color: #5D5D5D;
+        }
+        
+        QCheckBox {
+            color: #E0E0E0;
+            spacing: 8px;
+        }
+        
+        QCheckBox::indicator {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #3D3D3D;
+            border-radius: 3px;
+            background-color: #2D2D2D;
+        }
+        
+        QCheckBox::indicator:checked {
+            background-color: #0078D4;
+            border: 1px solid #0078D4;
+        }
+        
+        QRadioButton {
+            color: #E0E0E0;
+            spacing: 8px;
+        }
+        
+        QRadioButton::indicator {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #3D3D3D;
+            border-radius: 9px;
+            background-color: #2D2D2D;
+        }
+        
+        QRadioButton::indicator:checked {
+            background-color: #0078D4;
+            border: 1px solid #0078D4;
+        }
+        
+        QGroupBox {
+            color: #E0E0E0;
+            border: 1px solid #3D3D3D;
+            border-radius: 6px;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+        
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            subcontrol-position: top left;
+            padding: 4px 8px;
+            color: #FFFFFF;
+        }
+        
+        QTabWidget::pane {
+            border: 1px solid #3D3D3D;
+            background-color: #1E1E1E;
+        }
+        
+        QTabBar::tab {
+            background-color: #2D2D2D;
+            color: #E0E0E0;
+            padding: 8px 16px;
+            border: 1px solid #3D3D3D;
+            border-bottom: none;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+        
+        QTabBar::tab:selected {
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+        }
+        
+        QTabBar::tab:hover {
+            background-color: #3D3D3D;
+        }
+        
+        QMessageBox {
+            background-color: #1E1E1E;
+        }
+        
+        QMessageBox QLabel {
+            color: #E0E0E0;
+        }
+        
+        QMessageBox QPushButton {
+            min-width: 80px;
+        }
+    """
+    
+    app.setStyleSheet(dark_stylesheet)
+    
+    w = MainWindow()
+    w.show()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
-    exec()
+    main()
+
+
