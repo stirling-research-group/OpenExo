@@ -17,6 +17,9 @@ except Exception:
 
 UART_SERVICE_UUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
 UART_TX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"  # Write
+
+# Firmware error reporting characteristic (ErrorChar in firmware GattDb)
+ERROR_CHAR_UUID = "33b65d43-611c-11ed-9b6a-0242ac120002"
 UART_RX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"  # Notify
 
 
@@ -33,6 +36,7 @@ class QtExoDeviceManager(QtCore.QObject):
     error = QtCore.Signal(str)
     log = QtCore.Signal(str)
     dataReceived = QtCore.Signal(bytes)     # raw bytes from UART RX notify
+    firmwareError = QtCore.Signal(int, int, str)  # error_code, joint_id, raw
     scanResults = QtCore.Signal(list)       # list[(name, address)]
 
     def __init__(self, parent=None):
@@ -159,6 +163,30 @@ class QtExoDeviceManager(QtCore.QObject):
                             self.log.emit("Starting notifications…")
                             await client.start_notify(UART_RX_UUID, _on_rx)
 
+                            # Subscribe to firmware error notifications (ErrorChar)
+                            def _on_error(_sender, data: bytearray):
+                                try:
+                                    txt = bytes(data).decode("utf-8", errors="replace").strip()
+                                    parts = txt.split(":")
+                                    if len(parts) >= 2:
+                                        err = int(parts[0])
+                                        joint = int(parts[1])
+                                        self.firmwareError.emit(err, joint, txt)
+                                    else:
+                                        self.firmwareError.emit(-1, -1, txt)
+                                except Exception as ex:
+                                    try:
+                                        self.log.emit(f"Error notify parse failed: {ex}")
+                                    except Exception:
+                                        pass
+
+                            try:
+                                await client.start_notify(ERROR_CHAR_UUID, _on_error)
+                                self.log.emit("Subscribed to firmware error notifications")
+                            except Exception as ex:
+                                # Not fatal; some firmwares may not expose ErrorChar as notify
+                                self.log.emit(f"Could not subscribe to ErrorChar: {ex}")
+
                             self._client = client
                             self._is_connected = True
                             self.connected.emit(device.name or "", device.address)
@@ -189,6 +217,10 @@ class QtExoDeviceManager(QtCore.QObject):
                 if self._client:
                     try:
                         await self._client.stop_notify(UART_RX_UUID)
+                        try:
+                            await self._client.stop_notify(ERROR_CHAR_UUID)
+                        except Exception:
+                            pass
                     except Exception:
                         pass
                     try:

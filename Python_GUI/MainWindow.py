@@ -105,6 +105,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qt_dev.error.connect(self._on_dev_error)
         self.qt_dev.connected.connect(self._on_dev_connected)
         self.qt_dev.disconnected.connect(self._on_dev_disconnected)
+        self.qt_dev.firmwareError.connect(self._on_firmware_error)
+        self._last_fw_error = None  # suppress repeated popups
 
         # Settings page wiring
         self.settings_page.applyRequested.connect(self._on_apply_settings)
@@ -498,6 +500,47 @@ class MainWindow(QtWidgets.QMainWindow):
             pass
 
     @QtCore.Slot(str, str)
+
+    @QtCore.Slot(int, int, str)
+    def _on_firmware_error(self, error_code: int, joint_id: int, raw: str):
+        """Show an alert when firmware reports an error event over BLE ErrorChar."""
+        key = (error_code, joint_id, raw)
+        if key == getattr(self, "_last_fw_error", None):
+            return
+        self._last_fw_error = key
+
+        code_map = {
+            0: "NO_ERROR",
+            1: "TEST_ERROR",
+            2: "POOR_STATE_VARIANCE_ERROR",
+            3: "POOR_TRANSMISSION_EFFICIENCY_ERROR",
+            4: "TORQUE_OUT_OF_BOUNDS_ERROR",
+            5: "TORQUE_VARIANCE_ERROR",
+            6: "FORCE_VARIANCE_ERROR",
+            7: "TRACKING_ERROR",
+            8: "MOTOR_TIMEOUT_ERROR",
+        }
+        code_name = code_map.get(error_code, f"UNKNOWN_ERROR_{error_code}")
+
+        # Optional safety action: turn motors off and stop trial
+        try:
+            self.qt_dev.motorOff()
+        except Exception:
+            pass
+        try:
+            self.qt_dev.stopTrial()
+        except Exception:
+            pass
+
+        msg = (
+            "Firmware error detected:\n\n"
+            f"• {code_name}\n"
+            f"• joint_id: {joint_id}\n"
+            f"• raw: {raw}\n\n"
+            "Motors were commanded OFF and trial stop was sent."
+        )
+        QtWidgets.QMessageBox.critical(self, "Firmware Error", msg)
+
     def _on_dev_connected(self, name: str, addr: str):
         try:
             self.scan_page.status.setText(f"Connected: {name} {addr}")
