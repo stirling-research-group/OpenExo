@@ -364,7 +364,7 @@ class QtExoDeviceManager(QtCore.QObject):
                     totalLoops = 2
 
                 while loopCount != totalLoops:
-                    await self._client.write_gatt_char(UART_TX_UUID, b"f", response=True)
+                    await self._client.write_gatt_char(UART_TX_UUID, b"f", response=False)
 
                     for i in range(1, len(float_values)):
                         if i == 1:
@@ -381,7 +381,7 @@ class QtExoDeviceManager(QtCore.QObject):
                             float_bytes = struct.pack("<d", float(val))
                         else:
                             float_bytes = struct.pack("<d", float(float_values[i]))
-                        await self._client.write_gatt_char(UART_TX_UUID, float_bytes, response=True)
+                        await self._client.write_gatt_char(UART_TX_UUID, float_bytes, response=False)
 
                     loopCount += 1
                 self.log.emit("Torque parameters updated")
