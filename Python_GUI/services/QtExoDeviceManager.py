@@ -322,17 +322,18 @@ class QtExoDeviceManager(QtCore.QObject):
 
     @QtCore.Slot()
     def motorOff(self):
+        """Command motors OFF (best-effort, non-blocking).
+
+        Uses response=False to avoid blocking if the peripheral is in a fault state.
+        """
         if not self._ensure_connected():
             return
-
-        async def _do():
-            try:
-                await self._client.write_gatt_char(UART_TX_UUID, b"w", response=True)
-                self.log.emit("Motor OFF command sent")
-            except Exception as ex:
-                self.error.emit(str(ex))
-
-        self._submit(_do())
+        try:
+            # Reuse the common write() path (response=False).
+            self.write(b"w")
+            self.log.emit("Motor OFF command queued")
+        except Exception as ex:
+            self.error.emit(str(ex))
 
     @QtCore.Slot()
     def motorOn(self):

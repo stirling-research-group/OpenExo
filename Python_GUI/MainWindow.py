@@ -521,23 +521,21 @@ class MainWindow(QtWidgets.QMainWindow):
             8: "MOTOR_TIMEOUT_ERROR",
         }
         code_name = code_map.get(error_code, f"UNKNOWN_ERROR_{error_code}")
-
-        # Optional safety action: turn motors off and stop trial
+        # Safety action: command motors OFF, but keep the trial active in the GUI.
+        # We intentionally do NOT send a stop-trial command here.
         try:
-            self.qt_dev.motorOff()
+            # Use non-blocking BLE write (response=False) via qt_dev.write().
+            self.qt_dev.write(b"w")
+            # Send twice to increase likelihood of delivery if the BLE stack is busy.
+            QtCore.QTimer.singleShot(100, lambda: self.qt_dev.write(b"w"))
         except Exception:
             pass
-        try:
-            self.qt_dev.stopTrial()
-        except Exception:
-            pass
-
         msg = (
             "Firmware error detected:\n\n"
             f"• {code_name}\n"
             f"• joint_id: {joint_id}\n"
             f"• raw: {raw}\n\n"
-            "Motors were commanded OFF and trial stop was sent."
+            "Attempted to command motors OFF. The trial remains active in the GUI."
         )
         QtWidgets.QMessageBox.critical(self, "Firmware Error", msg)
 
