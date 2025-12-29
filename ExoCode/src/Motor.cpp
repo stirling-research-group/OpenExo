@@ -252,11 +252,46 @@ void _CANMotor::send_data(float torque)
     logger::print(torque);
     logger::print("\n");
 
+    CAN* can = can->getInstance();
+
     if (_motor_data->enabled)
     {
         //Set data in motor
-        CAN* can = can->getInstance();
         can->send(msg);
+        _prev_motor_enabled = true;
+    }
+    else if (_prev_motor_enabled)
+    {
+        // Motor was just disabled - send one final zero-torque command
+        // This is critical for AK60v3 which will otherwise hold the last command
+        uint32_t zero_p_int = _float_to_uint(0, -_P_MAX, _P_MAX, 16);
+        uint32_t zero_v_int = _float_to_uint(0, -_V_MAX, _V_MAX, 12);
+        uint32_t zero_kp_int = _float_to_uint(0, _KP_MIN, _KP_MAX, 12);
+        uint32_t zero_kd_int = _float_to_uint(0, _KD_MIN, _KD_MAX, 12);
+        uint32_t zero_i_int = _float_to_uint(0, -_I_MAX, _I_MAX, 12);
+
+        if (is_ak60v3) {
+            msg.buf[0] = zero_kp_int >> 4;
+            msg.buf[1] = ((zero_kp_int&0xF) << 4) | (zero_kd_int >> 8);
+            msg.buf[2] = (zero_kd_int & 0xFF);
+            msg.buf[3] = zero_p_int >> 8;
+            msg.buf[4] = zero_p_int & 0xFF;
+            msg.buf[5] = zero_v_int >> 4;
+            msg.buf[6] = ((zero_v_int & 0xF) << 4) | (zero_i_int >> 8);
+            msg.buf[7] = zero_i_int & 0xFF;
+        } else {
+            msg.buf[0] = zero_p_int >> 8;
+            msg.buf[1] = zero_p_int & 0xFF;
+            msg.buf[2] = zero_v_int >> 4;
+            msg.buf[3] = ((zero_v_int & 0xF) << 4) | (zero_kp_int >> 8);
+            msg.buf[4] = zero_kp_int & 0xFF;
+            msg.buf[5] = zero_kd_int >> 4;
+            msg.buf[6] = ((zero_kd_int & 0xF) << 4) | (zero_i_int >> 8);
+            msg.buf[7] = zero_i_int & 0xFF;
+        }
+
+        can->send(msg);
+        _prev_motor_enabled = false;
     }
     return;
 };
