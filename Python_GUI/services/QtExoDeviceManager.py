@@ -64,6 +64,20 @@ class QtExoDeviceManager(QtCore.QObject):
         }
 
     # Public API
+
+    def _mark_disconnected(self, reason: str = ""):
+        """Reset internal connection state after an unexpected disconnect."""
+        self._is_connected = False
+        self._is_connecting = False
+        self._client = None
+
+        if reason:
+            self.log.emit(f"Disconnected ({reason})")
+        else:
+            self.log.emit("Disconnected")
+
+        self.disconnected.emit()
+
     @QtCore.Slot(str)
     def set_mac(self, mac: str):
         self._mac = mac
@@ -102,6 +116,9 @@ class QtExoDeviceManager(QtCore.QObject):
         if not self._mac:
             self.error.emit("No MAC address set")
             return
+        # If our flags say "connected" but the underlying client isn't, recover.
+        if self._client and self._is_connected and not getattr(self._client, "is_connected", False):
+            self._mark_disconnected("stale client")
         if self._is_connecting or self._is_connected:
             return
 
@@ -135,8 +152,7 @@ class QtExoDeviceManager(QtCore.QObject):
                             print(f"[QtExoDeviceManager] connecting to {device.name} {device.address}")
                             def _disc_cb(_):
                                 try:
-                                    self.log.emit("Disconnected")
-                                    self.disconnected.emit()
+                                    self._mark_disconnected("link lost")
                                 except Exception:
                                     pass
                             client = BleakClient(device, disconnected_callback=_disc_cb)
@@ -272,6 +288,13 @@ class QtExoDeviceManager(QtCore.QObject):
         if not (self._client and self._loop and self._is_connected):
             self.error.emit("Not connected")
             return False
+
+        # If the OS link dropped, BleakClient.is_connected will be False.
+        if not getattr(self._client, "is_connected", False):
+            self._mark_disconnected("stale client")
+            self.error.emit("Not connected")
+            return False
+
         return True
 
     def _submit(self, coro):
