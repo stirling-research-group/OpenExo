@@ -17,6 +17,7 @@
 #include "ParamsFromSD.h"
 
 #include "UARTHandler.h"
+#include "ResetScheduler.h"
 #include "uart_commands.h"
 #include "UART_msg_t.h"
 #include "Logger.h"
@@ -218,13 +219,23 @@ namespace ble_handlers
         uart_handler->UART_msg(tx_msg);
 
         delayMicroseconds(100);
-
+        
         //Send motor enable update
         tx_msg.command = UART_command_names::update_motor_enable_disable;
         tx_msg.joint_id = 0;
         tx_msg.data[(uint8_t)UART_command_enums::motor_enable_disable::ENABLE_DISABLE] = 0;
         tx_msg.len = (uint8_t)UART_command_enums::motor_enable_disable::LENGTH;
         uart_handler->UART_msg(tx_msg);
+
+        // Request Teensy reset (non-blocking). UART_msg() flushes TX.
+        UART_msg_t rst_msg;
+        rst_msg.command = UART_command_names::get_system_reset;
+        rst_msg.joint_id = 0;
+        rst_msg.len = 0;
+        uart_handler->UART_msg(rst_msg);
+
+        // Schedule Nano reset (non-blocking) so the loop can finish cleanly.
+        reset_scheduler::request(5);
 
         data->mark = 10;
     }

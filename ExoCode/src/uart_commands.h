@@ -11,6 +11,7 @@
 #include "ParamsFromSD.h"
 #include "Logger.h"
 #include "RealTimeI2C.h"
+#include "ResetScheduler.h"
 
 /**
  * @brief Type to associate a command with an ammount of data
@@ -45,6 +46,8 @@ namespace UART_command_names
     static const uint8_t update_error_code = 0x16;
     static const uint8_t get_FSR_thesholds = 0x17;
     static const uint8_t update_FSR_thesholds = 0x18;
+    static const uint8_t get_system_reset = 0x19;
+    static const uint8_t update_system_reset = 0x1A;
 };
 
 /**
@@ -609,6 +612,26 @@ namespace UART_command_handlers
         exo_data->left_side.toe_fsr_upper_threshold = msg.data[(uint8_t)UART_command_enums::FSR_thresholds::LEFT_THRESHOLD] + fsr_config::SCHMITT_DELTA;
         exo_data->left_side.toe_fsr_lower_threshold = msg.data[(uint8_t)UART_command_enums::FSR_thresholds::LEFT_THRESHOLD] - fsr_config::SCHMITT_DELTA;
     }
+
+    // Request a system reset on the receiving MCU (used to reboot Teensy from Nano)
+    inline static void get_system_reset(UARTHandler *handler, ExoData *exo_data, UART_msg_t msg)
+    {
+        (void)handler;
+        (void)msg;
+
+        // Put system in a safe state before rebooting
+        exo_data->for_each_joint([](JointData* j_data, float* args)
+        {
+            (void)args;
+            j_data->motor.enabled = 0;
+            return;
+        });
+        exo_data->set_status(status_defs::messages::trial_off);
+
+        // Non-blocking: schedule reset a couple ms from now
+        reset_scheduler::request(0);
+    }
+
 };
 
 namespace UART_command_utils
@@ -807,6 +830,10 @@ namespace UART_command_utils
             break;
         case UART_command_names::update_FSR_thesholds:
             UART_command_handlers::update_FSR_thesholds(handler, exo_data, msg);
+            break;
+
+        case UART_command_names::get_system_reset:
+            UART_command_handlers::get_system_reset(handler, exo_data, msg);
             break;
 
 
