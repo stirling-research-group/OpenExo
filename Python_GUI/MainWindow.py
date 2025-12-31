@@ -87,7 +87,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._controller_matrix = []
         # Track intentional disconnect
         self._intentional_disconnect = False
-
+        # Suppress unexpected-disconnect popup for a brief window after intentional actions (e.g., End Trial)
+        self._suppress_disconnect_popup_until = 0.0
         # Device control wiring from ActiveTrialPage
         self.trial_page.deviceStartRequested.connect(self._on_device_start)
         self.trial_page.deviceStopRequested.connect(self._on_device_stop_motors)
@@ -323,6 +324,10 @@ class MainWindow(QtWidgets.QMainWindow):
             # Mark as intentional disconnect
             self._intentional_disconnect = True
             
+            # A disconnect may fire more than once (explicit disconnect + OS callback);
+            # suppress the "unexpected disconnect" popup for a short window.
+            self._suppress_disconnect_popup_until = time.monotonic() + 3.0
+
             # Navigate to scan page immediately
             self.stack.setCurrentWidget(self.scan_page)
             
@@ -363,6 +368,8 @@ class MainWindow(QtWidgets.QMainWindow):
             # Mark as intentional disconnect
             self._intentional_disconnect = True
             
+            self._suppress_disconnect_popup_until = time.monotonic() + 3.0
+
             # Navigate to scan page immediately
             self.stack.setCurrentWidget(self.scan_page)
             
@@ -560,9 +567,12 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot()
     def _on_dev_disconnected(self):
         try:
-            # Check if this was an intentional disconnect
-            is_intentional = self._intentional_disconnect
-            self._intentional_disconnect = False  # Reset flag
+            # Check if this was an intentional disconnect (or immediately followed an intentional action)
+            now = time.monotonic()
+            is_intentional = self._intentional_disconnect or (now < self._suppress_disconnect_popup_until)
+            # Reset flag (but keep the time window so duplicate disconnect signals don't trigger a popup)
+            self._intentional_disconnect = False
+
             
             self.scan_page.status.setText("Disconnected")
             self.scan_page.btn_save_connect.setEnabled(True)
