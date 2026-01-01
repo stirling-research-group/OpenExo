@@ -95,6 +95,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trial_page.csvPreambleChanged.connect(self._on_csv_preamble_changed)
         self.trial_page.recalibrateFSRRequested.connect(self._on_recal_fsr)
         self.trial_page.sendPresetFSRRequested.connect(self._on_send_preset_fsr)
+        self.trial_page.recalibrateTorqueRequested.connect(self._on_recal_torque)
         self.trial_page.markTrialRequested.connect(self._on_mark)
         self.trial_page.endTrialRequested.connect(self._on_end_trial)
         self.trial_page.saveCsvRequested.connect(self._on_save_csv)
@@ -302,6 +303,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_send_preset_fsr(self):
         try:
             self.qt_dev.sendPresetFsrValues()
+        except Exception:
+            pass
+
+    @QtCore.Slot()
+    def _on_recal_torque(self):
+        try:
+            self.qt_dev.calibrateTorque()
         except Exception:
             pass
 
@@ -652,5 +660,4 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception:
             self._csv_file = None
             self._csv_writer = None
-
 

@@ -25,6 +25,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     machineLearningRequested = QtCore.Signal()
     recalibrateFSRRequested = QtCore.Signal()
     sendPresetFSRRequested = QtCore.Signal()
+    recalibrateTorqueRequested = QtCore.Signal()
     markTrialRequested = QtCore.Signal()
     deviceStartRequested = QtCore.Signal()
     deviceStopRequested = QtCore.Signal()
@@ -48,7 +49,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         new_font_size = int(self._base_button_font_size * scale_factor)
         for btn in [self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
                     self.btn_set_preamble, self.btn_update_controller, self.btn_bio_feedback,
-                    self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr,
+                    self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr, self.btn_recal_torque,
                     self.btn_mark, self.btn_pause_play]:
             f = btn.font()
             f.setPointSize(new_font_size)
@@ -178,6 +179,9 @@ class ActiveTrialPage(QtWidgets.QWidget):
         
         self.btn_send_preset_fsr = QtWidgets.QPushButton("Send Preset FSR")
         controls.addWidget(self.btn_send_preset_fsr)
+
+        self.btn_recal_torque = QtWidgets.QPushButton("Recalibrate Torque Sensor")
+        controls.addWidget(self.btn_recal_torque)
         
         controls.addStretch(1)
 
@@ -226,6 +230,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_ml.clicked.connect(self.machineLearningRequested.emit)
         self.btn_recal_fsr.clicked.connect(self.recalibrateFSRRequested.emit)
         self.btn_send_preset_fsr.clicked.connect(self.sendPresetFSRRequested.emit)
+        self.btn_recal_torque.clicked.connect(self.recalibrateTorqueRequested.emit)
         self.btn_mark.clicked.connect(self.markTrialRequested.emit)
 
         # Make buttons dynamically resize with window
@@ -249,6 +254,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
             self.btn_ml,
             self.btn_recal_fsr,
             self.btn_send_preset_fsr,
+            self.btn_recal_torque,
             self.btn_mark,
             self.btn_pause_play,
         ):
@@ -409,7 +415,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         """Show dialog to set CSV filename preamble."""
         text, ok = QtWidgets.QInputDialog.getText(
             self,
-            "Set CSV Filename Prefix",
+            "Set CSV Filename Prefix + Save new CSV",
             "Enter prefix for CSV filenames (e.g., 'OutdoorShod'):",
             QtWidgets.QLineEdit.Normal,
             ""
@@ -509,5 +515,4 @@ def _demo():
 
 if __name__ == "__main__":
     _demo()
-
 
