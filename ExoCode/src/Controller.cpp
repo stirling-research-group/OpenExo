@@ -2671,7 +2671,7 @@ float PJMC_PLUS::calc_motor_cmd()
 	float cmd;
 	
     //PID on Motor Command
-    cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, 20 * _controller_data->parameters[controller_defs::pjmc_plus::kp], 80 * _controller_data->parameters[controller_defs::pjmc_plus::ki], 20 * _controller_data->parameters[controller_defs::pjmc_plus::kd]);
+    cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::pjmc_plus::kp], _controller_data->parameters[controller_defs::pjmc_plus::ki], _controller_data->parameters[controller_defs::pjmc_plus::kd]);
 
     #ifdef CONTROLLER_DEBUG
     logger::println("pjmcPlus::calc_motor_cmd : stop");
