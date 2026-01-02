@@ -11,7 +11,6 @@
 #include "ParamsFromSD.h"
 #include "Logger.h"
 #include "RealTimeI2C.h"
-#include "ResetScheduler.h"
 
 /**
  * @brief Type to associate a command with an ammount of data
@@ -46,8 +45,6 @@ namespace UART_command_names
     static const uint8_t update_error_code = 0x16;
     static const uint8_t get_FSR_thesholds = 0x17;
     static const uint8_t update_FSR_thesholds = 0x18;
-    static const uint8_t get_system_reset = 0x19;
-    static const uint8_t update_system_reset = 0x1A;
 };
 
 /**
@@ -363,9 +360,9 @@ namespace UART_command_handlers
         case (uint8_t)config_defs::exo_name::bilateral_ankle:
 		{
             rx_msg.len = (uint8_t)rt_data::BILATERAL_ANKLE_RT_LEN;
-            rx_msg.data[0] = exo_data->left_side.ankle.controller.ff_setpoint;
+            rx_msg.data[0] = exo_data->left_side.ankle.controller.filtered_setpoint;
             rx_msg.data[1] = exo_data->left_side.ankle.controller.filtered_torque_reading;
-			rx_msg.data[2] = exo_data->right_side.ankle.controller.ff_setpoint;
+			rx_msg.data[2] = exo_data->right_side.ankle.controller.filtered_setpoint;
 			rx_msg.data[3] = exo_data->right_side.ankle.controller.filtered_torque_reading;
 			rx_msg.data[4] = exo_data->left_side.toe_fsr;
             rx_msg.data[5] = exo_data->left_side.toe_stance;
@@ -628,8 +625,6 @@ namespace UART_command_handlers
         });
         exo_data->set_status(status_defs::messages::trial_off);
 
-        // Non-blocking: schedule reset a couple ms from now
-        reset_scheduler::request(0);
     }
 
 };
@@ -830,10 +825,6 @@ namespace UART_command_utils
             break;
         case UART_command_names::update_FSR_thesholds:
             UART_command_handlers::update_FSR_thesholds(handler, exo_data, msg);
-            break;
-
-        case UART_command_names::get_system_reset:
-            UART_command_handlers::get_system_reset(handler, exo_data, msg);
             break;
 
 

@@ -9,7 +9,6 @@
 #include "UART_msg_t.h"
 #include "uart_commands.h"
 #include "Logger.h"
-#include "ResetScheduler.h"
 
 //#define EXO_DEBUG  //Uncomment if you want the debug statements to print to serial monitor
 
@@ -101,7 +100,6 @@ bool Exo::run()
         //Check for incoming UART messages
         UART_msg_t msg = handler->poll(UART_times::CONT_MCU_TIMEOUT);       //UART_times::CONT_MCU_TIMEOUT is in Config.h
         UART_command_utils::handle_msg(handler, data, msg);
-        reset_scheduler::update();
 
         //Send the coms mcu the real time data every _real_time_msg_delay microseconds
         rt_delta_t += t_helper->tick(rt_context);

@@ -688,7 +688,6 @@ void loop()
 #include "src/ComsLed.h"
 #include "src/RealTimeI2C.h"
 #include "src/GetBulkChar.h"
-#include "src/ResetScheduler.h"
 
 #include "src/WaistBarometer.h"
 #include "src/InclineDetector.h"
@@ -823,9 +822,6 @@ void loop()
     mcu->update_UART();
     mcu->update_gui();
     mcu->handle_errors();
-
-    // Non-blocking scheduled reset support
-    reset_scheduler::update();
 
     #if MAIN_DEBUG
         static float then = millis();

@@ -41,7 +41,11 @@ namespace controller_defs                   /**< Stores the parameter indexes fo
         const uint8_t i_gain_idx = 5;                       //Value of I Gain for PID control
         const uint8_t d_gain_idx = 6;                       //Value of D Gain for PID control 
         const uint8_t torque_alpha_idx = 7;                 //Filtering term
-        const uint8_t num_parameter = 8;
+        const uint8_t GS_Flag = 8;                          // 0 = off, 1 = on
+        const uint8_t kp_zero = 9;                          // reduced gains near zero-torque
+        const uint8_t ki_zero = 10;
+        const uint8_t kd_zero = 11;
+        const uint8_t num_parameter = 12;
     }
 
     namespace zhang_collins

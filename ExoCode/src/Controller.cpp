@@ -211,7 +211,7 @@ float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain
     //Calculate the derivative of the erro
     if (time_good)
     {
-       de_dt = -(measurement - _prev_input) * (1000.0f / LOOP_FREQ_HZ);  //Convert to ms
+       de_dt = -(measurement - _prev_input) * (LOOP_FREQ_HZ);  //Convert to ms
        _prev_de_dt = de_dt;
     }
     else 
@@ -551,7 +551,7 @@ float ProportionalJointMoment::calc_motor_cmd()
     /* Low-Pass Filter Measured Torque */
 	const float torque = _joint_data->torque_reading;
     const float alpha = (_controller_data->parameters[controller_defs::proportional_joint_moment::torque_alpha_idx] != 0) ? _controller_data->parameters[controller_defs::proportional_joint_moment::torque_alpha_idx] : 0.5;
-    _controller_data->filtered_torque_reading = utils::ewma(torque, _controller_data->filtered_torque_reading, 1); //NOTE: Currently hard coded to not filer, can do so by replacing 1 with alpha
+    _controller_data->filtered_torque_reading = utils::ewma(torque, _controller_data->filtered_torque_reading, alpha); 
 
     /* Find the maximum measured torque and maximum setpoint during stance */
     if (_side_data->toe_stance) 
@@ -597,10 +597,49 @@ float ProportionalJointMoment::calc_motor_cmd()
     /* If the PID flag is enalbed, do PID control, otherwise just send feed-forward command. */
     if (_controller_data->parameters[controller_defs::proportional_joint_moment::use_pid_idx])
     {
+        // --------------------------- Gain scheduling (optional) ------------------------------
+        
+        // Defaults to nominal gains if gain scheduling is not enabled
+        float kp_use = _controller_data->parameters[controller_defs::proportional_joint_moment::p_gain_idx];
+        float ki_use = _controller_data->parameters[controller_defs::proportional_joint_moment::i_gain_idx];
+        float kd_use = _controller_data->parameters[controller_defs::proportional_joint_moment::d_gain_idx];
 
-		cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::proportional_joint_moment::p_gain_idx], _controller_data->parameters[controller_defs::proportional_joint_moment::i_gain_idx], _controller_data->parameters[controller_defs::proportional_joint_moment::d_gain_idx]);
+        const bool gain_sched_enabled =
+            (_controller_data->parameters[controller_defs::proportional_joint_moment::GS_Flag] > 0.5f);
 
-	}
+        if (gain_sched_enabled)
+        {
+            // Conditions for "near zero" gains:
+            // - setpoint is between +/- 3.5 Nm
+            // - measured torque is within +/- 3.5 Nm of setpoint
+            const float ZERO_BAND_NM = 3.5f;
+            const bool near_zero_setpoint = (fabsf(_controller_data->filtered_setpoint) < 4);
+            const bool near_zero_measured  = (fabsf(_controller_data->filtered_torque_reading) <= ZERO_BAND_NM);
+
+            if (near_zero_setpoint && near_zero_measured)
+            {
+                kp_use = _controller_data->parameters[controller_defs::proportional_joint_moment::kp_zero];
+                ki_use = _controller_data->parameters[controller_defs::proportional_joint_moment::ki_zero];
+                kd_use = _controller_data->parameters[controller_defs::proportional_joint_moment::kd_zero];
+    
+            }
+            else
+            {
+                kp_use = _controller_data->parameters[controller_defs::proportional_joint_moment::p_gain_idx];
+                ki_use = _controller_data->parameters[controller_defs::proportional_joint_moment::i_gain_idx];
+                kd_use = _controller_data->parameters[controller_defs::proportional_joint_moment::d_gain_idx];
+            }
+            
+        } // End of gain scheduling
+
+        // PID on Motor Command
+        cmd =  _pid(_controller_data->filtered_setpoint,
+                            _controller_data->filtered_torque_reading,
+                            kp_use,
+                            ki_use,
+                            kd_use);
+			
+    } // End of PID flag check
     else
     {
         cmd = cmd_ff;
