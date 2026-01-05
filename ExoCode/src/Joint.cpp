@@ -524,20 +524,7 @@ void HipJoint::run_joint()
         for (int i=0; i < _error_manager.errorQueueSize(); i++)
         {
             _motor->set_error();
-
-            // Pop the next error, report it, and apply any per-error safety actions.
-            const ErrorCodes code = _error_manager.popError();
-            ErrorReporter::get_instance()->report(code,_id);
-
-            // Safety: If an over-torque condition is detected on a Maxon motor,
-            // force the Maxon motor(s) OFF in the same way as the GUI motors_off ('pause') command.
-            if ((code == TORQUE_OUT_OF_BOUNDS_ERROR) &&
-                (_joint_data->motor.motor_type == (uint8_t)config_defs::motor::MaxonMotor))
-            {
-                // Match GUI pause behavior by flipping the enabled flag and forcing an enable(false) command.
-                _joint_data->motor.enabled = false;
-                _motor->enable(false);
-            }
+            ErrorReporter::get_instance()->report(_error_manager.popError(),_id);
         }
     }
 
