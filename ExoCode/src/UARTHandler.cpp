@@ -4,6 +4,8 @@
 
 #define MAX_NUM_LEGS 2
 #define MAX_NUM_JOINTS_PER_LEG 2 //Current PCB can only do 2 motors per side, if you have made a new PCB, update.
+#define UART_DATA_TYPE short int //If type is changes you will need to comment/uncomment lines in pack_float and unpack_float
+#define FIXED_POINT_FACTOR 100
 
 //Set to 1 to enable debug prints
 #define DEBUG_UART_HANDLER 0
@@ -157,13 +159,14 @@ void UARTHandler::_pack(uint8_t msg_id, uint8_t len, uint8_t joint_id, float *da
     data_to_pack[COMMAND] = msg_id;
     data_to_pack[JOINT_ID] = joint_id;
     
-    constexpr uint8_t bytes_per_float = sizeof(float);
-    uint8_t buf[bytes_per_float];
+    //Convert float array to short int array
+    uint8_t _num_bytes = sizeof(float)/sizeof(UART_DATA_TYPE);
+    uint8_t buf[_num_bytes];
     for (int i=0; i<len; i++)
     {
-        utils::float_to_uint8(data[i], buf);
-        uint8_t _offset = (DATA_START) + bytes_per_float*i;
-        memcpy((data_to_pack + _offset), buf, bytes_per_float);
+        utils::float_to_short_fixed_point_bytes(data[i], buf, FIXED_POINT_FACTOR);
+        uint8_t _offset = (DATA_START) + _num_bytes*i;
+        memcpy((data_to_pack + _offset), buf, _num_bytes);
     }
 }
 
@@ -172,19 +175,17 @@ UART_msg_t UARTHandler::_unpack(uint8_t* data, uint8_t len)
     UART_msg_t msg;
     msg.command = data[COMMAND];
     msg.joint_id = data[JOINT_ID];
-    const uint8_t bytes_per_float = sizeof(float);
-    if (len < DATA_START) {
-        msg.len = 0;
-        return msg;
-    }
-    msg.len = (len - DATA_START) / bytes_per_float;
+    float _total_len = len*sizeof(uint8_t);
+    float _meta_len = sizeof(msg.command)+sizeof(msg.joint_id);
+    float _conv_factor = ((float)sizeof(UART_DATA_TYPE)/(float)sizeof(float));
+    msg.len = (_total_len - _meta_len) * _conv_factor;
 
     //Fill msg.data, converting the short ints to floats
-    for (int i=0; i<msg.len; i++)
+    for (int i=0; i<len; i++)
     {
-        uint8_t _data_offset = (DATA_START) + (i * bytes_per_float);
+        uint8_t _data_offset = (DATA_START) + (i*2);
         float tmp = 0;
-        utils::uint8_to_float((uint8_t*)data+_data_offset, &tmp);
+        utils::short_fixed_point_bytes_to_float((uint8_t*)data+_data_offset, &tmp, FIXED_POINT_FACTOR);
         msg.data[i] = tmp;
     }
 
@@ -193,11 +194,12 @@ UART_msg_t UARTHandler::_unpack(uint8_t* data, uint8_t len)
 
 uint8_t UARTHandler::_get_packed_length(uint8_t msg_id, uint8_t len, uint8_t joint_id, float *data)
 {
-    const uint8_t bytes_per_float = sizeof(float);
-    uint8_t packed_len = 0;
-    packed_len += DATA_START; // command + joint_id
-    packed_len += len * bytes_per_float;
-    return packed_len;
+    uint8_t _val = 0;
+    //We are converting from float to short int, we must multiply by the size difference
+    _val += (float)len * (sizeof(float)/sizeof(UART_DATA_TYPE));
+    _val += sizeof(msg_id);
+    _val += sizeof(joint_id); 
+    return _val;
 }
 
 

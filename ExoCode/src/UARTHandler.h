@@ -23,6 +23,8 @@
 #define MAX_NUM_JOINTS_PER_SIDE 2   //Current PCB can only do 2 motors per side, if you have made a new PCB, update.
 #define MAX_RAW_BUFFER_SIZE 256
 #define MAX_DATA_SIZE 32
+#define UART_DATA_TYPE short int //If type is changes you will need to comment/uncomment lines in pack_float and unpack_float
+#define FIXED_POINT_FACTOR 100
 #define UART_BAUD 256000
 
 #define MAX_RX_LEN 64       //Bytes
