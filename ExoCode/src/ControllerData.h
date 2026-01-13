@@ -406,12 +406,6 @@ class ControllerData {
         //Variables for the PHMC Controller
         float fs;
         float state;
-		
-		//Variables for the PJMC_PLUS engineering validation controller (SPV2 step response)
-		unsigned long SPV2_step_millis = 0;
-		float SPV2_step_old_setpoint = 0;
-		bool SPV2_in_step_mode = false;
-		
 };      
 
 #endif
