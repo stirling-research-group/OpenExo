@@ -11,10 +11,6 @@
 #include <math.h>
 #include <random>
 #include <cmath>
-/* #include <Adafruit_INA260.h>
-//#include <Adafruit_INA219.h>
-Adafruit_INA260 ina260 = Adafruit_INA260();
-//Adafruit_INA219 ina219; */
 
 _Controller::_Controller(config_defs::joint_id id, ExoData* exo_data)
 {
@@ -2426,7 +2422,9 @@ float SPV2::calc_motor_cmd()
 		}
 		else if ((_controller_data->parameters[controller_defs::spv2::soft_or_stiff] >= 10) && (_controller_data->parameters[controller_defs::spv2::soft_or_stiff] <= 20)) {
 			uint8_t stiffness_cache = map(_controller_data->parameters[controller_defs::spv2::soft_or_stiff], 10, 20, _controller_data->parameters[controller_defs::spv2::servo_angle_soft], _controller_data->parameters[controller_defs::spv2::servo_angle_stiff]);
-			neutral_stiffness = constrain(stiffness_cache, _controller_data->parameters[controller_defs::spv2::servo_angle_soft], _controller_data->parameters[controller_defs::spv2::servo_angle_stiff]);
+
+			neutral_stiffness = max(min(stiffness_cache,max(_controller_data->parameters[controller_defs::spv2::servo_angle_soft], _controller_data->parameters[controller_defs::spv2::servo_angle_stiff])),min(_controller_data->parameters[controller_defs::spv2::servo_angle_soft], _controller_data->parameters[controller_defs::spv2::servo_angle_stiff]));
+
 		}
 		
 		
@@ -2439,7 +2437,8 @@ float SPV2::calc_motor_cmd()
 		uint16_t exo_status = _data->get_status();
 		bool active_trial = (exo_status == status_defs::messages::trial_on) || (exo_status == status_defs::messages::fsr_calibration) || (exo_status == status_defs::messages::fsr_refinement);
 		
-		/* if (!_controller_data->ps_connected) {
+		
+		if (!_controller_data->ps_connected) {
 			if (!ina260.begin()) {
 				Serial.println("Couldn't find INA260 chip");
 				while (1);
@@ -2466,7 +2465,7 @@ float SPV2::calc_motor_cmd()
 		}
 		//Serial.print("\n*********Teensy received battery voltage: ");
 		//Serial.print(ina219.getBusVoltage_V());
-		//Calculate system power usage during 30 seconds */
+		//Calculate system power usage during 30 seconds
 		
 		
 	//Calculate Generic Contribution
@@ -2647,10 +2646,10 @@ float SPV2::calc_motor_cmd()
 				//Serial.print("\nStep count: ");
 				//Serial.print(_controller_data->SPV2_step_count);
 			_controller_data->SPV2_motor_off = 20;
-			if ((servo_switch) && (_controller_data->servo_did_go_down) && ((_controller_data->filtered_torque_reading - cmd_ff) < 0) && (percent_grf > 0.1))
+			if ((servo_switch) && (_controller_data->servo_did_go_down) && ((_controller_data->filtered_torque_reading - cmd_ff) < 0) && (percent_grf > 0.02))
 			{
 				cmd = _pid(0, 0, 0, 0, 0);  //Reset the PID error sum by sending a 0 I gain
-				cmd = -25;                    //Send 0 Nm torque command to "turn off" the motor to extend the battery life
+				cmd = -20;                    //Send 0 Nm torque command to "turn off" the motor to extend the battery life
 				_controller_data->SPV2_motor_off = -20;
 			}
 			
