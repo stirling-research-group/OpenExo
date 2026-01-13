@@ -2437,8 +2437,8 @@ float SPV2::calc_motor_cmd()
 		uint16_t exo_status = _data->get_status();
 		bool active_trial = (exo_status == status_defs::messages::trial_on) || (exo_status == status_defs::messages::fsr_calibration) || (exo_status == status_defs::messages::fsr_refinement);
 		
-		
-		if (!_controller_data->ps_connected) {
+		//Block uncomment the following section if the device has an INA260 chip
+		/* if (!_controller_data->ps_connected) {
 			if (!ina260.begin()) {
 				Serial.println("Couldn't find INA260 chip");
 				while (1);
@@ -2465,7 +2465,7 @@ float SPV2::calc_motor_cmd()
 		}
 		//Serial.print("\n*********Teensy received battery voltage: ");
 		//Serial.print(ina219.getBusVoltage_V());
-		//Calculate system power usage during 30 seconds
+		//Calculate system power usage during 30 seconds */
 		
 		
 	//Calculate Generic Contribution
