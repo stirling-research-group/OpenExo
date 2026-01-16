@@ -249,6 +249,7 @@ class ControllerData {
 
         float setpoint;                                     /**< Controller setpoint, basically the motor command. */
         float ff_setpoint;                                  /**< Feed forwared setpoint, only updated in closed loop controllers */
+        float desired_torque;                               /**< Desired torque command for the controller */
         float parameters[controller_defs::max_parameters];  /**< Parameter list for the controller see the controller_defs namespace for the specific controller. */
         uint8_t parameter_set;                              /**< Temporary value used to store the parameter set while we are pulling from the sd card. */
 

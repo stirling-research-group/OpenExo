@@ -274,8 +274,12 @@ float ZeroTorque::calc_motor_cmd()
     //Set the feed-forward setpoint to the feed-forward command
     _controller_data->ff_setpoint = cmd_ff;
 
+    //Set the desired torque for plotting
+    _controller_data->desired_torque = cmd_ff;
+
     //Send the motor command
     return cmd;
+
 }
 
 //****************************************************
@@ -489,6 +493,9 @@ float TREC::calc_motor_cmd()
 	_controller_data->setpoint = cmd;
     _controller_data->filtered_setpoint = squelched_propulsive_term;
 
+    //Set the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->filtered_setpoint;
+
     #ifdef CONTROLLER_DEBUG
         logger::println("TREC::calc_motor_cmd : stop");
     #endif
@@ -644,6 +651,9 @@ float ProportionalJointMoment::calc_motor_cmd()
     /* Filter the commnad being sent to the motor. */
     _controller_data->filtered_cmd = utils::ewma(cmd, _controller_data->filtered_cmd, 1);
 
+    //Set the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->filtered_setpoint;
+
     /* Send the motor the command. */
     return _controller_data->filtered_cmd;
 }
@@ -701,6 +711,9 @@ float ZhangCollins::calc_motor_cmd()
     //Sets previous command for next loop of controller
 	_controller_data->previous_cmd = cmd;
 	
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = torque_cmd;
+
     return cmd;
 };
 
@@ -873,6 +886,9 @@ float FranksCollinsHip::calc_motor_cmd()
         cmd = torque_cmd;
     }
 
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = torque_cmd;
+
     return cmd;
 }
 
@@ -1012,6 +1028,9 @@ float ConstantTorque::calc_motor_cmd()
     previous_command = cmd_ff;
 
     previous_torque_reading = _controller_data->filtered_torque_reading;
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = cmd_ff;
 
     return cmd;
 }
@@ -1288,6 +1307,9 @@ float ElbowMinMax::calc_motor_cmd()
     //Get motor command based on PID
     cmd = _controller_data->filtered_setpoint + _pid(_controller_data->filtered_setpoint, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::elbow_min_max::P_gain_idx], _controller_data->parameters[controller_defs::elbow_min_max::I_gain_idx], _controller_data->parameters[controller_defs::elbow_min_max::D_gain_idx]);       //originally, (10, 0, 200)
 
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->filtered_setpoint;
+
     return cmd;
 }
 
@@ -1378,7 +1400,10 @@ float CalibrManager::calc_motor_cmd()
 	
 	_controller_data->ff_setpoint = cmd;
     return cmd;
-	
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->ff_setpoint;
+
 }
 
 //****************************************************
@@ -1488,6 +1513,9 @@ float Chirp::calc_motor_cmd()
     {
         return 0;
     }
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->ff_setpoint;
 
 }
 
@@ -1643,6 +1671,9 @@ float Step::calc_motor_cmd()
     //        Serial.print("\n");
     //    }
     //}
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = cmd_ff;
 
     return cmd;
 }
@@ -1974,6 +2005,9 @@ float ProportionalHipMoment::calc_motor_cmd()
 
     //Set the motor command equal to the setpoint, this is for open-loop control, we would need a torque sensor and to call the PID function if we wanted to do closed-loop
     float cmd = setpoint;
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = setpoint;
 
     //Return the Motor Command
     return cmd;
@@ -2673,6 +2707,10 @@ float SPV2::calc_motor_cmd()
 		}
 
 	}
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->ff_setpoint;
+
 }
 
 //****************************************************
@@ -2720,6 +2758,9 @@ float PJMC_PLUS::calc_motor_cmd()
 	_controller_data->setpoint = cmd;
     _controller_data->filtered_setpoint = cmd;
 	
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = _controller_data->ff_setpoint;
+    
 	return cmd;
 }
 #endif
