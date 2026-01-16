@@ -73,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rt_bridge.controllersReceived.connect(self._on_controllers)
         # Receive flattened 2D matrix of controllers and parameters
         self.rt_bridge.controllerMatrixReceived.connect(self._on_controller_matrix)
+        self.qt_dev.deviceErrorReceived.connect(self._on_device_error_message)
 
         # CSV logging state
         self._csv_file = None
@@ -89,6 +90,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._intentional_disconnect = False
         # Suppress unexpected-disconnect popup for a brief window after intentional actions (e.g., End Trial)
         self._suppress_disconnect_popup_until = 0.0
+        # Error popup gating to avoid repeated dialogs
+        self._error_popup_active = False
+        self._last_error_code = None
+        self._last_error_time = 0.0
+        self._error_popup_cooldown_s = 3.0
         # Device control wiring from ActiveTrialPage
         self.trial_page.deviceStartRequested.connect(self._on_device_start)
         self.trial_page.deviceStopRequested.connect(self._on_device_stop_motors)
@@ -512,6 +518,54 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception:
             pass
 
+    @QtCore.Slot(str)
+    def _on_device_error_message(self, msg: str):
+        error_names = {
+            0: "NO_ERROR",
+            1: "TEST_ERROR",
+            2: "POOR_STATE_VARIANCE_ERROR",
+            3: "POOR_TRANSMISSION_EFFICIENCY_ERROR",
+            4: "TORQUE_OUT_OF_BOUNDS_ERROR",
+            5: "TORQUE_VARIANCE_ERROR",
+            6: "FORCE_VARIANCE_ERROR",
+            7: "TRACKING_ERROR",
+            8: "MOTOR_TIMEOUT_ERROR",
+        }
+        message = msg
+        code = None
+        try:
+            parts = msg.split(":", 1)
+            if len(parts) == 2:
+                code = int(parts[0].strip())
+                joint_id = parts[1].strip()
+                name = error_names.get(code, f"UNKNOWN_ERROR_{code}")
+                message = f"{name} (code {code}, joint {joint_id})"
+        except Exception:
+            pass
+
+        if code == 0:
+            self._error_popup_active = False
+            self._last_error_code = None
+            return
+
+        now = time.monotonic()
+        if self._error_popup_active:
+            return
+        if (self._last_error_code == code) and ((now - self._last_error_time) < self._error_popup_cooldown_s):
+            return
+
+        try:
+            QtWidgets.QMessageBox.warning(self, "Device Error", message)
+        except Exception:
+            pass
+        try:
+            self.qt_dev.motorOff()
+        except Exception:
+            pass
+        self._error_popup_active = True
+        self._last_error_code = code
+        self._last_error_time = now
+
     @QtCore.Slot(str, str)
     def _on_dev_connected(self, name: str, addr: str):
         try:
@@ -525,6 +579,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 pass
         except Exception:
             pass
+        self._error_popup_active = False
+        self._last_error_code = None
         # Clear old plot data on reconnect
         try:
             self.trial_page.clear_plots()
@@ -586,6 +642,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     pass
         except Exception:
             pass
+        self._error_popup_active = False
+        self._last_error_code = None
 
     def _start_csv_auto(self):
         # Save within Qt/Saved_Data
@@ -619,4 +677,3 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception:
             self._csv_file = None
             self._csv_writer = None
-

@@ -18,6 +18,7 @@ except Exception:
 UART_SERVICE_UUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
 UART_TX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"  # Write
 UART_RX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"  # Notify
+ERROR_CHAR_UUID = "33b65d43-611c-11ed-9b6a-0242ac120002"  # Notify
 
 
 class QtExoDeviceManager(QtCore.QObject):
@@ -33,6 +34,7 @@ class QtExoDeviceManager(QtCore.QObject):
     error = QtCore.Signal(str)
     log = QtCore.Signal(str)
     dataReceived = QtCore.Signal(bytes)     # raw bytes from UART RX notify
+    deviceErrorReceived = QtCore.Signal(str)  # error messages from ErrorChar notify
     scanResults = QtCore.Signal(list)       # list[(name, address)]
 
     def __init__(self, parent=None):
@@ -172,8 +174,17 @@ class QtExoDeviceManager(QtCore.QObject):
                                 except Exception:
                                     pass
 
+                            def _on_error(sender, data: bytearray):
+                                try:
+                                    msg = bytes(data).decode("utf-8", errors="ignore").strip("\x00").strip()
+                                    if msg:
+                                        self.deviceErrorReceived.emit(msg)
+                                except Exception:
+                                    pass
+
                             self.log.emit("Starting notifications…")
                             await client.start_notify(UART_RX_UUID, _on_rx)
+                            await client.start_notify(ERROR_CHAR_UUID, _on_error)
 
                             self._client = client
                             self._is_connected = True
@@ -205,6 +216,10 @@ class QtExoDeviceManager(QtCore.QObject):
                 if self._client:
                     try:
                         await self._client.stop_notify(UART_RX_UUID)
+                    except Exception:
+                        pass
+                    try:
+                        await self._client.stop_notify(ERROR_CHAR_UUID)
                     except Exception:
                         pass
                     try:
@@ -559,5 +574,4 @@ class QtExoDeviceManager(QtCore.QObject):
             return False
 
     # Removed invalid get_char_handle; bleak accepts UUIDs directly
-
 
