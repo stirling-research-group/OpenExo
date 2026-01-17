@@ -91,7 +91,7 @@ class ScanWindowQt(QtWidgets.QWidget):
             print(f"Error loading OpenExo logo: {e}")
         
         # Add centered title
-        self.title = QtWidgets.QLabel("OpenExo GUI - Qt Scan")
+        self.title = QtWidgets.QLabel("OpenExo GUI - v2.0")
         self.title.setAlignment(QtCore.Qt.AlignCenter)
         self.title.setContentsMargins(0, 0, 0, 0)
         font = self.title.font()
