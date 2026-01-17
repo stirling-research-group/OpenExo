@@ -148,6 +148,7 @@ namespace config_defs
         step = 6,
         phmc = 7,
 		calibr_manager = 8,
+        spline = 9,
 		
 		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
@@ -177,6 +178,7 @@ namespace config_defs
         step = 9,
 		spv2 = 10,
 		pjmc_plus = 11,
+        spline = 12,
 		
 		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
@@ -428,6 +430,7 @@ namespace config_defs
             {"step", (uint8_t)config_defs::hip_controllers::step},
             {"phmc", (uint8_t)config_defs::hip_controllers::phmc},
 			{"calibrManager", (uint8_t)config_defs::hip_controllers::calibr_manager},
+            {"spline", (uint8_t)config_defs::hip_controllers::spline},
 
         };
         
@@ -454,6 +457,7 @@ namespace config_defs
             {"step", (uint8_t)config_defs::ankle_controllers::step},
 			{"SPV2", (uint8_t)config_defs::ankle_controllers::spv2},
 			{"PJMC_PLUS", (uint8_t)config_defs::ankle_controllers::pjmc_plus},
+            {"spline", (uint8_t)config_defs::ankle_controllers::spline},
         };  
 
         const IniKeyCode elbow_controllers

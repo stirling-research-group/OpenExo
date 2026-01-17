@@ -20,6 +20,8 @@ _Controller::_Controller(config_defs::joint_id id, ExoData* exo_data)
     _t_helper = Time_Helper::get_instance();
     _t_helper_context = _t_helper->generate_new_context();
     _t_helper_delta_t = 0;
+    _sim_gait_context = _t_helper->generate_new_context();
+    _sim_elapsed_us = 0.0f;
     
     //We just need to know the side to point at the right data location so it is only for the constructor
     bool is_left = utils::get_is_left(_id);
@@ -227,6 +229,19 @@ float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain
     //Return the summed PID
     return p + i + d;
 
+}
+
+//****************************************************
+
+float _Controller::_get_percent_gait(bool simulate)
+{
+    if (!simulate)
+    {
+        return _side_data->percent_stance;
+    }
+
+    _sim_elapsed_us += _t_helper->tick(_sim_gait_context);
+    return fmodf(_sim_elapsed_us, 1000000.0f) / 1000000.0f * 100.0f;
 }
 
 //****************************************************
@@ -676,7 +691,7 @@ float ZhangCollins::calc_motor_cmd()
 {
     
     //Calculates Percent Gait
-    float percent_gait = _side_data->percent_stance;
+    float percent_gait = _get_percent_gait(_controller_data->parameters[controller_defs::zhang_collins::sim_gait_idx] > 0.0f);
 			
     //Pull in user defined parameter values
     float peak_torque_Nm = _controller_data->parameters[controller_defs::zhang_collins::torque_idx];
@@ -759,6 +774,132 @@ float ZhangCollins::_spline_generation(float node1, float node2, float node3, fl
 
 //****************************************************
 
+Spline::Spline(config_defs::joint_id id, ExoData* exo_data)
+: _Controller(id, exo_data)
+{
+    #ifdef CONTROLLER_DEBUG
+        logger::println("Spline::Constructor");
+    #endif
+};
+
+float Spline::calc_motor_cmd()
+{
+    float percent_gait = _get_percent_gait(_controller_data->parameters[controller_defs::spline::sim_gait_idx] > 0.0f);
+
+    float x[5] =
+    {
+        _controller_data->parameters[controller_defs::spline::node1_x_idx],
+        _controller_data->parameters[controller_defs::spline::node2_x_idx],
+        _controller_data->parameters[controller_defs::spline::node3_x_idx],
+        _controller_data->parameters[controller_defs::spline::node4_x_idx],
+        _controller_data->parameters[controller_defs::spline::node5_x_idx],
+    };
+
+    float y[5] =
+    {
+        _controller_data->parameters[controller_defs::spline::node1_y_idx],
+        _controller_data->parameters[controller_defs::spline::node2_y_idx],
+        _controller_data->parameters[controller_defs::spline::node3_y_idx],
+        _controller_data->parameters[controller_defs::spline::node4_y_idx],
+        _controller_data->parameters[controller_defs::spline::node5_y_idx],
+    };
+
+    float torque_cmd = _spline_interpolate(x, y, percent_gait);
+
+    _controller_data->ff_setpoint = torque_cmd;
+    _controller_data->filtered_torque_reading = utils::ewma(_joint_data->torque_reading, _controller_data->filtered_torque_reading, 0.5f);
+
+    float cmd = 0.0f;
+    if (_controller_data->parameters[controller_defs::spline::use_pid_idx] > 0.0f)
+    {
+        cmd = torque_cmd + _pid(torque_cmd,
+                                _controller_data->filtered_torque_reading,
+                                _controller_data->parameters[controller_defs::spline::p_gain_idx],
+                                _controller_data->parameters[controller_defs::spline::i_gain_idx],
+                                _controller_data->parameters[controller_defs::spline::d_gain_idx]);
+    }
+    else
+    {
+        cmd = torque_cmd;
+    }
+
+    _controller_data->previous_cmd = cmd;
+    _controller_data->desired_torque = torque_cmd;
+
+    return cmd;
+}
+
+float Spline::_spline_interpolate(const float* x, const float* y, float percent_gait)
+{
+    const int n = 5;
+    float y2[n];
+    float u[n - 1];
+
+    for (int i = 1; i < n; ++i)
+    {
+        if (x[i] <= x[i - 1])
+        {
+            return 0.0f;
+        }
+    }
+
+    if (percent_gait <= x[0])
+    {
+        return y[0];
+    }
+    if (percent_gait >= x[n - 1])
+    {
+        return y[n - 1];
+    }
+
+    y2[0] = 0.0f;
+    u[0] = 0.0f;
+
+    for (int i = 1; i < n - 1; ++i)
+    {
+        float sig = (x[i] - x[i - 1]) / (x[i + 1] - x[i - 1]);
+        float p = (sig * y2[i - 1]) + 2.0f;
+        y2[i] = (sig - 1.0f) / p;
+
+        float dy_next = (y[i + 1] - y[i]) / (x[i + 1] - x[i]);
+        float dy_prev = (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+        float dd = dy_next - dy_prev;
+        u[i] = (6.0f * dd / (x[i + 1] - x[i - 1]) - sig * u[i - 1]) / p;
+    }
+
+    y2[n - 1] = 0.0f;
+
+    for (int k = n - 2; k >= 0; --k)
+    {
+        y2[k] = y2[k] * y2[k + 1] + u[k];
+    }
+
+    int k = 0;
+    for (int i = 0; i < n - 1; ++i)
+    {
+        if (percent_gait >= x[i] && percent_gait <= x[i + 1])
+        {
+            k = i;
+            break;
+        }
+    }
+
+    float h = x[k + 1] - x[k];
+    if (h <= 0.0f)
+    {
+        return 0.0f;
+    }
+
+    float a = (x[k + 1] - percent_gait) / h;
+    float b = (percent_gait - x[k]) / h;
+
+    return (a * y[k]) + (b * y[k + 1])
+        + (((a * a * a) - a) * y2[k] + ((b * b * b) - b) * y2[k + 1]) * (h * h) / 6.0f;
+}
+
+
+//****************************************************
+
 FranksCollinsHip::FranksCollinsHip(config_defs::joint_id id, ExoData* exo_data)
 : _Controller(id, exo_data)
 {
@@ -776,7 +917,7 @@ float FranksCollinsHip::calc_motor_cmd()
     float start_percent_gait = _controller_data->parameters[controller_defs::franks_collins_hip::start_percent_gait_idx];
 
     //Calculates the percent gait
-    float percent_gait = _side_data->percent_gait;
+    float percent_gait = _get_percent_gait(_controller_data->parameters[controller_defs::franks_collins_hip::sim_gait_idx] > 0.0f);
     float expected_duration = _side_data->expected_step_duration;
 
     //Determines the time when the user exceeds the defined startpoint of the shifted gait cycle (done to avoid discontinuties realted to heel strike)

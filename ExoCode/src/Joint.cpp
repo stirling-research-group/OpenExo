@@ -396,6 +396,7 @@ HipJoint::HipJoint(config_defs::joint_id id, ExoData* exo_data)
 : _Joint(id, exo_data)  // <-- Initializer list
 , _zero_torque(id, exo_data)
 , _franks_collins_hip(id, exo_data)
+, _spline(id, exo_data)
 , _constant_torque(id, exo_data)
 , _chirp(id, exo_data)
 , _step(id, exo_data)
@@ -574,6 +575,9 @@ void HipJoint::set_controller(uint8_t controller_id)
             break;
         case (uint8_t)config_defs::hip_controllers::franks_collins_hip :
             _controller = &_franks_collins_hip;
+            break;
+        case (uint8_t)config_defs::hip_controllers::spline :
+            _controller = &_spline;
             break;
         case (uint8_t)config_defs::hip_controllers::constant_torque:
             _controller = &_constant_torque;
@@ -807,6 +811,7 @@ AnkleJoint::AnkleJoint(config_defs::joint_id id, ExoData* exo_data)
 , _zero_torque(id, exo_data)
 , _proportional_joint_moment(id, exo_data)
 , _zhang_collins(id, exo_data)
+, _spline(id, exo_data)
 , _constant_torque(id, exo_data)
 , _trec(id, exo_data)
 , _calibr_manager(id, exo_data)
@@ -1010,6 +1015,9 @@ void AnkleJoint::set_controller(uint8_t controller_id)  //Changes the high level
             break;
         case (uint8_t)config_defs::ankle_controllers::zhang_collins :
             _controller = &_zhang_collins;
+            break;
+        case (uint8_t)config_defs::ankle_controllers::spline :
+            _controller = &_spline;
             break;
         case (uint8_t)config_defs::ankle_controllers::constant_torque:
             _controller = &_constant_torque;
