@@ -11,6 +11,7 @@
 #include "ParamsFromSD.h"
 #include "Logger.h"
 #include "RealTimeI2C.h"
+#include "SystemReset.h"
 
 /**
  * @brief Type to associate a command with an ammount of data
@@ -45,6 +46,8 @@ namespace UART_command_names
     static const uint8_t update_error_code = 0x16;
     static const uint8_t get_FSR_thesholds = 0x17;
     static const uint8_t update_FSR_thesholds = 0x18;
+    static const uint8_t get_system_reset = 0x19;
+    static const uint8_t update_system_reset = 0x1A;
 };
 
 /**
@@ -110,6 +113,10 @@ namespace UART_command_enums
     {
         LEFT_THRESHOLD = 0,
         RIGHT_THRESHOLD = 1,
+        LENGTH
+    };
+    enum class system_reset : uint8_t
+    {
         LENGTH
     };
 };
@@ -624,7 +631,8 @@ namespace UART_command_handlers
             return;
         });
         exo_data->set_status(status_defs::messages::trial_off);
-
+        delay(10);
+        exo_system_reset();
     }
 
 };
@@ -825,6 +833,9 @@ namespace UART_command_utils
             break;
         case UART_command_names::update_FSR_thesholds:
             UART_command_handlers::update_FSR_thesholds(handler, exo_data, msg);
+            break;
+        case UART_command_names::get_system_reset:
+            UART_command_handlers::get_system_reset(handler, exo_data, msg);
             break;
 
 

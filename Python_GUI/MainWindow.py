@@ -90,6 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._intentional_disconnect = False
         # Suppress unexpected-disconnect popup for a brief window after intentional actions (e.g., End Trial)
         self._suppress_disconnect_popup_until = 0.0
+        self._end_trial_suppress_disconnect_seconds = 10.0
         # Error popup gating to avoid repeated dialogs
         self._error_popup_active = False
         self._last_error_code = None
@@ -338,7 +339,7 @@ class MainWindow(QtWidgets.QMainWindow):
             
             # A disconnect may fire more than once (explicit disconnect + OS callback);
             # suppress the "unexpected disconnect" popup for a short window.
-            self._suppress_disconnect_popup_until = time.monotonic() + 3.0
+            self._suppress_disconnect_popup_until = time.monotonic() + self._end_trial_suppress_disconnect_seconds
 
             # Navigate to scan page immediately
             self.stack.setCurrentWidget(self.scan_page)
@@ -347,6 +348,7 @@ class MainWindow(QtWidgets.QMainWindow):
             try:
                 self.qt_dev.write(b'G')  # Stop trial
                 QtCore.QTimer.singleShot(100, lambda: self.qt_dev.write(b'w'))  # Motor off after delay
+                QtCore.QTimer.singleShot(200, lambda: self.qt_dev.write(b'Z'))  # Schedule system reset
                 QtCore.QTimer.singleShot(500, self.qt_dev.disconnect)  # Disconnect after commands sent
             except Exception:
                 pass
