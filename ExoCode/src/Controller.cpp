@@ -166,19 +166,10 @@ float _Controller::_cf_mfac(float reference, float current_measurement)         
  
 float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain, float d_gain)
 {	
-    //Check if time is ok
-    bool time_good = true;
-
-    if (_t_helper->tick(_t_helper_context) > ((float) 1/LOOP_FREQ_HZ * 1000000 * (1 + LOOP_TIME_TOLERANCE)))
-    {
-        time_good = false;
-    }
-
-    //Record the current time
-    float now = micros();
-
-    //Record the change in time 
-    float dt = (now - _prev_pid_time) * 1000000;
+    const float expected_us = (1.0f / LOOP_FREQ_HZ) * 1000000.0f;
+    const float dt_us = _t_helper->tick(_t_helper_context);
+    const bool time_good = (dt_us > 0.0f) && (dt_us <= expected_us * (1.0f + LOOP_TIME_TOLERANCE));
+    const float dt_s = dt_us / 1000000.0f;
 
     //Calculate the difference in the prescribed and measured torque 
     float error_val = cmd - measurement;  
@@ -186,7 +177,10 @@ float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain
     //If we want to to include the integral term (Note: We generally do not like to use the I gain but we have it here for completeness) 
     if (i_gain != 0)
     {
-        _pid_error_sum += error_val / LOOP_FREQ_HZ;
+        if (time_good)
+        {
+            _pid_error_sum += error_val * dt_s;
+        }
     }
     else
     {
@@ -206,11 +200,11 @@ float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain
     //Initialize the derivative of the error 
     float de_dt = 0;
 
-    //Calculate the derivative of the erro
-    if (time_good)
+    //Calculate the derivative of the error
+    if (time_good && dt_s > 0.0f)
     {
-       de_dt = -(measurement - _prev_input) * (LOOP_FREQ_HZ);  //Convert to ms
-       _prev_de_dt = de_dt;
+        de_dt = -(measurement - _prev_input) / dt_s;
+        _prev_de_dt = de_dt;
     }
     else 
     {
@@ -218,7 +212,6 @@ float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain
     }
 
     //Set the previous times for the next loop through the controller
-    _prev_pid_time = now;
     _prev_input = measurement;
 
     //Calculate the individual P,I,and D Terms
