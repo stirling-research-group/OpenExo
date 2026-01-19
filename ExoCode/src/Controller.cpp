@@ -784,7 +784,17 @@ Spline::Spline(config_defs::joint_id id, ExoData* exo_data)
 
 float Spline::calc_motor_cmd()
 {
-    float percent_gait = _get_percent_gait(_controller_data->parameters[controller_defs::spline::sim_gait_idx] > 0.0f);
+    const bool simulate_gait = _controller_data->parameters[controller_defs::spline::sim_gait_idx] > 0.0f;
+    const bool use_percent_gait = _controller_data->parameters[controller_defs::spline::use_percent_gait_idx] > 0.0f;
+    float percent_gait = 0.0f;
+    if (simulate_gait)
+    {
+        percent_gait = _get_percent_gait(true);
+    }
+    else
+    {
+        percent_gait = use_percent_gait ? _side_data->percent_gait : _side_data->percent_stance;
+    }
 
     float x[5] =
     {
@@ -805,6 +815,14 @@ float Spline::calc_motor_cmd()
     };
 
     float torque_cmd = _spline_interpolate(x, y, percent_gait);
+    if (torque_cmd > 15.0f)
+    {
+        torque_cmd = 15.0f;
+    }
+    else if (torque_cmd < -15.0f)
+    {
+        torque_cmd = -15.0f;
+    }
 
     _controller_data->ff_setpoint = torque_cmd;
     _controller_data->filtered_torque_reading = utils::ewma(_joint_data->torque_reading, _controller_data->filtered_torque_reading, 0.5f);
