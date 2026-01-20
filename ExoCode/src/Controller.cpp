@@ -98,6 +98,36 @@ _Controller::_Controller(config_defs::joint_id id, ExoData* exo_data)
                 _joint_data = &(exo_data->right_side.elbow);
             }
             break;
+        case (uint8_t)config_defs::joint_id::arm_1:
+            #ifdef CONTROLLER_DEBUG
+                logger::print("ARM 1 ");
+            #endif
+            if (is_left)
+            {
+                _controller_data = &(exo_data->left_side.arm_1.controller);
+                _joint_data = &(exo_data->left_side.arm_1);
+            }
+            else
+            {
+                _controller_data = &(exo_data->right_side.arm_1.controller);
+                _joint_data = &(exo_data->right_side.arm_1);
+            }
+            break;
+        case (uint8_t)config_defs::joint_id::arm_2:
+            #ifdef CONTROLLER_DEBUG
+                logger::print("ARM 2 ");
+            #endif
+            if (is_left)
+            {
+                _controller_data = &(exo_data->left_side.arm_2.controller);
+                _joint_data = &(exo_data->left_side.arm_2);
+            }
+            else
+            {
+                _controller_data = &(exo_data->right_side.arm_2.controller);
+                _joint_data = &(exo_data->right_side.arm_2);
+            }
+            break;
     }
 
     #ifdef CONTROLLER_DEBUG

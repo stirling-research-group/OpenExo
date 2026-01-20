@@ -337,6 +337,10 @@ namespace ble_handlers
         joint_id = (joint_id==(config_defs::joint_id)6)?(data->right_side.knee.id):(joint_id);
         joint_id = (joint_id==(config_defs::joint_id)7)?(data->right_side.ankle.id):(joint_id);
         joint_id = (joint_id==(config_defs::joint_id)8)?(data->right_side.elbow.id):(joint_id);
+        joint_id = (joint_id==(config_defs::joint_id)9)?(data->left_side.arm_1.id):(joint_id);
+        joint_id = (joint_id==(config_defs::joint_id)10)?(data->right_side.arm_1.id):(joint_id);
+        joint_id = (joint_id==(config_defs::joint_id)11)?(data->left_side.arm_2.id):(joint_id);
+        joint_id = (joint_id==(config_defs::joint_id)12)?(data->right_side.arm_2.id):(joint_id);
 
         if (joint_id == data->left_side.ankle.id)
         {
@@ -354,6 +358,14 @@ namespace ble_handlers
         {
             cont_data = &data->left_side.elbow.controller;
         }
+        else if (joint_id == data->left_side.arm_1.id)
+        {
+            cont_data = &data->left_side.arm_1.controller;
+        }
+        else if (joint_id == data->left_side.arm_2.id)
+        {
+            cont_data = &data->left_side.arm_2.controller;
+        }
         else if (joint_id == data->right_side.ankle.id) 
         {
             cont_data = &data->right_side.ankle.controller;
@@ -369,6 +381,14 @@ namespace ble_handlers
         else if (joint_id == data->right_side.elbow.id)
         {
             cont_data = &data->right_side.elbow.controller;
+        }
+        else if (joint_id == data->right_side.arm_1.id)
+        {
+            cont_data = &data->right_side.arm_1.controller;
+        }
+        else if (joint_id == data->right_side.arm_2.id)
+        {
+            cont_data = &data->right_side.arm_2.controller;
         }
         if (cont_data == NULL) {
             logger::println("cont_data is NULL!", LogLevel::Warn);
