@@ -153,7 +153,7 @@ JointData::JointData(config_defs::joint_id id, uint8_t* config_to_send, float jo
         }
         case (uint8_t)config_defs::joint_id::arm_1:
         {
-            is_used = (config_to_send[config_defs::arm_1_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t)(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
+            is_used = (config_to_send[config_defs::arm_1_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t>(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
                 || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]) && this->is_left)
                 || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]) && !this->is_left));
 
@@ -179,7 +179,7 @@ JointData::JointData(config_defs::joint_id id, uint8_t* config_to_send, float jo
         }
         case (uint8_t)config_defs::joint_id::arm_2:
         {
-            is_used = (config_to_send[config_defs::arm_2_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t)(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
+            is_used = (config_to_send[config_defs::arm_2_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t>(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
                 || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]) && this->is_left)
                 || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]) && !this->is_left));
 
@@ -293,7 +293,7 @@ void JointData::reconfigure(uint8_t* config_to_send)
         }
         case (uint8_t)config_defs::joint_id::arm_1:
         {
-            is_used = (config_to_send[config_defs::arm_1_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t)(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
+            is_used = (config_to_send[config_defs::arm_1_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t>(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
                 || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]) && this->is_left)
                 || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]) && !this->is_left));
 
@@ -309,7 +309,7 @@ void JointData::reconfigure(uint8_t* config_to_send)
         }
         case (uint8_t)config_defs::joint_id::arm_2:
         {
-            is_used = (config_to_send[config_defs::arm_2_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t)(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
+            is_used = (config_to_send[config_defs::arm_2_idx] != (uint8_t)config_defs::motor::not_used) && ((static_cast<uint8_t>(config_defs::exo_side::bilateral) == config_to_send[config_defs::exo_side_idx])
                 || (((uint8_t)config_defs::exo_side::left == config_to_send[config_defs::exo_side_idx]) && this->is_left)
                 || (((uint8_t)config_defs::exo_side::right == config_to_send[config_defs::exo_side_idx]) && !this->is_left));
 
