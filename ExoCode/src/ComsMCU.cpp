@@ -9,6 +9,7 @@
 #include "error_codes.h"
 #include "Logger.h"
 #include "ComsLed.h"
+#include "SystemReset.h"
 
 #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
 
@@ -103,6 +104,7 @@ void ComsMCU::local_sample()
     }
 
     ComsLed::get_instance()->life_pulse();
+    _maybe_system_reset();
 
     #if COMSMCU_DEBUG
         logger::println("ComsMCU::local_sample->End");
@@ -307,6 +309,9 @@ void ComsMCU::_process_complete_gui_command(BleMessage* msg)
     case ble_names::update_param:
         ble_handlers::update_param(_data, msg);
         break;
+    case ble_names::reset_system:
+        _schedule_system_reset();
+        break;
     default:
         logger::println("ComsMCU::_process_complete_gui_command->No case for command!", LogLevel::Error);
         break;
@@ -315,6 +320,34 @@ void ComsMCU::_process_complete_gui_command(BleMessage* msg)
     #if COMSMCU_DEBUG
         logger::println("ComsMCU::_process_complete_gui_command->End");
     #endif
+}
+
+void ComsMCU::_schedule_system_reset()
+{
+    _reset_pending = true;
+    _reset_start_ms = millis();
+}
+
+void ComsMCU::_maybe_system_reset()
+{
+    if (!_reset_pending)
+    {
+        return;
+    }
+    if ((millis() - _reset_start_ms) < _reset_delay_ms)
+    {
+        return;
+    }
+
+    UARTHandler* uart_handler = UARTHandler::get_instance();
+    UART_msg_t tx_msg;
+    tx_msg.command = UART_command_names::get_system_reset;
+    tx_msg.joint_id = 0;
+    tx_msg.len = 0;
+    uart_handler->UART_msg(tx_msg);
+    delay(10);
+
+    exo_system_reset();
 }
 
 void ComsMCU::_life_pulse()

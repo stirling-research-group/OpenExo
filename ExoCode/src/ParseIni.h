@@ -22,7 +22,7 @@ namespace ini_config
     const int buffer_length = 500;  /**< Length of the buffer for reading the file. */
     const int key_length = 25;      /**< Max length of the key name */
     const int section_length = 10;  /**< Max length of the section name */
-    const int number_of_keys = 48;  /**< Number of keys to be parsed. */
+    const int number_of_keys = 49;  /**< Number of keys to be parsed. */
 }
 
 //Reading the ini file from the SD card; 1 is the lowest value to confirm that data is present for sending over SPI
@@ -98,10 +98,11 @@ namespace config_defs
         not_used = 1, //The controller code won't run. Set motor type to NullMotor if you aren't attaching a motor.
         AK60 = 2, 
         AK80 = 3,
-        AK60_v1_1 = 4,
+        AK60v1_1 = 4,
         AK70 = 5,
 		MaxonMotor = 6,
 		NullMotor = 7,
+        AK60v3 = 8,
     };
     
     enum class gearing : uint8_t            //Gearing ratio options
@@ -147,6 +148,9 @@ namespace config_defs
         step = 6,
         phmc = 7,
 		calibr_manager = 8,
+        spline = 9,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
     
     enum class knee_controllers : uint8_t   //Knee Controller IDs
@@ -157,6 +161,8 @@ namespace config_defs
         chirp = 4,
         step = 5,
 		calibr_manager = 6,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
         
     enum class ankle_controllers : uint8_t  //Ankle Controller IDs
@@ -172,6 +178,9 @@ namespace config_defs
         step = 9,
 		spv2 = 10,
 		pjmc_plus = 11,
+        spline = 12,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
 
     enum class elbow_controllers : uint8_t  //Elbow Controller IDs
@@ -182,6 +191,8 @@ namespace config_defs
         calibr_manager = 4,
         chirp = 5,
         step = 6,
+		
+		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
     
     enum class use_torque_sensor : uint8_t  //Option to use or not use torque sensor for low-level control
@@ -393,10 +404,11 @@ namespace config_defs
             {"0", (uint8_t)config_defs::motor::not_used}, 
             {"AK60", (uint8_t)config_defs::motor::AK60}, 
             {"AK80", (uint8_t)config_defs::motor::AK80},
-            {"AK60v1.1", (uint8_t)config_defs::motor::AK60_v1_1},
+            {"AK60v1.1", (uint8_t)config_defs::motor::AK60v1_1},
             {"AK70", (uint8_t)config_defs::motor::AK70},
 			{"MaxonMotor", (uint8_t)config_defs::motor::MaxonMotor},
 			{"NullMotor", (uint8_t)config_defs::motor::NullMotor},
+            {"AK60v3", (uint8_t)config_defs::motor::AK60v3},
         };
         
         const IniKeyCode gearing 
@@ -418,6 +430,7 @@ namespace config_defs
             {"step", (uint8_t)config_defs::hip_controllers::step},
             {"phmc", (uint8_t)config_defs::hip_controllers::phmc},
 			{"calibrManager", (uint8_t)config_defs::hip_controllers::calibr_manager},
+            {"spline", (uint8_t)config_defs::hip_controllers::spline},
 
         };
         
@@ -444,6 +457,7 @@ namespace config_defs
             {"step", (uint8_t)config_defs::ankle_controllers::step},
 			{"SPV2", (uint8_t)config_defs::ankle_controllers::spv2},
 			{"PJMC_PLUS", (uint8_t)config_defs::ankle_controllers::pjmc_plus},
+            {"spline", (uint8_t)config_defs::ankle_controllers::spline},
         };  
 
         const IniKeyCode elbow_controllers

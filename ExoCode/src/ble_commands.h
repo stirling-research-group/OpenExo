@@ -50,6 +50,7 @@ namespace ble_names
     static const char motors_off        = 'w';
     static const char mark              = 'N';
     static const char update_param      = 'f';
+    static const char reset_system      = 'Z';
 
     //Sending Commands (Firmware->GUI)
     static const char send_real_time_data = '?';
@@ -83,6 +84,7 @@ namespace ble
         {ble_names::new_fsr,            2},
         {ble_names::new_trq,            4},
         {ble_names::update_param,       4},
+        {ble_names::reset_system,       0},
         
         //Sending Commands
         {ble_names::send_batt,              1},

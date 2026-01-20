@@ -396,6 +396,7 @@ HipJoint::HipJoint(config_defs::joint_id id, ExoData* exo_data)
 : _Joint(id, exo_data)  // <-- Initializer list
 , _zero_torque(id, exo_data)
 , _franks_collins_hip(id, exo_data)
+, _spline(id, exo_data)
 , _constant_torque(id, exo_data)
 , _chirp(id, exo_data)
 , _step(id, exo_data)
@@ -452,17 +453,23 @@ HipJoint::HipJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 HipJoint::set_motor(new AK80(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
-            case (uint8_t)config_defs::motor::AK60_v1_1 :
+            case (uint8_t)config_defs::motor::AK60v1_1 :
                 #ifdef JOINT_DEBUG
                     logger::println("AK60 v1.1");
                 #endif
-                HipJoint::set_motor(new AK60_v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                HipJoint::set_motor(new AK60v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
             case (uint8_t)config_defs::motor::AK70:
                 #ifdef JOINT_DEBUG
                     logger::println("AK70");
                 #endif
                 HipJoint::set_motor(new AK70(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK60v3:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK60v3");
+                #endif
+                HipJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
@@ -522,9 +529,16 @@ void HipJoint::run_joint()
         }
     }
 
+    // Boolean to check if the motor is an AK60v3.
+    bool is_AK60v3 = (_joint_data->motor.motor_type == (uint8_t)config_defs::motor::AK60v3);
+
     //Enable or disable the motor.
-    _motor->on_off(); 
-    _motor->enable();               //Do not enable the motors until the GUI tells you to, defaults to not enabled to prevent running until desired. 
+    _motor->on_off();
+    if (!is_AK60v3) {
+        // The AK60v3 enables automatically and does not expect an enable command.
+        // The other AK motors do require the enable command to be sent.
+        _motor->enable();
+    }
 
     //Send the new command to the motor.
     _motor->transaction(_joint_data->controller.setpoint / _joint_data->motor.gearing);
@@ -561,6 +575,9 @@ void HipJoint::set_controller(uint8_t controller_id)
             break;
         case (uint8_t)config_defs::hip_controllers::franks_collins_hip :
             _controller = &_franks_collins_hip;
+            break;
+        case (uint8_t)config_defs::hip_controllers::spline :
+            _controller = &_spline;
             break;
         case (uint8_t)config_defs::hip_controllers::constant_torque:
             _controller = &_constant_torque;
@@ -647,17 +664,23 @@ KneeJoint::KneeJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 KneeJoint::set_motor(new AK80(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
-            case (uint8_t)config_defs::motor::AK60_v1_1 :
+            case (uint8_t)config_defs::motor::AK60v1_1 :
                 #ifdef JOINT_DEBUG
                     logger::println("AK60 v1.1");
                 #endif
-                KneeJoint::set_motor(new AK60_v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                KneeJoint::set_motor(new AK60v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
             case (uint8_t)config_defs::motor::AK70:
                 #ifdef JOINT_DEBUG
                     logger::println("AK70");
                 #endif
                 KneeJoint::set_motor(new AK70(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK60v3:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK60v3");
+                #endif
+                KneeJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
@@ -720,9 +743,16 @@ void KneeJoint::run_joint()
         }
     }
 
+    // Boolean to check if the motor is an AK60v3.
+    bool is_AK60v3 = (_joint_data->motor.motor_type == (uint8_t)config_defs::motor::AK60v3);
+
     //Enable or disable the motor.
-    _motor->on_off(); 
-    _motor->enable();
+    _motor->on_off();
+    if (!is_AK60v3) {
+        // The AK60v3 enables automatically and does not expect an enable command.
+        // The other AK motors do require the enable command to be sent.
+        _motor->enable();
+    }
 
     //Send the new command to the motor.
     _motor->transaction(_joint_data->controller.setpoint / _joint_data->motor.gearing);
@@ -781,6 +811,7 @@ AnkleJoint::AnkleJoint(config_defs::joint_id id, ExoData* exo_data)
 , _zero_torque(id, exo_data)
 , _proportional_joint_moment(id, exo_data)
 , _zhang_collins(id, exo_data)
+, _spline(id, exo_data)
 , _constant_torque(id, exo_data)
 , _trec(id, exo_data)
 , _calibr_manager(id, exo_data)
@@ -837,17 +868,23 @@ AnkleJoint::AnkleJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 AnkleJoint::set_motor(new AK80(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
-            case (uint8_t)config_defs::motor::AK60_v1_1 :
+            case (uint8_t)config_defs::motor::AK60v1_1 :
                 #ifdef JOINT_DEBUG
                     logger::println("AK60 v1.1");
                 #endif
-                AnkleJoint::set_motor(new AK60_v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                AnkleJoint::set_motor(new AK60v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
             case (uint8_t)config_defs::motor::AK70:
                 #ifdef JOINT_DEBUG
                     logger::println("AK70");
                 #endif
                 AnkleJoint::set_motor(new AK70(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK60v3:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK60v3");
+                #endif
+                AnkleJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
@@ -920,9 +957,9 @@ void AnkleJoint::run_joint()
 
     if (error) 
     {
-        _motor->set_error();
-        _motor->on_off();
-        _motor->enable();
+        //_motor->set_error();
+        //_motor->on_off();
+        //_motor->enable();
         
         //Send all errors to the other microcontroller
         for (int i=0; i < _error_manager.errorQueueSize(); i++)
@@ -931,9 +968,16 @@ void AnkleJoint::run_joint()
         }
     }
 
+    // Boolean to check if the motor is an AK60v3.
+    bool is_AK60v3 = (_joint_data->motor.motor_type == (uint8_t)config_defs::motor::AK60v3);
+
     //Enable or disable the motor.
     _motor->on_off();
-    _motor->enable();
+    if (!is_AK60v3) {
+        // The AK60v3 enables automatically and does not expect an enable command.
+        // The other AK motors do require the enable command to be sent.
+        _motor->enable();
+    }
 
     //Send the new command to the motor.
     _motor->transaction(_joint_data->controller.setpoint / _joint_data->motor.gearing);
@@ -971,6 +1015,9 @@ void AnkleJoint::set_controller(uint8_t controller_id)  //Changes the high level
             break;
         case (uint8_t)config_defs::ankle_controllers::zhang_collins :
             _controller = &_zhang_collins;
+            break;
+        case (uint8_t)config_defs::ankle_controllers::spline :
+            _controller = &_spline;
             break;
         case (uint8_t)config_defs::ankle_controllers::constant_torque:
             _controller = &_constant_torque;
@@ -1057,11 +1104,11 @@ ElbowJoint::ElbowJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 ElbowJoint::set_motor(new AK80(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
             break;
-            case (uint8_t)config_defs::motor::AK60_v1_1:
+            case (uint8_t)config_defs::motor::AK60v1_1:
                 #ifdef JOINT_DEBUG
                             logger::println("AK60 v1.1");
                 #endif
-                ElbowJoint::set_motor(new AK60_v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                ElbowJoint::set_motor(new AK60v1_1(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
             break;
             case (uint8_t)config_defs::motor::AK70:
                 #ifdef JOINT_DEBUG
@@ -1069,6 +1116,12 @@ ElbowJoint::ElbowJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 ElbowJoint::set_motor(new AK70(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
             break;
+            case (uint8_t)config_defs::motor::AK60v3:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK60v3");
+                #endif
+                ElbowJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
                     logger::println("MaxonMotor");
@@ -1139,9 +1192,16 @@ void ElbowJoint ::run_joint()
         }
     }
 
+    // Boolean to check if the motor is an AK60v3.
+    bool is_AK60v3 = (_joint_data->motor.motor_type == (uint8_t)config_defs::motor::AK60v3);
+
     //Enable or disable the motor.
     _motor->on_off();
-    _motor->enable();
+    if (!is_AK60v3) {
+        // The AK60v3 enables automatically and does not expect an enable command.
+        // The other AK motors do require the enable command to be sent.
+        _motor->enable();
+    }
 
     //Send the new command to the motor.
     _motor->transaction(_joint_data->controller.setpoint / _joint_data->motor.gearing);

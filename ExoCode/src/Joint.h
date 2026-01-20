@@ -157,6 +157,7 @@ class HipJoint : public _Joint
         //Objects for joint specific controllers
         ZeroTorque _zero_torque;                        /**< Zero torque controller */
         FranksCollinsHip _franks_collins_hip;           /**< Franks Collins Hip controller */
+        Spline _spline;                                 /**< Spline controller */
         ConstantTorque _constant_torque;                /**< Constant torque controller */
         Chirp _chirp;                                   /**< Chirp Controller for Device Characterization */                    
         Step _step;                                     /**< Step Controller for Device Characterization */
@@ -231,6 +232,7 @@ class AnkleJoint : public _Joint
         ZeroTorque _zero_torque;                                /**< Zero torque controller */
         ProportionalJointMoment _proportional_joint_moment;     /**< Proportional joint moment controller */
         ZhangCollins _zhang_collins;                            /**< Zhang Collins controller */
+        Spline _spline;                                         /**< Spline controller */
         ConstantTorque _constant_torque;                        /**< Constant torque controller*/
         TREC _trec;                                             /**< TREC */
 		CalibrManager _calibr_manager;                          /**< Calibration Manager "Controller" */

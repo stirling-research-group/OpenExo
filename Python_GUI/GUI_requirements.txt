@@ -1,0 +1,4 @@
+# Dependencies for the Qt GUI (Python_GUI/Qt)
+PySide6
+pyqtgraph
+bleak
