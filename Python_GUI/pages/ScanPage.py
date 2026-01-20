@@ -285,14 +285,14 @@ class ScanWindowQt(QtWidgets.QWidget):
             # Keep Start Trial disabled for a short delay to allow calibration to settle
             self.btn_start_trial.setEnabled(False)
 
-            self.status.setText("Torque calibration sent. Start Trial will be enabled in 3 seconds...")
+            self.status.setText("Torque calibration sent. Start Trial will be enabled in 1 second...")
 
             # Enable Start Trial after 3 seconds (only if still connected)
             def _enable_start_trial_if_connected():
                 if self._connected and self._qt_dev is not None:
                     self.btn_start_trial.setEnabled(True)
 
-            QtCore.QTimer.singleShot(1500, _enable_start_trial_if_connected)
+            QtCore.QTimer.singleShot(1000, _enable_start_trial_if_connected)
         except Exception as ex:
             self.status.setText(f"Torque calibration failed: {ex}")
 
@@ -377,5 +377,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 

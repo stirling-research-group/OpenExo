@@ -166,31 +166,15 @@ float _Controller::_cf_mfac(float reference, float current_measurement)         
  
 float _Controller::_pid(float cmd, float measurement, float p_gain, float i_gain, float d_gain)
 {	
-<<<<<<< HEAD
 	// Disable pid for torque control if the torque sensor isn't calibrated
 	if (_joint_data->torque_offset_reading == 0) {
 		Serial.print("\nTorque sensor not calibrated. Closed-loop torque control disabled.");
 		return cmd;
 	}
-    //Check if time is ok
-    bool time_good = true;
-
-    if (_t_helper->tick(_t_helper_context) > ((float) 1/LOOP_FREQ_HZ * 1000000 * (1 + LOOP_TIME_TOLERANCE)))
-    {
-        time_good = false;
-    }
-
-    //Record the current time
-    float now = micros();
-
-    //Record the change in time 
-    float dt = (now - _prev_pid_time) * 1000000;
-=======
     const float expected_us = (1.0f / LOOP_FREQ_HZ) * 1000000.0f;
     const float dt_us = _t_helper->tick(_t_helper_context);
     const bool time_good = (dt_us > 0.0f) && (dt_us <= expected_us * (1.0f + LOOP_TIME_TOLERANCE));
     const float dt_s = dt_us / 1000000.0f;
->>>>>>> test/GenerateCtrlParamArray_SizeReduced
 
     //Calculate the difference in the prescribed and measured torque 
     float error_val = cmd - measurement;  
