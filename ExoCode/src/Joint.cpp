@@ -471,6 +471,18 @@ HipJoint::HipJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 HipJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
+            case (uint8_t)config_defs::motor::AK45_36:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_36");
+                #endif
+                HipJoint::set_motor(new AK45_36(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK45_10:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_10");
+                #endif
+                HipJoint::set_motor(new AK45_10(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
                     logger::println("MaxonMotor");
@@ -682,6 +694,18 @@ KneeJoint::KneeJoint(config_defs::joint_id id, ExoData* exo_data)
                 #endif
                 KneeJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
+            case (uint8_t)config_defs::motor::AK45_36:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_36");
+                #endif
+                KneeJoint::set_motor(new AK45_36(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK45_10:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_10");
+                #endif
+                KneeJoint::set_motor(new AK45_10(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
                     logger::println("MaxonMotor");
@@ -885,6 +909,18 @@ AnkleJoint::AnkleJoint(config_defs::joint_id id, ExoData* exo_data)
                     logger::println("AK60v3");
                 #endif
                 AnkleJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK45_36:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_36");
+                #endif
+                AnkleJoint::set_motor(new AK45_36(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK45_10:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_10");
+                #endif
+                AnkleJoint::set_motor(new AK45_10(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG
@@ -1121,6 +1157,18 @@ ElbowJoint::ElbowJoint(config_defs::joint_id id, ExoData* exo_data)
                     logger::println("AK60v3");
                 #endif
                 ElbowJoint::set_motor(new AK60v3(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK45_36:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_36");
+                #endif
+                ElbowJoint::set_motor(new AK45_36(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
+                break;
+            case (uint8_t)config_defs::motor::AK45_10:
+                #ifdef JOINT_DEBUG
+                    logger::println("AK45_10");
+                #endif
+                ElbowJoint::set_motor(new AK45_10(id, exo_data, _Joint::get_motor_enable_pin(id, exo_data)));
                 break;
 			case (uint8_t)config_defs::motor::MaxonMotor:
                 #ifdef JOINT_DEBUG

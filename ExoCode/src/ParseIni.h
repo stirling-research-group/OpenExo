@@ -103,6 +103,8 @@ namespace config_defs
 		MaxonMotor = 6,
 		NullMotor = 7,
         AK60v3 = 8,
+        AK45_36 = 9,
+        AK45_10 = 10,
     };
     
     enum class gearing : uint8_t            //Gearing ratio options
@@ -409,6 +411,8 @@ namespace config_defs
 			{"MaxonMotor", (uint8_t)config_defs::motor::MaxonMotor},
 			{"NullMotor", (uint8_t)config_defs::motor::NullMotor},
             {"AK60v3", (uint8_t)config_defs::motor::AK60v3},
+            {"AK45_36", (uint8_t)config_defs::motor::AK45_36},
+            {"AK45_10", (uint8_t)config_defs::motor::AK45_10},
         };
         
         const IniKeyCode gearing 
