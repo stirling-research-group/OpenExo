@@ -47,6 +47,9 @@ ComsMCU::ComsMCU(ExoData* data, uint8_t* config_to_send):_data{data}
         case (uint8_t)config_defs::exo_name::bilateral_hip_ankle:
             rt_data_len = rt_data::BILATERAL_HIP_ANKLE_RT_LEN;
             break;
+        case (uint8_t)config_defs::exo_name::bilateral_arm:
+            rt_data_len = rt_data::BILATERAL_ARM_RT_LEN;
+            break;
         default:
             rt_data_len = 8;
             break;

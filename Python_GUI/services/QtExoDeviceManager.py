@@ -49,17 +49,6 @@ class QtExoDeviceManager(QtCore.QObject):
         # Store last FSR values
         self._curr_left_fsr_value: float = 0.25
         self._curr_right_fsr_value: float = 0.25
-        # Joint dictionary matching legacy manager
-        self.jointDictionary = {
-            1: 33.0,
-            2: 65.0,
-            3: 34.0,
-            4: 66.0,
-            5: 36.0,
-            6: 68.0,
-            7: 40.0,
-            8: 72.0,
-        }
 
     # Public API
 
@@ -364,25 +353,26 @@ class QtExoDeviceManager(QtCore.QObject):
                 totalLoops = 1
                 loopCount = 0
                 float_values = parameter_list
+                use_bilateral = bool(float_values[0]) if float_values else False
 
-                if float_values and bool(float_values[0]) is True:
-                    totalLoops = 2
+                mirror_val = None
+                if float_values and len(float_values) > 1 and use_bilateral:
+                    key = int(float_values[1])
+                    side_bits = key & 0x60
+                    if side_bits in (0x20, 0x40):
+                        totalLoops = 2
+                        mirror_val = key ^ 0x60
 
                 while loopCount != totalLoops:
                     await self._client.write_gatt_char(UART_TX_UUID, b"f", response=False)
 
                     for i in range(1, len(float_values)):
                         if i == 1:
-                            key = float_values[1]
-                            joint_val = self.jointDictionary.get(key)
-                            if joint_val is None:
-                                raise ValueError("Invalid joint selection")
-                            if loopCount == 1 and key % 2 == 0:
-                                val = joint_val - 32
-                            elif loopCount == 1 and key % 2 != 0:
-                                val = joint_val + 32
+                            key = int(float_values[1])
+                            if use_bilateral and mirror_val is not None:
+                                val = key if loopCount == 0 else mirror_val
                             else:
-                                val = joint_val
+                                val = key
                             float_bytes = struct.pack("<d", float(val))
                         else:
                             float_bytes = struct.pack("<d", float(float_values[i]))
@@ -574,4 +564,3 @@ class QtExoDeviceManager(QtCore.QObject):
             return False
 
     # Removed invalid get_char_handle; bleak accepts UUIDs directly
-

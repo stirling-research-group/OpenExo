@@ -6,8 +6,7 @@ except ImportError as e:
 
 class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
     """Fallback settings page shown when no controller metadata is available.
-    Uses dropdowns for joint, controller index, and parameter index (legacy-style naming),
-    plus bilateral toggle and numeric value input. No text fields to avoid keyboard.
+    Uses raw joint/controller IDs and parameter index with a bilateral toggle.
     """
 
     applyRequested = QtCore.Signal(list)  # [isBilateral, joint, controller, parameter, value]
@@ -19,7 +18,7 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
         self._bilateral_state = False
         self._last_selection = {
             "bilateral": False,
-            "joint": "Left hip",
+            "joint_id": 0,
             "controller": 0,
             "parameter": 0,
             "value": 0.0,
@@ -49,41 +48,18 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
         form.addWidget(self.chk_bilateral, row, 0, 1, 2)
         row += 1
 
-        # Joints with legacy naming
-        lbl_joint = QtWidgets.QLabel("Joint")
+        lbl_joint = QtWidgets.QLabel("Joint ID")
         lf = lbl_joint.font(); lf.setPointSize(18); lbl_joint.setFont(lf)
-        self.combo_joint = QtWidgets.QComboBox()
-        jf = self.combo_joint.font(); jf.setPointSize(18); self.combo_joint.setFont(jf)
-        self.combo_joint.setMinimumHeight(56)
-        # Legacy joint names and mapping indices
-        self._joint_names = [
-            "Left hip",
-            "Left knee",
-            "Left ankle",
-            "Left elbow",
-            "Right hip",
-            "Right knee",
-            "Right ankle",
-            "Right elbow",
-        ]
-        # Map to indices consistent with legacy mapping
-        self._joint_name_to_index = {
-            "Right hip": 1,
-            "Left hip": 2,
-            "Right knee": 3,
-            "Left knee": 4,
-            "Right ankle": 5,
-            "Left ankle": 6,
-            "Right elbow": 7,
-            "Left elbow": 8,
-        }
-        self.combo_joint.addItems(self._joint_names)
+        self.spin_joint_id = QtWidgets.QSpinBox()
+        jf = self.spin_joint_id.font(); jf.setPointSize(18); self.spin_joint_id.setFont(jf)
+        self.spin_joint_id.setMinimumHeight(56)
+        self.spin_joint_id.setRange(0, 255)
         form.addWidget(lbl_joint, row, 0)
-        form.addWidget(self.combo_joint, row, 1)
+        form.addWidget(self.spin_joint_id, row, 1)
         row += 1
 
         # Controller index
-        lbl_controller = QtWidgets.QLabel("Controller Index")
+        lbl_controller = QtWidgets.QLabel("Controller ID")
         lcf = lbl_controller.font(); lcf.setPointSize(18); lbl_controller.setFont(lcf)
         self.combo_controller = QtWidgets.QComboBox()
         ccf = self.combo_controller.font(); ccf.setPointSize(18); self.combo_controller.setFont(ccf)
@@ -151,8 +127,25 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
                             self._bilateral_state = line.split("=")[1].strip() == "True"
                             self._last_selection["bilateral"] = self._bilateral_state
                             print(f"[BasicSettings] Loaded bilateral state: {self._bilateral_state}")
+                        elif line.startswith("last_basic_joint_id="):
+                            try:
+                                self._last_selection["joint_id"] = int(line.split("=")[1].strip())
+                            except Exception:
+                                pass
                         elif line.startswith("last_basic_joint="):
-                            self._last_selection["joint"] = line.split("=")[1].strip()
+                            # Backward-compatible: map legacy labels to raw IDs.
+                            legacy = line.split("=")[1].strip().lower()
+                            legacy_map = {
+                                "left hip": 65,
+                                "right hip": 33,
+                                "left knee": 66,
+                                "right knee": 34,
+                                "left ankle": 68,
+                                "right ankle": 36,
+                                "left elbow": 72,
+                                "right elbow": 40,
+                            }
+                            self._last_selection["joint_id"] = legacy_map.get(legacy, 0)
                         elif line.startswith("last_basic_controller="):
                             try:
                                 self._last_selection["controller"] = int(line.split("=")[1].strip())
@@ -189,7 +182,7 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
                             existing[key] = val
             # Update with current values
             existing["bilateral"] = str(self._bilateral_state)
-            existing["last_basic_joint"] = str(self._last_selection.get("joint", "Left hip"))
+            existing["last_basic_joint_id"] = str(self._last_selection.get("joint_id", 0))
             existing["last_basic_controller"] = str(self._last_selection.get("controller", 0))
             existing["last_basic_parameter"] = str(self._last_selection.get("parameter", 0))
             existing["last_basic_value"] = str(self._last_selection.get("value", 0.0))
@@ -209,10 +202,8 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
             self.chk_bilateral.setChecked(bilateral)
             
             # Restore joint selection
-            joint_name = self._last_selection.get("joint", "Left hip")
-            idx = self.combo_joint.findText(joint_name)
-            if idx >= 0:
-                self.combo_joint.setCurrentIndex(idx)
+            joint_id = int(self._last_selection.get("joint_id", 0))
+            self.spin_joint_id.setValue(joint_id)
             
             # Restore controller selection
             controller = self._last_selection.get("controller", 0)
@@ -241,18 +232,16 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
     @QtCore.Slot()
     def _on_apply(self):
         is_bilateral = self.chk_bilateral.isChecked()
-        # Map joint name to index per legacy mapping
-        joint_name = self.combo_joint.currentText()
-        joint_index = self._joint_name_to_index.get(joint_name, 1)
+        joint_id = int(self.spin_joint_id.value())
         controller = int(self.combo_controller.currentText())
         parameter = int(self.combo_param.currentText())
         value = float(self.spin_value.value())
-        payload = [is_bilateral, joint_index, controller, parameter, value]
+        payload = [is_bilateral, joint_id, controller, parameter, value]
         
         # Save last selection for next time
         self._last_selection = {
             "bilateral": is_bilateral,
-            "joint": joint_name,
+            "joint_id": joint_id,
             "controller": controller,
             "parameter": parameter,
             "value": value,
@@ -260,5 +249,4 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
         self._save_settings()
         
         self.applyRequested.emit(payload)
-
 

@@ -17,17 +17,6 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
         self.setObjectName("ActiveTrialSettingsPage")
         self._controller_matrix: list[list[str]] = []
         self._joint_controllers: dict = {}  # Maps joint name to list of controller indices
-        # Joint ID to joint number mapping (matches QtExoDeviceManager.jointDictionary)
-        self._joint_id_to_num = {
-            33: 1,  # Left Hip
-            65: 2,  # Right Hip
-            34: 3,  # Left Knee
-            66: 4,  # Right Knee
-            36: 5,  # Left Ankle
-            68: 6,  # Right Ankle
-            40: 7,  # Left Elbow
-            72: 8,  # Right Elbow
-        }
         self._bilateral_state = False  # Store bilateral state
         self._last_selection = {
             "bilateral": False,
@@ -359,10 +348,12 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                             except (ValueError, IndexError):
                                 print(f"Warning: Could not parse joint ID from row[1]='{row[1]}'")
                         
-                        # Convert joint ID to joint number (1-8) using the mapping
-                        joint_num = self._joint_id_to_num.get(joint_id_raw, 1)
-                        if joint_id_raw and joint_id_raw not in self._joint_id_to_num:
-                            print(f"Warning: Unknown joint ID {joint_id_raw}, defaulting to joint 1")
+                        # Prefer sending the raw joint ID from the controller list.
+                        if joint_id_raw is not None:
+                            joint_num = joint_id_raw
+                        else:
+                            joint_num = 0
+                            print("Warning: Missing joint ID, defaulting to 0")
                         
                         # Extract actual controller ID from row[3]
                         controller_id = controller_local_idx  # Default to local index if parsing fails
@@ -533,5 +524,3 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                 self.combo_param.blockSignals(False)
             except Exception:
                 pass
-
-

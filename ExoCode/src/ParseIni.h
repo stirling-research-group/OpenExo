@@ -209,8 +209,9 @@ namespace config_defs
     enum class arm_1_controllers : uint8_t  //Arm 1 Controller IDs
     {
         disabled = 1,
-        constant_torque = 2,
-        spline = 3,
+        zero_torque = 2,
+        constant_torque = 3,
+        spline = 4,
 
         Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
@@ -218,8 +219,9 @@ namespace config_defs
     enum class arm_2_controllers : uint8_t  //Arm 2 Controller IDs
     {
         disabled = 1,
-        constant_torque = 2,
-        spline = 3,
+        zero_torque = 2,
+        constant_torque = 3,
+        spline = 4,
 
         Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
@@ -528,6 +530,7 @@ namespace config_defs
         const IniKeyCode arm_1_controllers
         {
             {"0", (uint8_t)config_defs::arm_1_controllers::disabled},
+            {"zeroTorque", (uint8_t)config_defs::arm_1_controllers::zero_torque},
             {"constantTorque", (uint8_t)config_defs::arm_1_controllers::constant_torque},
             {"spline", (uint8_t)config_defs::arm_1_controllers::spline},
         };
@@ -535,6 +538,7 @@ namespace config_defs
         const IniKeyCode arm_2_controllers
         {
             {"0", (uint8_t)config_defs::arm_2_controllers::disabled},
+            {"zeroTorque", (uint8_t)config_defs::arm_2_controllers::zero_torque},
             {"constantTorque", (uint8_t)config_defs::arm_2_controllers::constant_torque},
             {"spline", (uint8_t)config_defs::arm_2_controllers::spline},
         };

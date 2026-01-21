@@ -90,6 +90,7 @@
         const ParamFilenameKey arm_1
         {
             {(uint8_t)config_defs::arm_1_controllers::disabled,"arm1Controllers/zeroTorque.csv"},
+            {(uint8_t)config_defs::arm_1_controllers::zero_torque,"arm1Controllers/zeroTorque.csv"},
             {(uint8_t)config_defs::arm_1_controllers::constant_torque,"arm1Controllers/constantTorque.csv"},
             {(uint8_t)config_defs::arm_1_controllers::spline,"arm1Controllers/spline.csv"},
         };
@@ -97,6 +98,7 @@
         const ParamFilenameKey arm_2
         {
             {(uint8_t)config_defs::arm_2_controllers::disabled,"arm2Controllers/zeroTorque.csv"},
+            {(uint8_t)config_defs::arm_2_controllers::zero_torque,"arm2Controllers/zeroTorque.csv"},
             {(uint8_t)config_defs::arm_2_controllers::constant_torque,"arm2Controllers/constantTorque.csv"},
             {(uint8_t)config_defs::arm_2_controllers::spline,"arm2Controllers/spline.csv"},
         };

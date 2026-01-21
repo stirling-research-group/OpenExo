@@ -1530,6 +1530,9 @@ void Arm1Joint::set_controller(uint8_t controller_id)
             _joint_data->motor.enabled = false;
             _controller = &_zero_torque;
             break;
+        case (uint8_t)config_defs::arm_1_controllers::zero_torque:
+            _controller = &_zero_torque;
+            break;
         case (uint8_t)config_defs::arm_1_controllers::constant_torque:
             _controller = &_constant_torque;
             break;
@@ -1643,6 +1646,9 @@ void Arm2Joint::set_controller(uint8_t controller_id)
     {
         case (uint8_t)config_defs::arm_2_controllers::disabled:
             _joint_data->motor.enabled = false;
+            _controller = &_zero_torque;
+            break;
+        case (uint8_t)config_defs::arm_2_controllers::zero_torque:
             _controller = &_zero_torque;
             break;
         case (uint8_t)config_defs::arm_2_controllers::constant_torque:

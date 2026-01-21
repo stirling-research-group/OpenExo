@@ -145,7 +145,8 @@ void ctrl_param_array_gen(uint8_t* config_to_send) {
 		//Serial.print(csvCount);
 		
 		
-		for (int i_ctrl = 2; i_ctrl < csvCount; i_ctrl++) {//starting from 2 to skip the first controllers (Disabled controllers)
+		int start_ctrl = 2; // Skip disabled controller for all joints.
+		for (int i_ctrl = start_ctrl; i_ctrl < csvCount; i_ctrl++) {
 			bool csvExists;
 			std::string filename;
 			char joint_id_string;
