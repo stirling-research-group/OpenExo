@@ -422,6 +422,13 @@ namespace config_defs
 
         const IniKeyCode exo_name 
         { 
+            {"Ankle", (uint8_t)config_defs::exo_name::bilateral_ankle},
+            {"Hip", (uint8_t)config_defs::exo_name::bilateral_hip},
+            {"Knee", (uint8_t)config_defs::exo_name::bilateral_knee},
+            {"Elbow", (uint8_t)config_defs::exo_name::bilateral_elbow},
+            {"HipAnkle", (uint8_t)config_defs::exo_name::bilateral_hip_ankle},
+            {"HipElbow", (uint8_t)config_defs::exo_name::bilateral_hip_elbow},
+            {"AnkleElbow", (uint8_t)config_defs::exo_name::bilateral_ankle_elbow},
             {"bilateralAnkle", (uint8_t)config_defs::exo_name::bilateral_ankle}, 
             {"bilateralHip", (uint8_t)config_defs::exo_name::bilateral_hip},
             {"bilateralKnee", (uint8_t)config_defs::exo_name::bilateral_knee},
@@ -444,6 +451,7 @@ namespace config_defs
             {"leftAnkleElbow", (uint8_t)config_defs::exo_name::left_ankle_elbow},
             {"rightAnkleElbow", (uint8_t)config_defs::exo_name::right_ankle_elbow},
             {"test", (uint8_t)config_defs::exo_name::test},
+            {"Arm", (uint8_t)config_defs::exo_name::bilateral_arm},
             {"bilateralArm", (uint8_t)config_defs::exo_name::bilateral_arm},
         };
         
