@@ -43,6 +43,7 @@ class QtExoDeviceManager(QtCore.QObject):
         self._client: Optional[object] = None
         self._is_connecting = False
         self._is_connected = False
+        self._error_notify_enabled = False
         # Persistent asyncio loop running in a background thread
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._loop_thread: Optional[threading.Thread] = None
@@ -173,7 +174,13 @@ class QtExoDeviceManager(QtCore.QObject):
 
                             self.log.emit("Starting notifications…")
                             await client.start_notify(UART_RX_UUID, _on_rx)
-                            await client.start_notify(ERROR_CHAR_UUID, _on_error)
+                            self._error_notify_enabled = False
+                            try:
+                                await client.start_notify(ERROR_CHAR_UUID, _on_error)
+                                self._error_notify_enabled = True
+                            except Exception as ex:
+                                self.log.emit("Error characteristic not found; continuing with UART only.")
+                                print(f"[QtExoDeviceManager] error char notify failed: {ex}")
 
                             self._client = client
                             self._is_connected = True
@@ -207,10 +214,11 @@ class QtExoDeviceManager(QtCore.QObject):
                         await self._client.stop_notify(UART_RX_UUID)
                     except Exception:
                         pass
-                    try:
-                        await self._client.stop_notify(ERROR_CHAR_UUID)
-                    except Exception:
-                        pass
+                    if self._error_notify_enabled:
+                        try:
+                            await self._client.stop_notify(ERROR_CHAR_UUID)
+                        except Exception:
+                            pass
                     try:
                         await self._client.disconnect()
                     except Exception:

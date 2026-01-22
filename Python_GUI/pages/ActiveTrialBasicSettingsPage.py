@@ -23,6 +23,7 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
         self._bilateral_state = False
         self._last_selection = {
             "bilateral": False,
+            "joint": "Left hip",
             "joint_id": 0,
             "controller": 0,
             "parameter": 0,
@@ -137,7 +138,9 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
                                 pass
                         elif line.startswith("last_basic_joint="):
                             # Backward-compatible: map legacy labels to raw IDs.
-                            legacy = line.split("=")[1].strip().lower()
+                            legacy = line.split("=")[1].strip()
+                            self._last_selection["joint"] = legacy
+                            legacy_key = legacy.lower()
                             legacy_map = {
                                 "left hip": 65,
                                 "right hip": 33,
@@ -148,7 +151,7 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
                                 "left elbow": 72,
                                 "right elbow": 40,
                             }
-                            self._last_selection["joint_id"] = legacy_map.get(legacy, 0)
+                            self._last_selection["joint_id"] = legacy_map.get(legacy_key, 0)
                         elif line.startswith("last_basic_controller="):
                             try:
                                 self._last_selection["controller"] = int(line.split("=")[1].strip())
@@ -186,6 +189,8 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
             # Update with current values
             existing["bilateral"] = str(self._bilateral_state)
             existing["last_basic_joint_id"] = str(self._last_selection.get("joint_id", 0))
+            if hasattr(self, "combo_joint"):
+                existing["last_basic_joint"] = str(self._last_selection.get("joint", "Left hip"))
             existing["last_basic_controller"] = str(self._last_selection.get("controller", 0))
             existing["last_basic_parameter"] = str(self._last_selection.get("parameter", 0))
             existing["last_basic_value"] = str(self._last_selection.get("value", 0.0))
@@ -205,8 +210,14 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
             self.chk_bilateral.setChecked(bilateral)
             
             # Restore joint selection
-            joint_id = int(self._last_selection.get("joint_id", 0))
-            self.spin_joint_id.setValue(joint_id)
+            if hasattr(self, "combo_joint"):
+                joint_name = self._last_selection.get("joint", "Left hip")
+                idx = self.combo_joint.findText(joint_name)
+                if idx >= 0:
+                    self.combo_joint.setCurrentIndex(idx)
+            else:
+                joint_id = int(self._last_selection.get("joint_id", 0))
+                self.spin_joint_id.setValue(joint_id)
             
             # Restore controller selection
             controller = self._last_selection.get("controller", 0)
@@ -235,7 +246,12 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
     @QtCore.Slot()
     def _on_apply(self):
         is_bilateral = self.chk_bilateral.isChecked()
-        joint_id = int(self.spin_joint_id.value())
+        if hasattr(self, "combo_joint"):
+            joint_name = self.combo_joint.currentText()
+            joint_id = self._joint_name_to_index.get(joint_name, 0)
+        else:
+            joint_name = self._last_selection.get("joint", "Left hip")
+            joint_id = int(self.spin_joint_id.value())
         controller = int(self.combo_controller.currentText())
         parameter = int(self.combo_param.currentText())
         value = float(self.spin_value.value())
@@ -244,6 +260,7 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
         # Save last selection for next time
         self._last_selection = {
             "bilateral": is_bilateral,
+            "joint": joint_name,
             "joint_id": joint_id,
             "controller": controller,
             "parameter": parameter,
