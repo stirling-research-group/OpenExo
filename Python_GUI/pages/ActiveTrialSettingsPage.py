@@ -103,6 +103,9 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
         self.spin_value.setSingleStep(0.1)
         self.spin_value.setValue(0.0)
         style_spinbox(self.spin_value, height=UIConfig.BTN_HEIGHT_XLARGE, font_size=UIConfig.FONT_LARGE)
+        self.spin_value.setButtonSymbols(QtWidgets.QAbstractSpinBox.UpDownArrows)
+        self.spin_value.setMinimumWidth(90)
+        self.spin_value.setStyleSheet("QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 24px; }")
         form.addWidget(lbl_value, row, 0)
         form.addWidget(self.spin_value, row, 1)
 
