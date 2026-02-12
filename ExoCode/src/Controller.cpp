@@ -1268,10 +1268,25 @@ ElbowMinMax::ElbowMinMax(config_defs::joint_id id, ExoData* exo_data)
 float ElbowMinMax::calc_motor_cmd()
 {
 
+    // alpha3 = _controller_data->parameters[controller_defs::elbow_min_max::FiltStrength_idx] * 0.01;
+
+    // float Sig_Flex = _side_data->toe_fsr;   //(Sensor 1)
+    // float Sig_Ext = _side_data->heel_fsr;   //(Sensor 2)
+
+    // //Filter the incoming FSR signals
+    // Smoothed_Sig_Flex = ((alpha0 * Sig_Flex) + ((1 - alpha0) * Smoothed_Sig_Flex));
+    // Smoothed_Sig_Ext = ((alpha0 * Sig_Ext) + ((1 - alpha0) * Smoothed_Sig_Ext));
+
+    //Local FSR direct read
+    float elbow_toe_fsr;
+    float elbow_heel_fsr;
+    elbow_toe_fsr = analogRead(_joint_data->is_left ? logic_micro_pins::fsr_sense_left_toe_pin : logic_micro_pins::fsr_sense_right_toe_pin);
+    elbow_heel_fsr = analogRead(_joint_data->is_left ? logic_micro_pins::fsr_sense_left_heel_pin : logic_micro_pins::fsr_sense_right_heel_pin);
+
     alpha3 = _controller_data->parameters[controller_defs::elbow_min_max::FiltStrength_idx] * 0.01;
 
-    float Sig_Flex = _side_data->toe_fsr;   //(Sensor 1)
-    float Sig_Ext = _side_data->heel_fsr;   //(Sensor 2)
+    float Sig_Flex = elbow_toe_fsr;   //(Sensor 1)
+    float Sig_Ext = elbow_heel_fsr;   //(Sensor 2)
 
     //Filter the incoming FSR signals
     Smoothed_Sig_Flex = ((alpha0 * Sig_Flex) + ((1 - alpha0) * Smoothed_Sig_Flex));
