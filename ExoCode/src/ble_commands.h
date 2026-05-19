@@ -51,7 +51,7 @@ namespace ble_names
     static const char mark              = 'N';
     static const char update_param      = 'f';
     static const char reset_system      = 'Z';
-
+    // static const char get_param         = 'g';
     //Sending Commands (Firmware->GUI)
     static const char send_real_time_data = '?';
     static const char send_batt           = '~';
@@ -60,6 +60,7 @@ namespace ble_names
     static const char send_trq_cal        = 'H';
     static const char send_step_count     = 's';
     static const char cal_fsr_finished    = 'n';
+    static const char send_param          = 'p';
 
 };
 
@@ -85,6 +86,8 @@ namespace ble
         {ble_names::new_trq,            4},
         {ble_names::update_param,       4},
         {ble_names::reset_system,       0},
+        // {ble_names::get_param,       0},
+
         
         //Sending Commands
         {ble_names::send_batt,              1},
@@ -94,6 +97,7 @@ namespace ble
         {ble_names::send_trq_cal,           2},
         {ble_names::send_step_count,        2},
         {ble_names::cal_fsr_finished,       0},
+        {ble_names::send_param,       4}, //May need to update this
     };
 };
 
@@ -456,7 +460,10 @@ namespace ble_handlers
 		Serial.print(tx_msg.data[(uint8_t)UART_command_enums::controller_param::PARAM_VALUE]);
 		#endif
     }
+    // inline static void get_param(ExoData* data, BleMessage* msg) {
+    //     data->print();
 
+    // }
 }
 
 #endif
