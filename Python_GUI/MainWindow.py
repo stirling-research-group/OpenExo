@@ -654,3 +654,4 @@ class MainWindow(QtWidgets.QMainWindow):
             self._csv_file = None
             self._csv_writer = None
 
+

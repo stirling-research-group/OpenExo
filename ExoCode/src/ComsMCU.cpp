@@ -315,6 +315,9 @@ void ComsMCU::_process_complete_gui_command(BleMessage* msg)
     case ble_names::reset_system:
         _schedule_system_reset();
         break;
+     case ble_names::get_pid:
+        ble_handlers::get_pid(_data,msg);
+        break;
     default:
         logger::println("ComsMCU::_process_complete_gui_command->No case for command!", LogLevel::Error);
         break;

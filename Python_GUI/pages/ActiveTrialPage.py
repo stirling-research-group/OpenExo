@@ -67,7 +67,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
             self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
             self.btn_set_preamble, self.btn_update_controller, self.btn_bio_feedback,
             self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr, self.btn_recal_torque,
-            self.btn_mark, self.btn_pause_play,
+            self.btn_mark, self.btn_pause_play, self.btn_get_pid
         ]
         target_width = None
         try:
@@ -161,7 +161,10 @@ class ActiveTrialPage(QtWidgets.QWidget):
         
         self.btn_save_csv = QtWidgets.QPushButton("Save & New CSV")
         controls.addWidget(self.btn_save_csv)
-        
+
+        ##my addition
+        self.btn_get_pid = QtWidgets.QPushButton("Get current PID values")
+        controls.addWidget(self.btn_get_pid)
         # Separator
         controls.addSpacing(UIConfig.SPACING_XLARGE)
         controls.addWidget(create_separator())
@@ -269,13 +272,13 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_send_preset_fsr.clicked.connect(self.sendPresetFSRRequested.emit)
         self.btn_recal_torque.clicked.connect(self.recalibrateTorqueRequested.emit)
         self.btn_mark.clicked.connect(self.markTrialRequested.emit)
-
+        self.btn_get_pid.clicked.connect(self.request_pid_values)
         # Apply consistent button styling
         buttons = [
             self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
             self.btn_set_preamble, self.btn_update_controller, self.btn_bio_feedback,
             self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr, self.btn_recal_torque,
-            self.btn_mark, self.btn_pause_play,
+            self.btn_mark, self.btn_pause_play, self.btn_get_pid
         ]
         apply_button_style_batch(buttons, height=UIConfig.BTN_HEIGHT_SMALL, padding="6px 10px")
         
