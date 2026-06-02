@@ -21,6 +21,7 @@ class RtBridge(QtCore.QObject):
     controllersReceived = QtCore.Signal(list, list)
     controllerMatrixReceived = QtCore.Signal(list)
     rtDataUpdated = QtCore.Signal(list)
+    pidValuesReceived = QtCore.Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -273,6 +274,14 @@ class RtBridge(QtCore.QObject):
                         if val is not None:
                             self._payload.append(val)
                         if self._num_count == self._data_length:
+                            # Sophie - addition delete or comment if error
+                            values = list(self._payload)
+
+                            if self._command == "p":
+                                self.pidValuesReceived.emit(values)
+                                self._reset_stream()
+                                return
+                            
                             # Drop spurious single-value frames (e.g., fragmented BLE chunks)
                             if self._data_length <= 1:
                                 self._reset_stream()

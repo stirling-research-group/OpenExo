@@ -572,3 +572,19 @@ class QtExoDeviceManager(QtCore.QObject):
             return False
 
     # Removed invalid get_char_handle; bleak accepts UUIDs directly
+
+
+    ##my addition
+    @QtCore.Slot()
+    def request_pid_values(self):
+        if not self._ensure_connected():
+            return
+
+        async def _do():
+            try:
+                await self._client.write_gatt_char(UART_TX_UUID, b"P", response=False)
+                self.log.emit("PID request sent")
+            except Exception as ex:
+                self.error.emit(str(ex))
+
+        self._submit(_do())

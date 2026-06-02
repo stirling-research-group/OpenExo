@@ -36,7 +36,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     deviceStartRequested = QtCore.Signal()
     deviceStopRequested = QtCore.Signal()
     csvPreambleChanged = QtCore.Signal(str)
-
+    pidValuesRequested = QtCore.Signal()
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("ActiveTrialPage")
@@ -272,7 +272,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_send_preset_fsr.clicked.connect(self.sendPresetFSRRequested.emit)
         self.btn_recal_torque.clicked.connect(self.recalibrateTorqueRequested.emit)
         self.btn_mark.clicked.connect(self.markTrialRequested.emit)
-        self.btn_get_pid.clicked.connect(self.request_pid_values)
+        self.btn_get_pid.clicked.connect(self.pidValuesRequested.emit)
         # Apply consistent button styling
         buttons = [
             self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,

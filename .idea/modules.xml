@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/OpenExo.iml" filepath="$PROJECT_DIR$/.idea/OpenExo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/OpenExo_Summer.iml" filepath="$PROJECT_DIR$/.idea/OpenExo_Summer.iml" />
     </modules>
   </component>
 </project>

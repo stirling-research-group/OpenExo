@@ -79,6 +79,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Receive flattened 2D matrix of controllers and parameters
         self.rt_bridge.controllerMatrixReceived.connect(self._on_controller_matrix)
 
+        #recieve pid values
+        self.rt_bridge.pidValuesReceived.connect(self._on_pid_values_received)
+
         # CSV logging state
         self._csv_file = None
         self._csv_writer = None
@@ -107,6 +110,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trial_page.updateControllerRequested.connect(self._on_update_controller)
         self.trial_page.bioFeedbackRequested.connect(self._on_bio_feedback)
         self.trial_page.machineLearningRequested.connect(self._on_machine_learning)
+        self.trial_page.pidValuesRequested.connect(self._on_request_pid_values)
         # Update Scan page status from device manager
         self.qt_dev.log.connect(self._on_dev_log)
         self.qt_dev.error.connect(self._on_dev_error)
@@ -653,5 +657,50 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception:
             self._csv_file = None
             self._csv_writer = None
+## my addition
+    @QtCore.Slot()
+    def _on_request_pid_values(self):
+        self.qt_dev.request_pid_values()
+
+    @QtCore.Slot(list)
+    def _on_pid_values_received(self, values):
+        try:
+            if len(values) < 4:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    "PID Values",
+                    f"Received incomplete PID data: {values}"
+                )
+                return
+
+            joint_id, p_gain, i_gain, d_gain = values[:4]
+
+            message = (
+                f"Joint ID: {int(joint_id)}\n\n"
+                f"P: {p_gain:.6f}\n"
+                f"I: {i_gain:.6f}\n"
+                f"D: {d_gain:.6f}"
+            )
+
+            QtWidgets.QMessageBox.information(
+                self,
+                "Current PID Values",
+                message
+            )
+
+        except Exception as e:
+            QtWidgets.QMessageBox.warning(
+                self,
+                "PID Values",
+                f"ERROR:\n{e}"
+            )
+    # @QtCore.Slot(list)
+    # def _on_pid_values_received(self, values):
+    #     try:
+    #         msg = f"PID values received: {values}"
+    #         self.scan_page.status.setText(msg)
+    #         QtWidgets.QMessageBox.information(self, "Current PID Values", msg)
+    #     except Exception:
+    #         pass
 
 
