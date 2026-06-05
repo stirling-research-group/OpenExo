@@ -235,7 +235,25 @@ void ComsMCU::update_gui()
         batt_msg.expecting = ble_command_helpers::get_length_for_command(batt_msg.command);
         batt_msg.data[0] = _data->battery_value;
         _exo_ble->send_message(batt_msg); */
+        BleMessage pid_msg = BleMessage();
+        pid_msg.command = ble_names::get_pid;
+        pid_msg.expecting = ble_command_helpers::get_length_for_command(pid_msg.command);
 
+        // pid addition
+
+        int idx = 0;
+        _data->for_each_joint([&](JointData* j, float*) {
+            if (j->is_used) { // might need to edit
+                response.data[idx++] = j->controller.parameters[P_gain_idx];
+                response.data[idx++] = j->controller.parameters[I_gain_idx];
+                response.data[idx++] = j->controller.parameters[D_gain_idx];
+            }
+        });
+        _exo_ble->send_message(pid_msg);
+        #if COMSMCU_DEBUG
+            logger::println("ComsMCU::update_gui->PID sent message");
+        #endif
+        //end of pid addition
         del_t_status = 0;
 
         #if COMSMCU_DEBUG
@@ -315,9 +333,27 @@ void ComsMCU::_process_complete_gui_command(BleMessage* msg)
     case ble_names::reset_system:
         _schedule_system_reset();
         break;
-     case ble_names::get_pid:
-        ble_handlers::get_pid(_data,msg);
-        break;
+//     case ble_names::get_pid:
+////        ble_handlers::get_pid(_data,msg);
+//
+//        BleMessage response;
+//        response.command = ble_names::get_pid;
+//        int pid_count = 0;
+//        data->for_each_joint([&](JointData* j, float*) {
+//            if (j->is_used) pid_count += 3;
+//        });
+//        response.expecting = pid_count;
+//
+//        int idx = 0;
+//        data->for_each_joint([&](JointData* j, float*) {
+//            if (j->is_used) { // might need to edit
+//                response.data[idx++] = j->controller.parameters[P_gain_idx];
+//                response.data[idx++] = j->controller.parameters[I_gain_idx];
+//                response.data[idx++] = j->controller.parameters[D_gain_idx];
+//            }
+//        });
+//         _exo_ble->send_message(response);
+//        break;
     default:
         logger::println("ComsMCU::_process_complete_gui_command->No case for command!", LogLevel::Error);
         break;
