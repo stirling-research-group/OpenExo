@@ -88,6 +88,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rt_bridge.controllerMatrixReceived.connect(self._on_controller_matrix)
         self.rt_bridge.controllerValuesReceived.connect(self._on_controller_values)
 
+        ## PID GUI Update start - Sophie
+        self.rt_bridge.pidValuesReceived.connect(self._on_pid_values)
+        ## PID GUI Update end - sophie
+
         # CSV logging state
         self._csv_file = None
         self._csv_writer = None
@@ -900,5 +904,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.logger.debug(traceback.format_exc())
             self._csv_file = None
             self._csv_writer = None
+
+    ## PID GUI Update start - Sophie
+    @QtCore.Slot(dict)
+    def _on_pid_values(self, pid_data: dict):
+        try:
+            self.logger.debug(f"Received PID values: {pid_data}")
+            # Send to trial page to display
+            self.trial_page.update_pid_values(pid_data)
+        except Exception as e:
+            self.logger.error(f"Failed to update PID values: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    ## PID GUI Update end - sophie
 
 

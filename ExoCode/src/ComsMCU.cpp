@@ -239,7 +239,7 @@ void ComsMCU::update_gui()
         pid_msg.command = ble_names::get_pid;
         pid_msg.expecting = ble_command_helpers::get_length_for_command(pid_msg.command);
 
-        // pid addition
+        // start of pid addition
 
         int idx = 0;
         _data->for_each_joint([&](JointData* j, float*) {
@@ -254,6 +254,7 @@ void ComsMCU::update_gui()
             logger::println("ComsMCU::update_gui->PID sent message");
         #endif
         //end of pid addition
+
         del_t_status = 0;
 
         #if COMSMCU_DEBUG

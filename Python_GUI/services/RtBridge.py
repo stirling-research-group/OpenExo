@@ -25,6 +25,7 @@ class RtBridge(QtCore.QObject):
     controllerMatrixReceived = QtCore.Signal(list)
     controllerValuesReceived = QtCore.Signal(list)
     rtDataUpdated = QtCore.Signal(list)
+    pidValuesReceived = QtCore.Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -380,6 +381,41 @@ class RtBridge(QtCore.QObject):
                             return
                 else:
                     return
+
+        if 'P' in s:
+            parts = s.split('P')
+            event_info = parts[0]
+            event_data = parts[1]
+            m = self._event_count_regex.match(event_info)
+            if not m.hasMatch():
+                return
+            count = int(m.captured(0))  # Should be 3
+
+            # Parse 3 values
+            values = []
+            token = ""
+            for ch in event_data:
+                if ch == 'n':
+                    try:
+                        val = float(token) / 100.0
+                        values.append(val)
+                    except:
+                        pass
+                    token = ""
+                elif ch == 'E':
+                    break
+                else:
+                    token += ch
+
+
+                    if len(values) >= 12:
+                        pid_data = {
+                            'kp': values[0],
+                            'ki': values[1],
+                            'kd': values[2],
+
+                        }
+                        self.pidValuesReceived.emit(pid_data)
 
     def _reset_stream(self):
         self._start_transmission = False

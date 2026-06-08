@@ -36,6 +36,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     deviceStartRequested = QtCore.Signal()
     deviceStopRequested = QtCore.Signal()
     csvPreambleChanged = QtCore.Signal(str)
+    #showPIDRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -162,13 +163,36 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_save_csv = QtWidgets.QPushButton("Save & New CSV")
         controls.addWidget(self.btn_save_csv)
 
-        ##my addition
-        self.btn_get_pid = QtWidgets.QPushButton("Get current PID values")
-        controls.addWidget(self.btn_get_pid)
+        # ##my addition
+        # self.btn_get_pid = QtWidgets.QPushButton("Get current PID values")
+        # controls.addWidget(self.btn_get_pid)
+
+
         # Separator
         controls.addSpacing(UIConfig.SPACING_XLARGE)
         controls.addWidget(create_separator())
-        
+        # ═══════ PID Values  ═══════
+        controls.addWidget(create_section_label("Current PID Values"))
+        controls.addSpacing(UIConfig.SPACING_SMALL)
+        # Create a grid layout for PID values
+        pid_layout = QtWidgets.QGridLayout()
+        pid_layout.setSpacing(UIConfig.SPACING_SMALL)
+
+
+        lbl_elbow = QtWidgets.QLabel("Elbow:")
+        lbl_elbow.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL}pt; font-weight: bold;")
+        self.lbl_elbow_kp = QtWidgets.QLabel("Kp: --")
+        self.lbl_elbow_ki = QtWidgets.QLabel("Ki: --")
+        self.lbl_elbow_kd = QtWidgets.QLabel("Kd: --")
+        self.lbl_elbow_kp.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_elbow_ki.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_elbow_kd.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        pid_layout.addWidget( lbl_elbow, 0, 0)
+        pid_layout.addWidget(self.lbl_elbow_kp, 0, 1)
+        pid_layout.addWidget(self.lbl_elbow_ki, 0, 2)
+        pid_layout.addWidget(self.lbl_elbow_kd, 0, 3)
+        controls.addLayout(pid_layout)
+        controls.addSpacing(UIConfig.SPACING_XLARGE)
         # ═══════ SETTINGS ═══════
         controls.addWidget(create_section_label("Settings"))
         controls.addSpacing(UIConfig.SPACING_SMALL)
@@ -539,6 +563,21 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.curve_bot_a.setData(self.t_vals, self.bot_a_vals)
         self.curve_bot_b.setData(self.t_vals, self.bot_b_vals)
 
+    def update_pid_values(self, pid_data: dict):
+        #Update PID display with new values.
+
+        try:
+
+
+                self.lbl_elbow_kp.setText(f"Kp: {pid_data[0]:.4f}")
+                self.lbl_elbow_ki.setText(f"Ki: {pid_data[1]:.4f}")
+                self.lbl_elbow_kd.setText(f"Kd: {pid_data[2]:.4f}")
+
+
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to update PID values: {e}")
 
 # Standalone demo
 def _demo():
