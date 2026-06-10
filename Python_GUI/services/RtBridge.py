@@ -383,6 +383,7 @@ class RtBridge(QtCore.QObject):
                     return
 
         if 'P' in s:
+            self.logger.error("P Loop entered")
             parts = s.split('P')
             event_info = parts[0]
             event_data = parts[1]

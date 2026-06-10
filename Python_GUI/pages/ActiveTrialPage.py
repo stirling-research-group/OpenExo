@@ -36,7 +36,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     deviceStartRequested = QtCore.Signal()
     deviceStopRequested = QtCore.Signal()
     csvPreambleChanged = QtCore.Signal(str)
-    #showPIDRequested = QtCore.Signal()
+    PIDRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -44,7 +44,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self._base_button_font_size = 13  # Store base size for scaling
         self._build_ui()
         self._init_state()
-    
+        self._pid_values: list = []
     def resizeEvent(self, event):
         """Dynamically adjust font sizes and button heights."""
         super().resizeEvent(event)
@@ -175,6 +175,8 @@ class ActiveTrialPage(QtWidgets.QWidget):
         controls.addWidget(create_section_label("Current PID Values"))
         controls.addSpacing(UIConfig.SPACING_SMALL)
         # Create a grid layout for PID values
+        self.btn_get_pid = QtWidgets.QPushButton("Get current PID values")
+        controls.addWidget(self.btn_get_pid)
         pid_layout = QtWidgets.QGridLayout()
         pid_layout.setSpacing(UIConfig.SPACING_SMALL)
 
@@ -296,7 +298,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_send_preset_fsr.clicked.connect(self.sendPresetFSRRequested.emit)
         self.btn_recal_torque.clicked.connect(self.recalibrateTorqueRequested.emit)
         self.btn_mark.clicked.connect(self.markTrialRequested.emit)
-        self.btn_get_pid.clicked.connect(self.request_pid_values)
+        self.btn_get_pid.clicked.connect(self.PIDRequested.emit)
         # Apply consistent button styling
         buttons = [
             self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
@@ -563,7 +565,8 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.curve_bot_a.setData(self.t_vals, self.bot_a_vals)
         self.curve_bot_b.setData(self.t_vals, self.bot_b_vals)
 
-    def update_pid_values(self, pid_data: dict):
+
+    def update_pid_values(self, pid_data: list):
         #Update PID display with new values.
 
         try:
@@ -579,6 +582,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
             logger = logging.getLogger(__name__)
             logger.error(f"Failed to update PID values: {e}")
 
+   # def set_pid_values(self):
 # Standalone demo
 def _demo():
     app = QtWidgets.QApplication(sys.argv)

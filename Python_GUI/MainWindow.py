@@ -103,6 +103,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._csv_preamble = ""  # Preamble for CSV filename
         # Store controller -> params 2D matrix
         self._controller_matrix = []
+        # PID controller values
+        self._pid_values = []
         # Store controller values by (joint_id, controller_id)
         self._controller_values = {}
         # Device control wiring from ActiveTrialPage
@@ -118,6 +120,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trial_page.updateControllerRequested.connect(self._on_update_controller)
         self.trial_page.bioFeedbackRequested.connect(self._on_bio_feedback)
         self.trial_page.machineLearningRequested.connect(self._on_machine_learning)
+
+        #PID Update start -sophie
+        self.trial_page.PIDRequested.connect(self._on_pid_values)
+        #PID Update end - sophie
         # Update Scan page status from device manager
         self.qt_dev.log.connect(self._on_dev_log)
         self.qt_dev.error.connect(self._on_dev_error)
@@ -688,6 +694,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.logger.error(f"Failed to navigate to trial page after settings: {e}")
             self.logger.debug(traceback.format_exc())
 
+    #def find_gains(self):
+
     def _clear_ble_prefs_on_new_connection(self):
         """Purge saved Update-Controller prefs and in-memory selections for a new link.
 
@@ -906,12 +914,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self._csv_writer = None
 
     ## PID GUI Update start - Sophie
-    @QtCore.Slot(dict)
-    def _on_pid_values(self, pid_data: dict):
+    @QtCore.Slot(list)
+    def _on_pid_values(self):
+
+        page = self.trial_page
+        self.logger.debug("Trying to get values")
         try:
-            self.logger.debug(f"Received PID values: {pid_data}")
+            self.logger.debug(f"Received PID values: {self._pid_values}")
             # Send to trial page to display
-            self.trial_page.update_pid_values(pid_data)
+            page.update_pid_values(self._pid_values)
         except Exception as e:
             self.logger.error(f"Failed to update PID values: {e}")
             self.logger.debug(traceback.format_exc())

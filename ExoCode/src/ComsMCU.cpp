@@ -13,7 +13,7 @@
 
 #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
 
-#define COMSMCU_DEBUG 0
+#define COMSMCU_DEBUG 1 // Switch back
 
 ComsMCU::ComsMCU(ExoData* data, uint8_t* config_to_send):_data{data}
 {
@@ -153,9 +153,17 @@ void ComsMCU::update_gui()
     static Time_Helper* t_helper = Time_Helper::get_instance();
     static float my_mark = _data->mark;
     static float* rt_floats = new float(rt_data::len);
-
+    #if COMSMCU_DEBUG
+            logger::println("ComsMCU::update_gui->RT floats before poll");
+            logger::println(rt_floats);
+    #endif
     //Get real time data from ExoData and send to GUI
     const bool new_rt_data = real_time_i2c::poll(rt_floats);
+
+      #if COMSMCU_DEBUG
+            logger::println("ComsMCU::update_gui->New RT data after polll");
+            logger::println(new_rt_data);
+    #endif
     static float del_t_no_msg = millis();
 
     if (new_rt_data || rt_data::new_rt_msg)
@@ -244,13 +252,18 @@ void ComsMCU::update_gui()
         int idx = 0;
         _data->for_each_joint([&](JointData* j, float*) {
             if (j->is_used) { // might need to edit
-                response.data[idx++] = j->controller.parameters[P_gain_idx];
-                response.data[idx++] = j->controller.parameters[I_gain_idx];
-                response.data[idx++] = j->controller.parameters[D_gain_idx];
+                pid_msg.data[idx++] = j->controller.parameters[P_gain_idx];
+                pid_msg.data[idx++] = j->controller.parameters[I_gain_idx];
+                pid_msg.data[idx++] = j->controller.parameters[D_gain_idx];
             }
         });
+        #if COMSMCU_DEBUG
+          logger::println(f"ComsMCU::update_gui-> PID Message");
+          pid_msg.print();
+        #endif
         _exo_ble->send_message(pid_msg);
         #if COMSMCU_DEBUG
+          //  logger::println(f"ComsMCU::update_gui-> PID Message")
             logger::println("ComsMCU::update_gui->PID sent message");
         #endif
         //end of pid addition

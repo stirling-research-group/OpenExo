@@ -9,3 +9,5 @@ ExoCode/.vscode
 */.vs
 Libraries/ArduinoBLE/extras/arduino-ble-parser.py
 .idea/
+.venv/
+OpenExo/*
