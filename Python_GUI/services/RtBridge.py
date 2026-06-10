@@ -297,8 +297,18 @@ class RtBridge(QtCore.QObject):
                 return
             event_info = parts[0]
             event_data = parts[1]
+
+            ## Figure out command
+            if len(event_info) < 2:
+                curr_command = event_info[1]
+            else:
+                curr_command = None
+            if len(event_info) >= 3:
+                count_str = event_info[2:]
+            else:
+                count_str = event_info
             # Extract count from event_info using regex
-            m = self._event_count_regex.match(event_info)
+            m = self._event_count_regex.match(count_str)
             if not m.hasMatch():
                 return
             try:
@@ -308,9 +318,31 @@ class RtBridge(QtCore.QObject):
                 self.logger.debug(traceback.format_exc())
                 return
 
-            event_without_count = f"{event_info[0]}{event_info[1]}{event_data}"
+
+
             # Parse stream similar to original logic
+            if curr_command == 'P':
+                self.logger.debug(f"PID frame detected, expecting {self._data_length} values")
+                values = []
+                token = ""
+                for ch in event_data:
+                    if ch == 'n':
+                        try:
+                            values.append(float(token) / 100.0)
+                        except Exception:
+                            pass
+                        token = ""
+                    else:
+                        token += ch
+                if values:
+                    self.logger.debug(f"Emitting PID values: {values}")
+                    self.pidValuesReceived.emit(values)
+                self._reset_stream()
+                return
+            event_without_count = f"{event_info[0]}{event_info[1]}{event_data}"
             for ch in event_without_count:
+
+
                 if ch == 'S' and not self._start_transmission:
                     self._start_transmission = True
                     continue
@@ -382,41 +414,40 @@ class RtBridge(QtCore.QObject):
                 else:
                     return
 
-        if 'P' in s:
-            self.logger.error("P Loop entered")
-            parts = s.split('P')
-            event_info = parts[0]
-            event_data = parts[1]
-            m = self._event_count_regex.match(event_info)
-            if not m.hasMatch():
-                return
-            count = int(m.captured(0))  # Should be 3
-
-            # Parse 3 values
-            values = []
-            token = ""
-            for ch in event_data:
-                if ch == 'n':
-                    try:
-                        val = float(token) / 100.0
-                        values.append(val)
-                    except:
-                        pass
-                    token = ""
-                elif ch == 'E':
-                    break
-                else:
-                    token += ch
-
-
-                    if len(values) >= 12:
-                        pid_data = {
-                            'kp': values[0],
-                            'ki': values[1],
-                            'kd': values[2],
-
-                        }
-                        self.pidValuesReceived.emit(pid_data)
+        # if 'P' in s:
+        #     self.logger.debug("P Loop entered")
+        #     parts = s.split('P')
+        #     event_info = parts[0]
+        #     event_data = parts[1]
+        #     m = self._event_count_regex.match(event_info)
+        #     if not m.hasMatch():
+        #         return
+        #     count = int(m.captured(0))
+        #
+        #     # Parse count values terminated by 'n' delimiters (same format as 'c' frames)
+        #     values = []
+        #     token = ""
+        #     for ch in event_data:
+        #         if ch == 'n':
+        #             try:
+        #                 val = float(token) / 100.0
+        #                 values.append(val)
+        #             except Exception:
+        #                 pass
+        #             token = ""
+        #         else:
+        #             token += ch
+        #
+        #
+        #     if len(values) >2:
+        #         self.pidValuesReceived.emit(list(values))
+                # pid_data = { ## dictionary
+                #     'kp': values[0],
+                #     'ki': values[1],
+                #     'kd': values[2],
+                #
+                # }
+                # self.pidValuesReceived.emit(pid_data)
 
     def _reset_stream(self):
         self._start_transmission = False

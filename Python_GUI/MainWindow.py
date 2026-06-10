@@ -122,7 +122,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trial_page.machineLearningRequested.connect(self._on_machine_learning)
 
         #PID Update start -sophie
-        self.trial_page.PIDRequested.connect(self._on_pid_values)
+
+        self.trial_page.PIDRequested.connect(self._on_pid_button_pressed)
         #PID Update end - sophie
         # Update Scan page status from device manager
         self.qt_dev.log.connect(self._on_dev_log)
@@ -914,15 +915,21 @@ class MainWindow(QtWidgets.QMainWindow):
             self._csv_writer = None
 
     ## PID GUI Update start - Sophie
-    @QtCore.Slot(list)
-    def _on_pid_values(self):
 
-        page = self.trial_page
-        self.logger.debug("Trying to get values")
+    @QtCore.Slot()
+    def _on_pid_button_pressed(self):
+
+        if self._pid_values:
+            self.trial_page.update_pid_values(self._pid_values)
+        else:
+            self.logger.debug("PID button pressed but no PID values received yet")
+
+
+    def _on_pid_values(self, pid_values: list):
+        self._pid_values = pid_values
+        self.logger.debug(f"Received PID values: {pid_values}")
         try:
-            self.logger.debug(f"Received PID values: {self._pid_values}")
-            # Send to trial page to display
-            page.update_pid_values(self._pid_values)
+            self.trial_page.update_pid_values(pid_values)
         except Exception as e:
             self.logger.error(f"Failed to update PID values: {e}")
             self.logger.debug(traceback.format_exc())

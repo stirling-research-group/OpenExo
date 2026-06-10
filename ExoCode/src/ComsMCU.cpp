@@ -155,14 +155,14 @@ void ComsMCU::update_gui()
     static float* rt_floats = new float(rt_data::len);
     #if COMSMCU_DEBUG
             logger::println("ComsMCU::update_gui->RT floats before poll");
-            logger::println(rt_floats);
+            //logger::println(rt_floats);
     #endif
     //Get real time data from ExoData and send to GUI
     const bool new_rt_data = real_time_i2c::poll(rt_floats);
 
       #if COMSMCU_DEBUG
             logger::println("ComsMCU::update_gui->New RT data after polll");
-            logger::println(new_rt_data);
+            //logger::println(new_rt_data);
     #endif
     static float del_t_no_msg = millis();
 
@@ -252,14 +252,39 @@ void ComsMCU::update_gui()
         int idx = 0;
         _data->for_each_joint([&](JointData* j, float*) {
             if (j->is_used) { // might need to edit
-                pid_msg.data[idx++] = j->controller.parameters[P_gain_idx];
-                pid_msg.data[idx++] = j->controller.parameters[I_gain_idx];
-                pid_msg.data[idx++] = j->controller.parameters[D_gain_idx];
+            switch (j->controller.controller){
+                case 2:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::p_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::i_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::d_gain_idx];
+                    break;
+                case 3:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::elbow_min_max::P_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::elbow_min_max::I_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::elbow_min_max::D_gain_idx];
+                    break;
+                case 4: // Calibration manager
+                    pid_msg.data[idx++] = 0;
+                    pid_msg.data[idx++] = 0;
+                    pid_msg.data[idx++] = 0;
+                    break;
+                case 5:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::chirp::p_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::chirp::i_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::chirp::d_gain_idx];
+                    break;
+                 case 6:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::p_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::i_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::d_gain_idx];
+                    break;
+                    }
+
             }
         });
         #if COMSMCU_DEBUG
-          logger::println(f"ComsMCU::update_gui-> PID Message");
-          pid_msg.print();
+          logger::println("ComsMCU::update_gui-> PID Message");
+          //print(pid_msg);
         #endif
         _exo_ble->send_message(pid_msg);
         #if COMSMCU_DEBUG
