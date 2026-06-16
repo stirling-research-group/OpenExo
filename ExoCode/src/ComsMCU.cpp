@@ -13,7 +13,7 @@
 
 #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
 
-#define COMSMCU_DEBUG 1
+#define COMSMCU_DEBUG 1 // Switch back
 
 ComsMCU::ComsMCU(ExoData* data, uint8_t* config_to_send):_data{data}
 {
@@ -153,9 +153,17 @@ void ComsMCU::update_gui()
     static Time_Helper* t_helper = Time_Helper::get_instance();
     static float my_mark = _data->mark;
     static float* rt_floats = new float(rt_data::len);
-
+    #if COMSMCU_DEBUG
+            logger::println("ComsMCU::update_gui->RT floats before poll");
+            //logger::println(rt_floats);
+    #endif
     //Get real time data from ExoData and send to GUI
     const bool new_rt_data = real_time_i2c::poll(rt_floats);
+
+      #if COMSMCU_DEBUG
+            logger::println("ComsMCU::update_gui->New RT data after polll");
+            //logger::println(new_rt_data);
+    #endif
     static float del_t_no_msg = millis();
 
     if (new_rt_data || rt_data::new_rt_msg)
@@ -235,6 +243,61 @@ void ComsMCU::update_gui()
         batt_msg.expecting = ble_command_helpers::get_length_for_command(batt_msg.command);
         batt_msg.data[0] = _data->battery_value;
         _exo_ble->send_message(batt_msg); */
+        BleMessage pid_msg = BleMessage();
+        pid_msg.command = ble_names::get_pid;
+        pid_msg.expecting = ble_command_helpers::get_length_for_command(pid_msg.command);
+
+        // start of pid addition
+
+        int idx = 0;
+        _data->for_each_joint([&](JointData* j, float*) {
+             #if COMSMCU_DEBUG
+                logger::println("ComsMCU::update_gui->In each joint loop");
+             #endif
+            if (j->is_used) { // might need to edit
+            switch (j->controller.controller){
+                case 2:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::p_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::i_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::d_gain_idx];
+                    break;
+                case 3:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::elbow_min_max::P_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::elbow_min_max::I_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::elbow_min_max::D_gain_idx];
+                    break;
+                case 4: // Calibration manager
+                    pid_msg.data[idx++] = 0;
+                    pid_msg.data[idx++] = 0;
+                    pid_msg.data[idx++] = 0;
+                    break;
+                case 5:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::chirp::p_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::chirp::i_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::chirp::d_gain_idx];
+                    break;
+                 case 6:
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::p_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::i_gain_idx];
+                    pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::d_gain_idx];
+                    break;
+                    }
+                #if COMSMCU_DEBUG
+                    logger::println("ComsMCU::update_gui->End of joint loop");
+                #endif
+
+            }
+        });
+        #if COMSMCU_DEBUG
+          logger::println("ComsMCU::update_gui-> PID Message");
+          //print(pid_msg);
+        #endif
+        _exo_ble->send_message(pid_msg);
+        #if COMSMCU_DEBUG
+          //  logger::println(f"ComsMCU::update_gui-> PID Message")
+            logger::println("ComsMCU::update_gui->PID sent message");
+        #endif
+        //end of pid addition
 
         del_t_status = 0;
 
