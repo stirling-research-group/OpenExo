@@ -51,6 +51,7 @@ namespace ble_names
     static const char mark              = 'N';
     static const char update_param      = 'f';
     static const char reset_system      = 'Z';
+    static const char get_pid = 'p';
 
     //Sending Commands (Firmware->GUI)
     static const char send_real_time_data = '?';
@@ -61,7 +62,7 @@ namespace ble_names
     static const char send_step_count     = 's';
     static const char cal_fsr_finished    = 'n';
     //static const char send_pid            = 'p';
-    static const char get_pid  = 'P';
+    static const char send_pid  = 'P';
 
 };
 
@@ -87,7 +88,9 @@ namespace ble
         {ble_names::new_trq,            4},
         {ble_names::update_param,       4},
         {ble_names::reset_system,       0},
+
         {ble_names::get_pid,       3},
+
 
         
         //Sending Commands
@@ -98,7 +101,7 @@ namespace ble
         {ble_names::send_trq_cal,           2},
         {ble_names::send_step_count,        2},
         {ble_names::cal_fsr_finished,       0},
-        //{ble_names::send_pid,       4}, //May need to update this
+        {ble_names::send_pid,       3}, //May need to update this
     };
 };
 
