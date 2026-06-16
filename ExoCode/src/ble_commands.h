@@ -60,6 +60,8 @@ namespace ble_names
     static const char send_trq_cal        = 'H';
     static const char send_step_count     = 's';
     static const char cal_fsr_finished    = 'n';
+    //static const char send_pid            = 'p';
+    static const char get_pid  = 'P';
 
 };
 
@@ -85,6 +87,8 @@ namespace ble
         {ble_names::new_trq,            4},
         {ble_names::update_param,       4},
         {ble_names::reset_system,       0},
+        {ble_names::get_pid,       3},
+
         
         //Sending Commands
         {ble_names::send_batt,              1},
@@ -94,6 +98,7 @@ namespace ble
         {ble_names::send_trq_cal,           2},
         {ble_names::send_step_count,        2},
         {ble_names::cal_fsr_finished,       0},
+        //{ble_names::send_pid,       4}, //May need to update this
     };
 };
 
@@ -456,7 +461,30 @@ namespace ble_handlers
 		Serial.print(tx_msg.data[(uint8_t)UART_command_enums::controller_param::PARAM_VALUE]);
 		#endif
     }
-
+//     inline static void get_pid(ExoData* data, BleMessage* msg) {
+//
+//        BleMessage response;
+//        response.command = ble_names::send_pid;
+//        int pid_count = 0;
+//        data->for_each_joint([&](JointData* j, float*) {
+//            if (j->is_used) pid_count += 3;
+//        });
+//        response.expecting = pid_count;
+//
+//        int idx = 0;
+//        data->for_each_joint([&](JointData* j, float*) {
+//            if (j->is_used) { // might need to edit
+//                response.data[idx++] = j->controller.parameters[P_gain_idx];
+//                response.data[idx++] = j->controller.parameters[I_gain_idx];
+//                response.data[idx++] = j->controller.parameters[D_gain_idx];
+//            }
+//        });
+//
+//
+//        ExoBLE::get_instance()->send_message(response);
+//}
+//
+//     }
 }
 
 #endif
