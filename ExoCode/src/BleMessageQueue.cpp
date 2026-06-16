@@ -9,7 +9,7 @@
 static rtos::Mutex queue_mutex;
 #endif
 
-#define BLE_QUEUE_DEBUG 0
+#define BLE_QUEUE_DEBUG 1
 
 static const int k_max_size = 10;
 static BleMessage queue[k_max_size];
