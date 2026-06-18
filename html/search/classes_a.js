@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['shortintbyteunion_0',['ShortIntByteUnion',['../unionutils_1_1_short_int_byte_union.html',1,'utils']]],
-  ['speedcheck_1',['SpeedCheck',['../classutils_1_1_speed_check.html',1,'utils']]]
+  ['ticker_5ft_0',['ticker_t',['../structticker__t.html',1,'']]],
+  ['time_5fhelper_1',['Time_Helper',['../class_time___helper.html',1,'']]]
 ];

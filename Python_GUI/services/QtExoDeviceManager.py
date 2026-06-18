@@ -980,12 +980,22 @@ class QtExoDeviceManager(QtCore.QObject):
         self.logger.info(f"Event loop thread created (thread_id: {self._loop_thread.ident}, name: {self._loop_thread.name})")
 
     # exoDeviceManager-style BLE filter (UART service UUID)
-    @staticmethod
+    # @staticmethod
+    # def _filter_exo(device, adv) -> bool:
+    #     try:
+    #         uuids = set((adv.service_uuids or []))
+    #         return UART_SERVICE_UUID.lower() in {u.lower() for u in uuids}
+    #     except Exception:
+    #         return False
+    @staticmethod # Changed by sophie maybe change back
     def _filter_exo(device, adv) -> bool:
         try:
+            name = ((device.name or "") or (getattr(adv, "local_name", "") or "")).strip()
+            if name.upper().startswith("EXOBLE_"):
+                return True
+
             uuids = set((adv.service_uuids or []))
             return UART_SERVICE_UUID.lower() in {u.lower() for u in uuids}
         except Exception:
             return False
-
     # Removed invalid get_char_handle; bleak accepts UUIDs directly

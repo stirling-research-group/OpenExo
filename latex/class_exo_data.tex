@@ -7,89 +7,105 @@ Class to store all the data related to the exo.
 
 
 
-{\ttfamily \#include $<$Exo\+Data.\+h$>$}
+{\ttfamily \+\#include $<$Exo\+Data.\+h$>$}
 
 
 
-Collaboration diagram for Exo\+Data\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=236pt]{class_exo_data__coll__graph}
-\end{center}
-\end{figure}
+Collaboration diagram for Exo\+Data:\+
+% FIG 0
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4}{Exo\+Data}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}config\+\_\+to\+\_\+send)
+\doxymbox{\hyperlink{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4}{Exo\+Data}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}config\+\_\+to\+\_\+send)
 \item 
-void \mbox{\hyperlink{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0}{reconfigure}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}config\+\_\+to\+\_\+send)
-\begin{DoxyCompactList}\small\item\em reconfigures the the exo data if the configuration changes after constructor called. \end{DoxyCompactList}\item 
-{\footnotesize template$<$typename F $>$ }\\void \mbox{\hyperlink{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e}{for\+\_\+each\+\_\+joint}} (F \&\&func)
+void \doxymbox{\hyperlink{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0}{reconfigure}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}config\+\_\+to\+\_\+send)
+\begin{DoxyCompactList}\small\item\em Reconfigures the the exo data if the configuration changes after constructor called. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename F$>$ }\\void \doxymbox{\hyperlink{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e}{for\+\_\+each\+\_\+joint}} (F \&\&func)
 \begin{DoxyCompactList}\small\item\em performs a function for each joint \end{DoxyCompactList}\item 
-{\footnotesize template$<$typename F $>$ }\\void \mbox{\hyperlink{class_exo_data_a125fae8948f327459ec91741089fe2c4}{for\+\_\+each\+\_\+joint}} (F \&\&func, float \texorpdfstring{$\ast$}{*}args)
+{\footnotesize template$<$typename F$>$ }\\void \doxymbox{\hyperlink{class_exo_data_a125fae8948f327459ec91741089fe2c4}{for\+\_\+each\+\_\+joint}} (F \&\&func, float \texorpdfstring{$\ast$}{*}args)
 \item 
-uint8\+\_\+t \mbox{\hyperlink{class_exo_data_a95318701c50b166d8acc24433edf8a75}{get\+\_\+used\+\_\+joints}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}used\+\_\+joints)
+uint8\+\_\+t \doxymbox{\hyperlink{class_exo_data_a95318701c50b166d8acc24433edf8a75}{get\+\_\+used\+\_\+joints}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}used\+\_\+joints)
 \item 
-\mbox{\hyperlink{class_joint_data}{Joint\+Data}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e}{get\+\_\+joint\+\_\+with}} (uint8\+\_\+t id)
+\doxymbox{\hyperlink{class_joint_data}{Joint\+Data}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e}{get\+\_\+joint\+\_\+with}} (uint8\+\_\+t id)
 \begin{DoxyCompactList}\small\item\em Get the joint pointer for a joint id. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2}{print}} ()
+void \doxymbox{\hyperlink{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2}{print}} ()
 \begin{DoxyCompactList}\small\item\em Prints all the exo data. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782}{set\+\_\+status}} (uint16\+\_\+t status\+\_\+to\+\_\+set)
+void \doxymbox{\hyperlink{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782}{set\+\_\+status}} (uint16\+\_\+t status\+\_\+to\+\_\+set)
 \begin{DoxyCompactList}\small\item\em Set the status object. \end{DoxyCompactList}\item 
-uint16\+\_\+t \mbox{\hyperlink{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1}{get\+\_\+status}} (void)
+uint16\+\_\+t \doxymbox{\hyperlink{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1}{get\+\_\+status}} (void)
 \begin{DoxyCompactList}\small\item\em Get the status object. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}{set\+\_\+default\+\_\+parameters}} ()
-\begin{DoxyCompactList}\small\item\em Set the default controller parameters for the current controller. These are the first row in the controller csv file. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{class_exo_data_ac74a7b16376ba236c4ec55a73858996d}{start\+\_\+pretrial\+\_\+cal}} ()
-\begin{DoxyCompactList}\small\item\em Start the pretrial calibration process. \end{DoxyCompactList}\end{DoxyCompactItemize}
+void \doxymbox{\hyperlink{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}{set\+\_\+default\+\_\+parameters}} ()
+\begin{DoxyCompactList}\small\item\em Set the default controller parameters for the current controller. These are the first row in the controller csv file on the SD Card. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_exo_data_af7839543023370c1151541c9d2d23dcd}{set\+\_\+default\+\_\+parameters}} (uint8\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em Set the default controller parameters for the current controller. These are the first row in the controller csv file on the SD Card. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_exo_data_ac74a7b16376ba236c4ec55a73858996d}{start\+\_\+pretrial\+\_\+cal}} ()
+\begin{DoxyCompactList}\small\item\em Start the pretrial calibration process. \end{DoxyCompactList}\item 
+float \doxymbox{\hyperlink{class_exo_data_abf05aaa299e4a12e6165b2bf639825bf}{get\+\_\+batt\+\_\+info}} (uint8\+\_\+t batt\+\_\+info\+\_\+type)
+\begin{DoxyCompactList}\small\item\em Communicate with the power sensor and pull battery-\/related information such as voltage, current and power. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-bool \mbox{\hyperlink{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8}{sync\+\_\+led\+\_\+state}}
+bool \doxymbox{\hyperlink{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8}{sync\+\_\+led\+\_\+state}}
 \item 
-bool \mbox{\hyperlink{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67}{estop}}
+bool \doxymbox{\hyperlink{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67}{estop}}
 \item 
-float \mbox{\hyperlink{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced}{battery\+\_\+value}}
+float \doxymbox{\hyperlink{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced}{battery\+\_\+value}}
 \item 
-\mbox{\hyperlink{class_leg_data}{Leg\+Data}} \mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\+\_\+leg}}
+float \doxymbox{\hyperlink{class_exo_data_a9c2e14bccfbf0b3308615deadba087b5}{filtered\+\_\+batt\+\_\+pwr}} = 0
 \item 
-\mbox{\hyperlink{class_leg_data}{Leg\+Data}} \mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\+\_\+leg}}
+\doxymbox{\hyperlink{class_side_data}{Side\+Data}} \doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\+\_\+side}}
 \item 
-uint32\+\_\+t \mbox{\hyperlink{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f}{mark}}
+\doxymbox{\hyperlink{class_side_data}{Side\+Data}} \doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\+\_\+side}}
 \item 
-uint8\+\_\+t \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_exo_data_adb716628633d114cc379c47bcec33c6e}{config}}
+uint32\+\_\+t \doxymbox{\hyperlink{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f}{mark}}
 \item 
-uint8\+\_\+t \mbox{\hyperlink{class_exo_data_a985f6529cd415b4e9a95b09e2e059868}{config\+\_\+len}}
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{class_exo_data_adb716628633d114cc379c47bcec33c6e}{config}}
 \item 
-int \mbox{\hyperlink{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14}{error\+\_\+code}}
+uint8\+\_\+t \doxymbox{\hyperlink{class_exo_data_a985f6529cd415b4e9a95b09e2e059868}{config\+\_\+len}}
 \item 
-int \mbox{\hyperlink{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791}{error\+\_\+joint\+\_\+id}}
+int \doxymbox{\hyperlink{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14}{error\+\_\+code}}
 \item 
-bool \mbox{\hyperlink{class_exo_data_a47e327da385f78f5a86b421820ccaca8}{user\+\_\+paused}}
+int \doxymbox{\hyperlink{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791}{error\+\_\+joint\+\_\+id}}
+\item 
+bool \doxymbox{\hyperlink{class_exo_data_a47e327da385f78f5a86b421820ccaca8}{user\+\_\+paused}}
+\item 
+int \doxymbox{\hyperlink{class_exo_data_ab393e80b3da3a03352f1ffbc309cd145}{hip\+\_\+torque\+\_\+flag}} = 0
+\item 
+int \doxymbox{\hyperlink{class_exo_data_a31bb6c3c6a905b13307d10e8ef2088d6}{knee\+\_\+torque\+\_\+flag}} = 0
+\item 
+int \doxymbox{\hyperlink{class_exo_data_a870fcd2e0602e04f8695b266d08b559d}{ankle\+\_\+torque\+\_\+flag}} = 0
+\item 
+int \doxymbox{\hyperlink{class_exo_data_a743f148c196a8458d8463573d95f1780}{elbow\+\_\+torque\+\_\+flag}} = 0
+\item 
+int \doxymbox{\hyperlink{class_exo_data_a0273da4fd8b8c52e9584f46e1fcb6d12}{arm\+\_\+1\+\_\+torque\+\_\+flag}} = 0
+\item 
+int \doxymbox{\hyperlink{class_exo_data_a0d1513777cd78daebb0ae702aaf46f2e}{arm\+\_\+2\+\_\+torque\+\_\+flag}} = 0
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 Class to store all the data related to the exo. 
 
+\label{class_exo_data_doc-constructors}
+\Hypertarget{class_exo_data_doc-constructors}
 \doxysubsection{Constructor \& Destructor Documentation}
-\Hypertarget{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4}\label{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4} 
-\index{ExoData@{ExoData}!ExoData@{ExoData}}
+\Hypertarget{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4}\index{ExoData@{ExoData}!ExoData@{ExoData}}
 \index{ExoData@{ExoData}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{ExoData()}{ExoData()}}
-{\footnotesize\ttfamily Exo\+Data\+::\+Exo\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{config\+\_\+to\+\_\+send }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4} 
+Exo\+Data::\+\+Exo\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{config\+\_\+to\+\_\+send}{}\end{DoxyParamCaption})}
 
 
 
+\label{class_exo_data_doc-func-members}
+\Hypertarget{class_exo_data_doc-func-members}
 \doxysubsection{Member Function Documentation}
-\Hypertarget{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e}\label{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e} 
-\index{ExoData@{ExoData}!for\_each\_joint@{for\_each\_joint}}
+\Hypertarget{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e}\index{ExoData@{ExoData}!for\_each\_joint@{for\_each\_joint}}
 \index{for\_each\_joint@{for\_each\_joint}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{for\_each\_joint()}{for\_each\_joint()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily template$<$typename F $>$ \\
-void Exo\+Data\+::for\+\_\+each\+\_\+joint (\begin{DoxyParamCaption}\item[{F \&\&}]{func }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily \label{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e} 
+template$<$typename F$>$ \\
+void Exo\+Data::\+for\+\_\+each\+\_\+joint (\begin{DoxyParamCaption}\item[{F \&\&}]{func}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -100,18 +116,30 @@ performs a function for each joint
 {\em pointer} & to the function that should be done for each used joint \\
 \hline
 \end{DoxyParams}
-\Hypertarget{class_exo_data_a125fae8948f327459ec91741089fe2c4}\label{class_exo_data_a125fae8948f327459ec91741089fe2c4} 
-\index{ExoData@{ExoData}!for\_each\_joint@{for\_each\_joint}}
+\Hypertarget{class_exo_data_a125fae8948f327459ec91741089fe2c4}\index{ExoData@{ExoData}!for\_each\_joint@{for\_each\_joint}}
 \index{for\_each\_joint@{for\_each\_joint}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{for\_each\_joint()}{for\_each\_joint()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily template$<$typename F $>$ \\
-void Exo\+Data\+::for\+\_\+each\+\_\+joint (\begin{DoxyParamCaption}\item[{F \&\&}]{func,  }\item[{float \texorpdfstring{$\ast$}{*}}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily \label{class_exo_data_a125fae8948f327459ec91741089fe2c4} 
+template$<$typename F$>$ \\
+void Exo\+Data::\+for\+\_\+each\+\_\+joint (\begin{DoxyParamCaption}\item[{F \&\&}]{func}{, }\item[{float \texorpdfstring{$\ast$}{*}}]{args}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\Hypertarget{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e}\label{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e} 
-\index{ExoData@{ExoData}!get\_joint\_with@{get\_joint\_with}}
+\Hypertarget{class_exo_data_abf05aaa299e4a12e6165b2bf639825bf}\index{ExoData@{ExoData}!get\_batt\_info@{get\_batt\_info}}
+\index{get\_batt\_info@{get\_batt\_info}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{get\_batt\_info()}{get\_batt\_info()}}
+{\footnotesize\ttfamily \label{class_exo_data_abf05aaa299e4a12e6165b2bf639825bf} 
+float Exo\+Data::\+get\+\_\+batt\+\_\+info (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{batt\+\_\+info\+\_\+type}{}\end{DoxyParamCaption})}
+
+
+
+Communicate with the power sensor and pull battery-\/related information such as voltage, current and power. 
+
+Here is the call graph for this function:\+
+% FIG 1
+\Hypertarget{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e}\index{ExoData@{ExoData}!get\_joint\_with@{get\_joint\_with}}
 \index{get\_joint\_with@{get\_joint\_with}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{get\_joint\_with()}{get\_joint\_with()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_joint_data}{Joint\+Data}} \texorpdfstring{$\ast$}{*} Exo\+Data\+::get\+\_\+joint\+\_\+with (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{id }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e} 
+\doxymbox{\hyperlink{class_joint_data}{Joint\+Data}} \texorpdfstring{$\ast$}{*} Exo\+Data::\+get\+\_\+joint\+\_\+with (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{id}{}\end{DoxyParamCaption})}
 
 
 
@@ -125,81 +153,84 @@ Get the joint pointer for a joint id.
 \begin{DoxyReturn}{Returns}
 Joint\+Data\texorpdfstring{$\ast$}{*} Pointer to \doxylink{class_joint_data}{Joint\+Data} class for joint with id 
 \end{DoxyReturn}
-\Hypertarget{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1}\label{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1} 
-\index{ExoData@{ExoData}!get\_status@{get\_status}}
+\Hypertarget{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1}\index{ExoData@{ExoData}!get\_status@{get\_status}}
 \index{get\_status@{get\_status}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{get\_status()}{get\_status()}}
-{\footnotesize\ttfamily uint16\+\_\+t Exo\+Data\+::get\+\_\+status (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1} 
+uint16\+\_\+t Exo\+Data::\+get\+\_\+status (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
 
 
 
 Get the status object. 
 
 \begin{DoxyReturn}{Returns}
-uint16\+\_\+t status\+\_\+defs\+::messages\+::status\+\_\+t 
+uint16\+\_\+t status\+\_\+defs::\+messages::\+status\+\_\+t 
 \end{DoxyReturn}
-\Hypertarget{class_exo_data_a95318701c50b166d8acc24433edf8a75}\label{class_exo_data_a95318701c50b166d8acc24433edf8a75} 
-\index{ExoData@{ExoData}!get\_used\_joints@{get\_used\_joints}}
+\Hypertarget{class_exo_data_a95318701c50b166d8acc24433edf8a75}\index{ExoData@{ExoData}!get\_used\_joints@{get\_used\_joints}}
 \index{get\_used\_joints@{get\_used\_joints}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{get\_used\_joints()}{get\_used\_joints()}}
-{\footnotesize\ttfamily uint8\+\_\+t Exo\+Data\+::get\+\_\+used\+\_\+joints (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{used\+\_\+joints }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_a95318701c50b166d8acc24433edf8a75} 
+uint8\+\_\+t Exo\+Data::\+get\+\_\+used\+\_\+joints (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{used\+\_\+joints}{}\end{DoxyParamCaption})}
 
-\Hypertarget{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2}\label{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2} 
-\index{ExoData@{ExoData}!print@{print}}
+\Hypertarget{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2}\index{ExoData@{ExoData}!print@{print}}
 \index{print@{print}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{print()}{print()}}
-{\footnotesize\ttfamily void Exo\+Data\+::print (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2} 
+void Exo\+Data::\+print (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
 Prints all the exo data. 
 
-\Hypertarget{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0}\label{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0} 
-\index{ExoData@{ExoData}!reconfigure@{reconfigure}}
+\Hypertarget{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0}\index{ExoData@{ExoData}!reconfigure@{reconfigure}}
 \index{reconfigure@{reconfigure}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{reconfigure()}{reconfigure()}}
-{\footnotesize\ttfamily void Exo\+Data\+::reconfigure (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{config\+\_\+to\+\_\+send }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0} 
+void Exo\+Data::\+reconfigure (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{config\+\_\+to\+\_\+send}{}\end{DoxyParamCaption})}
 
 
 
-reconfigures the the exo data if the configuration changes after constructor called. 
+Reconfigures the the exo data if the configuration changes after constructor called. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em configuration} & array \\
 \hline
 \end{DoxyParams}
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0_cgraph}
-\end{center}
-\end{figure}
-\Hypertarget{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}\label{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641} 
-\index{ExoData@{ExoData}!set\_default\_parameters@{set\_default\_parameters}}
+\Hypertarget{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}\index{ExoData@{ExoData}!set\_default\_parameters@{set\_default\_parameters}}
 \index{set\_default\_parameters@{set\_default\_parameters}!ExoData@{ExoData}}
-\doxysubsubsection{\texorpdfstring{set\_default\_parameters()}{set\_default\_parameters()}}
-{\footnotesize\ttfamily void Exo\+Data\+::set\+\_\+default\+\_\+parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+\doxysubsubsection{\texorpdfstring{set\_default\_parameters()}{set\_default\_parameters()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641} 
+void Exo\+Data::\+set\+\_\+default\+\_\+parameters (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
-Set the default controller parameters for the current controller. These are the first row in the controller csv file. 
+Set the default controller parameters for the current controller. These are the first row in the controller csv file on the SD Card. 
 
-Here is the call graph for this function\+:
-\nopagebreak
+Here is the call graph for this function:\+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=342pt]{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641_cgraph}
 \end{center}
 \end{figure}
-\Hypertarget{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782}\label{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782} 
-\index{ExoData@{ExoData}!set\_status@{set\_status}}
+\Hypertarget{class_exo_data_af7839543023370c1151541c9d2d23dcd}\index{ExoData@{ExoData}!set\_default\_parameters@{set\_default\_parameters}}
+\index{set\_default\_parameters@{set\_default\_parameters}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{set\_default\_parameters()}{set\_default\_parameters()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_exo_data_af7839543023370c1151541c9d2d23dcd} 
+void Exo\+Data::\+set\+\_\+default\+\_\+parameters (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{id}{}\end{DoxyParamCaption})}
+
+
+
+Set the default controller parameters for the current controller. These are the first row in the controller csv file on the SD Card. 
+
+Here is the call graph for this function:\+
+% FIG 2
+\Hypertarget{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782}\index{ExoData@{ExoData}!set\_status@{set\_status}}
 \index{set\_status@{set\_status}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{set\_status()}{set\_status()}}
-{\footnotesize\ttfamily void Exo\+Data\+::set\+\_\+status (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{status\+\_\+to\+\_\+set }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782} 
+void Exo\+Data::\+set\+\_\+status (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{status\+\_\+to\+\_\+set}{}\end{DoxyParamCaption})}
 
 
 
@@ -207,21 +238,20 @@ Set the status object.
 
 
 \begin{DoxyParams}{Parameters}
-{\em status\+\_\+to\+\_\+set} & status\+\_\+defs\+::messages\+::status\+\_\+t \\
+{\em status\+\_\+to\+\_\+set} & status\+\_\+defs::\+messages::\+status\+\_\+t \\
 \hline
 \end{DoxyParams}
-\Hypertarget{class_exo_data_ac74a7b16376ba236c4ec55a73858996d}\label{class_exo_data_ac74a7b16376ba236c4ec55a73858996d} 
-\index{ExoData@{ExoData}!start\_pretrial\_cal@{start\_pretrial\_cal}}
+\Hypertarget{class_exo_data_ac74a7b16376ba236c4ec55a73858996d}\index{ExoData@{ExoData}!start\_pretrial\_cal@{start\_pretrial\_cal}}
 \index{start\_pretrial\_cal@{start\_pretrial\_cal}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{start\_pretrial\_cal()}{start\_pretrial\_cal()}}
-{\footnotesize\ttfamily void Exo\+Data\+::start\+\_\+pretrial\+\_\+cal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_exo_data_ac74a7b16376ba236c4ec55a73858996d} 
+void Exo\+Data::\+start\+\_\+pretrial\+\_\+cal (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
 Start the pretrial calibration process. 
 
-Here is the call graph for this function\+:
-\nopagebreak
+Here is the call graph for this function:\+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -230,76 +260,120 @@ Here is the call graph for this function\+:
 \end{figure}
 
 
+\label{class_exo_data_doc-variable-members}
+\Hypertarget{class_exo_data_doc-variable-members}
 \doxysubsection{Member Data Documentation}
-\Hypertarget{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced}\label{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced} 
-\index{ExoData@{ExoData}!battery\_value@{battery\_value}}
+\Hypertarget{class_exo_data_a870fcd2e0602e04f8695b266d08b559d}\index{ExoData@{ExoData}!ankle\_torque\_flag@{ankle\_torque\_flag}}
+\index{ankle\_torque\_flag@{ankle\_torque\_flag}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{ankle\_torque\_flag}{ankle\_torque\_flag}}
+{\footnotesize\ttfamily \label{class_exo_data_a870fcd2e0602e04f8695b266d08b559d} 
+int Exo\+Data::\+ankle\+\_\+torque\+\_\+flag = 0}
+
+Flag to determine if we want to use torque sensor for that joint \Hypertarget{class_exo_data_a0273da4fd8b8c52e9584f46e1fcb6d12}\index{ExoData@{ExoData}!arm\_1\_torque\_flag@{arm\_1\_torque\_flag}}
+\index{arm\_1\_torque\_flag@{arm\_1\_torque\_flag}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{arm\_1\_torque\_flag}{arm\_1\_torque\_flag}}
+{\footnotesize\ttfamily \label{class_exo_data_a0273da4fd8b8c52e9584f46e1fcb6d12} 
+int Exo\+Data::\+arm\+\_\+1\+\_\+torque\+\_\+flag = 0}
+
+Flag to determine if we want to use torque sensor for that joint \Hypertarget{class_exo_data_a0d1513777cd78daebb0ae702aaf46f2e}\index{ExoData@{ExoData}!arm\_2\_torque\_flag@{arm\_2\_torque\_flag}}
+\index{arm\_2\_torque\_flag@{arm\_2\_torque\_flag}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{arm\_2\_torque\_flag}{arm\_2\_torque\_flag}}
+{\footnotesize\ttfamily \label{class_exo_data_a0d1513777cd78daebb0ae702aaf46f2e} 
+int Exo\+Data::\+arm\+\_\+2\+\_\+torque\+\_\+flag = 0}
+
+Flag to determine if we want to use torque sensor for that joint \Hypertarget{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced}\index{ExoData@{ExoData}!battery\_value@{battery\_value}}
 \index{battery\_value@{battery\_value}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{battery\_value}{battery\_value}}
-{\footnotesize\ttfamily float Exo\+Data\+::battery\+\_\+value}
+{\footnotesize\ttfamily \label{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced} 
+float Exo\+Data::\+battery\+\_\+value}
 
-Could be Voltage or SOC, depending on the battery type \Hypertarget{class_exo_data_adb716628633d114cc379c47bcec33c6e}\label{class_exo_data_adb716628633d114cc379c47bcec33c6e} 
-\index{ExoData@{ExoData}!config@{config}}
+Could be Voltage or SOC, depending on the battery type \Hypertarget{class_exo_data_adb716628633d114cc379c47bcec33c6e}\index{ExoData@{ExoData}!config@{config}}
 \index{config@{config}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{config}{config}}
-{\footnotesize\ttfamily uint8\+\_\+t\texorpdfstring{$\ast$}{*} Exo\+Data\+::config}
+{\footnotesize\ttfamily \label{class_exo_data_adb716628633d114cc379c47bcec33c6e} 
+uint8\+\_\+t\texorpdfstring{$\ast$}{*} Exo\+Data::\+config}
 
-pointer to the configuration array \Hypertarget{class_exo_data_a985f6529cd415b4e9a95b09e2e059868}\label{class_exo_data_a985f6529cd415b4e9a95b09e2e059868} 
-\index{ExoData@{ExoData}!config\_len@{config\_len}}
+Pointer to the configuration array \Hypertarget{class_exo_data_a985f6529cd415b4e9a95b09e2e059868}\index{ExoData@{ExoData}!config\_len@{config\_len}}
 \index{config\_len@{config\_len}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{config\_len}{config\_len}}
-{\footnotesize\ttfamily uint8\+\_\+t Exo\+Data\+::config\+\_\+len}
+{\footnotesize\ttfamily \label{class_exo_data_a985f6529cd415b4e9a95b09e2e059868} 
+uint8\+\_\+t Exo\+Data::\+config\+\_\+len}
 
-len of the configuration array \Hypertarget{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14}\label{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14} 
-\index{ExoData@{ExoData}!error\_code@{error\_code}}
+Length of the configuration array \Hypertarget{class_exo_data_a743f148c196a8458d8463573d95f1780}\index{ExoData@{ExoData}!elbow\_torque\_flag@{elbow\_torque\_flag}}
+\index{elbow\_torque\_flag@{elbow\_torque\_flag}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{elbow\_torque\_flag}{elbow\_torque\_flag}}
+{\footnotesize\ttfamily \label{class_exo_data_a743f148c196a8458d8463573d95f1780} 
+int Exo\+Data::\+elbow\+\_\+torque\+\_\+flag = 0}
+
+Flag to determine if we want to use torque sensor for that joint \Hypertarget{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14}\index{ExoData@{ExoData}!error\_code@{error\_code}}
 \index{error\_code@{error\_code}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{error\_code}{error\_code}}
-{\footnotesize\ttfamily int Exo\+Data\+::error\+\_\+code}
+{\footnotesize\ttfamily \label{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14} 
+int Exo\+Data::\+error\+\_\+code}
 
-current error code for the system \Hypertarget{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791}\label{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791} 
-\index{ExoData@{ExoData}!error\_joint\_id@{error\_joint\_id}}
+Current error code for the system \Hypertarget{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791}\index{ExoData@{ExoData}!error\_joint\_id@{error\_joint\_id}}
 \index{error\_joint\_id@{error\_joint\_id}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{error\_joint\_id}{error\_joint\_id}}
-{\footnotesize\ttfamily int Exo\+Data\+::error\+\_\+joint\+\_\+id}
+{\footnotesize\ttfamily \label{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791} 
+int Exo\+Data::\+error\+\_\+joint\+\_\+id}
 
-\Hypertarget{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67}\label{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67} 
-\index{ExoData@{ExoData}!estop@{estop}}
+\Hypertarget{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67}\index{ExoData@{ExoData}!estop@{estop}}
 \index{estop@{estop}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{estop}{estop}}
-{\footnotesize\ttfamily bool Exo\+Data\+::estop}
+{\footnotesize\ttfamily \label{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67} 
+bool Exo\+Data::\+estop}
 
-state of the estop \Hypertarget{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}\label{class_exo_data_af6c87cc40873dbe89146c8742303e7ce} 
-\index{ExoData@{ExoData}!left\_leg@{left\_leg}}
-\index{left\_leg@{left\_leg}!ExoData@{ExoData}}
-\doxysubsubsection{\texorpdfstring{left\_leg}{left\_leg}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_leg_data}{Leg\+Data}} Exo\+Data\+::left\+\_\+leg}
+State of the estop \Hypertarget{class_exo_data_a9c2e14bccfbf0b3308615deadba087b5}\index{ExoData@{ExoData}!filtered\_batt\_pwr@{filtered\_batt\_pwr}}
+\index{filtered\_batt\_pwr@{filtered\_batt\_pwr}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{filtered\_batt\_pwr}{filtered\_batt\_pwr}}
+{\footnotesize\ttfamily \label{class_exo_data_a9c2e14bccfbf0b3308615deadba087b5} 
+float Exo\+Data::\+filtered\+\_\+batt\+\_\+pwr = 0}
 
-data for the left leg \Hypertarget{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f}\label{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f} 
-\index{ExoData@{ExoData}!mark@{mark}}
+Filtered battery power \Hypertarget{class_exo_data_ab393e80b3da3a03352f1ffbc309cd145}\index{ExoData@{ExoData}!hip\_torque\_flag@{hip\_torque\_flag}}
+\index{hip\_torque\_flag@{hip\_torque\_flag}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{hip\_torque\_flag}{hip\_torque\_flag}}
+{\footnotesize\ttfamily \label{class_exo_data_ab393e80b3da3a03352f1ffbc309cd145} 
+int Exo\+Data::\+hip\+\_\+torque\+\_\+flag = 0}
+
+Flag to determine if we want to use torque sensor for that joint \Hypertarget{class_exo_data_a31bb6c3c6a905b13307d10e8ef2088d6}\index{ExoData@{ExoData}!knee\_torque\_flag@{knee\_torque\_flag}}
+\index{knee\_torque\_flag@{knee\_torque\_flag}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{knee\_torque\_flag}{knee\_torque\_flag}}
+{\footnotesize\ttfamily \label{class_exo_data_a31bb6c3c6a905b13307d10e8ef2088d6} 
+int Exo\+Data::\+knee\+\_\+torque\+\_\+flag = 0}
+
+Flag to determine if we want to use torque sensor for that joint \Hypertarget{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}\index{ExoData@{ExoData}!left\_side@{left\_side}}
+\index{left\_side@{left\_side}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{left\_side}{left\_side}}
+{\footnotesize\ttfamily \label{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c} 
+\doxymbox{\hyperlink{class_side_data}{Side\+Data}} Exo\+Data::\+left\+\_\+side}
+
+Data for the left side \Hypertarget{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f}\index{ExoData@{ExoData}!mark@{mark}}
 \index{mark@{mark}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{mark}{mark}}
-{\footnotesize\ttfamily uint32\+\_\+t Exo\+Data\+::mark}
+{\footnotesize\ttfamily \label{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f} 
+uint32\+\_\+t Exo\+Data::\+mark}
 
-used for timing, currently only used by the nano \Hypertarget{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}\label{class_exo_data_a55ca7a43ea5f135647cde868c59a1770} 
-\index{ExoData@{ExoData}!right\_leg@{right\_leg}}
-\index{right\_leg@{right\_leg}!ExoData@{ExoData}}
-\doxysubsubsection{\texorpdfstring{right\_leg}{right\_leg}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_leg_data}{Leg\+Data}} Exo\+Data\+::right\+\_\+leg}
+Used for timing, currently only used by the nano \Hypertarget{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}\index{ExoData@{ExoData}!right\_side@{right\_side}}
+\index{right\_side@{right\_side}!ExoData@{ExoData}}
+\doxysubsubsection{\texorpdfstring{right\_side}{right\_side}}
+{\footnotesize\ttfamily \label{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd} 
+\doxymbox{\hyperlink{class_side_data}{Side\+Data}} Exo\+Data::\+right\+\_\+side}
 
-data for the right leg \Hypertarget{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8}\label{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8} 
-\index{ExoData@{ExoData}!sync\_led\_state@{sync\_led\_state}}
+Data for the right side \Hypertarget{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8}\index{ExoData@{ExoData}!sync\_led\_state@{sync\_led\_state}}
 \index{sync\_led\_state@{sync\_led\_state}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{sync\_led\_state}{sync\_led\_state}}
-{\footnotesize\ttfamily bool Exo\+Data\+::sync\+\_\+led\+\_\+state}
+{\footnotesize\ttfamily \label{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8} 
+bool Exo\+Data::\+sync\+\_\+led\+\_\+state}
 
-state of the sync led \Hypertarget{class_exo_data_a47e327da385f78f5a86b421820ccaca8}\label{class_exo_data_a47e327da385f78f5a86b421820ccaca8} 
-\index{ExoData@{ExoData}!user\_paused@{user\_paused}}
+State of the sync led \Hypertarget{class_exo_data_a47e327da385f78f5a86b421820ccaca8}\index{ExoData@{ExoData}!user\_paused@{user\_paused}}
 \index{user\_paused@{user\_paused}!ExoData@{ExoData}}
 \doxysubsubsection{\texorpdfstring{user\_paused}{user\_paused}}
-{\footnotesize\ttfamily bool Exo\+Data\+::user\+\_\+paused}
+{\footnotesize\ttfamily \label{class_exo_data_a47e327da385f78f5a86b421820ccaca8} 
+bool Exo\+Data::\+user\+\_\+paused}
 
-if the user has paused the system 
+If the user has paused the system 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
 \item 
-Exo\+Code/src/\mbox{\hyperlink{_exo_data_8h}{Exo\+Data.\+h}}\item 
-Exo\+Code/src/\mbox{\hyperlink{_exo_data_8cpp}{Exo\+Data.\+cpp}}\end{DoxyCompactItemize}
+Exo\+Code/\+src/\+\doxymbox{\hyperlink{_exo_data_8h}{Exo\+Data.\+h}}\item 
+Exo\+Code/\+src/\+\doxymbox{\hyperlink{_exo_data_8cpp}{Exo\+Data.\+cpp}}\end{DoxyCompactItemize}

@@ -1,53 +1,83 @@
 \doxysection{Joint\+Data.\+h}
 \hypertarget{_joint_data_8h_source}{}\label{_joint_data_8h_source}\index{ExoCode/src/JointData.h@{ExoCode/src/JointData.h}}
-\mbox{\hyperlink{_joint_data_8h}{Go to the documentation of this file.}}
+\doxymbox{\hyperlink{_joint_data_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
 \DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ JointData\_h}}
 \DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ JointData\_h}}
 \DoxyCodeLine{00013\ }
-\DoxyCodeLine{00014\ }
-\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}Arduino.h"{}}}
-\DoxyCodeLine{00016\ }
-\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motor_data_8h}{MotorData.h}}"{}}}
-\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_controller_data_8h}{ControllerData.h}}"{}}}
-\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
-\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_board_8h}{Board.h}}"{}}}
-\DoxyCodeLine{00021\ }
-\DoxyCodeLine{00022\ }
-\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
-\DoxyCodeLine{00024\ }
-\DoxyCodeLine{00025\ }
-\DoxyCodeLine{00026\ \textcolor{comment}{//\ forward\ declaration}}
-\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_exo_data}{ExoData}};}
-\DoxyCodeLine{00028\ }
-\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_joint_data}{JointData}}\ \{}
-\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_joint_data}{JointData}}(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ uint8\_t*\ config\_to\_send);}
-\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_joint_data_a966c7b2eeb8fb0a9f0c09ee27ef30b21}{reconfigure}}(uint8\_t*\ config\_to\_send);}
-\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \mbox{\hyperlink{class_joint_data_ac8947070e832b4ab37b21e365c8396fe}{id}};\ }
-\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_motor_data}{MotorData}}\ \mbox{\hyperlink{class_joint_data_afaead532774a6d60394f3667838d61d1}{motor}};\ }
-\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_controller_data}{ControllerData}}\ \mbox{\hyperlink{class_joint_data_ad90ce98dc4a3f5f65e08e08fb6352dd9}{controller}};\ }
-\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_aec2580e88fbe79db393a7bd6f945ce4e}{torque\_reading}};\ \ }
-\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_joint_data_a1e501d7d94358f3f5ea1ed16a5430104}{is\_left}};\ }
-\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_joint_data_ad99709a8ab18ff876b7e283939c8d801}{flip\_direction}};\ }
-\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_joint_data_ac92eaeab50564303d8c8ca0febd44c12}{is\_used}};\ }
-\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_joint_data_a0bbbbcca43245b06a0547fb10ad82e51}{calibrate\_torque\_sensor}};\ \ }
-\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_joint_data_a41d75138032402255a952f221d8c849a}{calibrate\_angle\_sensor}};\ \ }
-\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_a0563b57da044af56c140ce91b3bc7971}{position}};\ }
-\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_af1fbbc2a4c6d77240847a7f778b6baa3}{velocity}};\ }
-\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_aaee486eb0ddfdfd5d13e7f19a1114586}{joint\_position}};\ }
-\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_abbd67ac219ed42648005031bfc794de6}{joint\_global\_angle}};\ }
-\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_a0c4636e1a0d5271bd1c2778d46889cdd}{prev\_joint\_position}};\ }
-\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_a1c35091d470e4bb27d1aabf6cacdc383}{joint\_velocity}};}
-\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_af0821a3736964b10909bd17b7c286993}{joint\_position\_alpha}}\ =\ 0.1f;}
-\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_joint_data_aa0c3fa50cc0f109a654e36d5bf68f199}{joint\_velocity\_alpha}}\ =\ 0.1f;}
-\DoxyCodeLine{00064\ }
-\DoxyCodeLine{00065\ \};}
-\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}Arduino.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_motor_data_8h}{MotorData.h}}"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_controller_data_8h}{ControllerData.h}}"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_board_8h}{Board.h}}"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <queue>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//Forward\ declaration}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_exo_data}{ExoData}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_joint_data_a990e7c6ada0301b5471c946e06b8222c}{JointData}}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_joint_data_a990e7c6ada0301b5471c946e06b8222c}{JointData}}(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ uint8\_t*\ config\_to\_send,\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a9f8bdcb0cf20e3db72af587dc2bfdbb0}{joint\_RoM}},\ \textcolor{keywordtype}{bool}\ flip\_ankle\_angle,\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_ae8bff72c3be9278353ec0ca02035a207}{torque\_offset}});}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_joint_data_a966c7b2eeb8fb0a9f0c09ee27ef30b21}{reconfigure}}(uint8\_t*\ config\_to\_send);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \doxymbox{\hyperlink{class_joint_data_ac8947070e832b4ab37b21e365c8396fe}{id}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_motor_data}{MotorData}}\ \doxymbox{\hyperlink{class_joint_data_afaead532774a6d60394f3667838d61d1}{motor}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_data}{ControllerData}}\ \doxymbox{\hyperlink{class_joint_data_ad90ce98dc4a3f5f65e08e08fb6352dd9}{controller}};\ \ \ \ \ \ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_aec2580e88fbe79db393a7bd6f945ce4e}{torque\_reading}};\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_joint_data_a1e501d7d94358f3f5ea1ed16a5430104}{is\_left}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_joint_data_ad99709a8ab18ff876b7e283939c8d801}{flip\_direction}};\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_joint_data_ac92eaeab50564303d8c8ca0febd44c12}{is\_used}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_joint_data_a0bbbbcca43245b06a0547fb10ad82e51}{calibrate\_torque\_sensor}};\ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_joint_data_a41d75138032402255a952f221d8c849a}{calibrate\_angle\_sensor}};\ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a0563b57da044af56c140ce91b3bc7971}{position}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_af1fbbc2a4c6d77240847a7f778b6baa3}{velocity}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_aaee486eb0ddfdfd5d13e7f19a1114586}{joint\_position}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_abbd67ac219ed42648005031bfc794de6}{joint\_global\_angle}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a0c4636e1a0d5271bd1c2778d46889cdd}{prev\_joint\_position}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a1c35091d470e4bb27d1aabf6cacdc383}{joint\_velocity}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_af0821a3736964b10909bd17b7c286993}{joint\_position\_alpha}}\ =\ 1;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_aa0c3fa50cc0f109a654e36d5bf68f199}{joint\_velocity\_alpha}}\ =\ 0.05f;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a9f8bdcb0cf20e3db72af587dc2bfdbb0}{joint\_RoM}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_joint_data_a509af8544ed2da892663c1499f84cd86}{do\_flip\_angle}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a5c46d30a780ab84eff24dcd8a0377490}{torque\_reading\_microSD}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_ae8bff72c3be9278353ec0ca02035a207}{torque\_offset}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_aee24a68d3b25e7c5ff4f26de67cbcccd}{torque\_offset\_reading}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
 \DoxyCodeLine{00067\ }
-\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Torque\ tracking\ check}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_afd95add5b9e02f39a4a0c17d870ef85f}{torque\_output\_alpha}}\ =\ 0.2;\ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a4662607a14f702f41410a640e9fb0005}{post\_transmission\_torque}}\ =\ 0;\ }
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Torque\ absolute\ check}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a625e3bea4caf62edf3fc71d624bfdd51}{torque\_output\_threshold}}\ =\ 60;\ }
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Torque\ variance\ check}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_joint_data_ac34f0af837576fa9b2c304cdbbd602d2}{torque\_failure\_count\_max}}\ =\ 2;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_joint_data_ad1d6d80c7c57a15b26a8f41287ac38b7}{torque\_std\_dev\_multiple}}\ =\ 10;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_aae71cb659a52f68b5bb350b055656908}{torque\_data\_window\_max\_size}}\ =\ 100;\ \ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ std::queue<float>\ \doxymbox{\hyperlink{class_joint_data_a0e0a11420cb5130deed035b09941c3bf}{torque\_data\_window}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_joint_data_ac22bce06e754de95c7f4d72621c3d70d}{torque\_failure\_count}}\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Transmission\ efficiency\ check}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_ac86daa43dcfbd4718d9d02c01dd2b006}{transmission\_efficiency\_threshold}}\ =\ 0.001;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_ada08e8daac16d1ec211f7b459ebef23d}{motor\_torque\_smoothing}}\ =\ 0.1;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_aaade4e3c3e9106ea33790d075bc3d4da}{torque\_error\_smoothing}}\ =\ 1;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a3bc9eed31af33201861fe3ac7faa51f8}{smoothed\_motor\_torque}}\ =\ 0;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a25ac23160e3f4ca982a399a84ac30ae3}{close\_to\_zero\_tolerance}}\ =\ 0.1;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_joint_data_a8ba539089f1e04005d12cc2ea7cf60d8}{torque\_error}}\ =\ 0;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

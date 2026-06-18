@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['ticker_5ft_0',['ticker_t',['../structticker__t.html',1,'']]],
-  ['time_5fhelper_1',['Time_Helper',['../class_time___helper.html',1,'']]]
+  ['uart_5fmsg_5ft_0',['UART_msg_t',['../struct_u_a_r_t__msg__t.html',1,'']]],
+  ['uarthandler_1',['UARTHandler',['../class_u_a_r_t_handler.html',1,'']]]
 ];

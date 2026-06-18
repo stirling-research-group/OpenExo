@@ -1,90 +1,137 @@
 \doxysection{Exo\+Data.\+h}
 \hypertarget{_exo_data_8h_source}{}\label{_exo_data_8h_source}\index{ExoCode/src/ExoData.h@{ExoCode/src/ExoData.h}}
-\mbox{\hyperlink{_exo_data_8h}{Go to the documentation of this file.}}
+\doxymbox{\hyperlink{_exo_data_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
 \DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ ExoData\_h}}
 \DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ ExoData\_h}}
 \DoxyCodeLine{00013\ }
 \DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}Arduino.h"{}}}
 \DoxyCodeLine{00015\ }
-\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_leg_data_8h}{LegData.h}}"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_side_data_8h}{SideData.h}}"{}}}
 \DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
-\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
-\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_board_8h}{Board.h}}"{}}}
-\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_status_led_8h}{StatusLed.h}}"{}}}
-\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_status_defs_8h}{StatusDefs.h}}"{}}}
-\DoxyCodeLine{00022\ \textcolor{comment}{/*\ }}
-\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ ExoData\ was\ broken\ out\ from\ the\ Exo\ class\ as\ we\ were\ originally\ going\ to\ have\ it\ mirrored\ on\ a\ second\ microcontroller\ that\ handled\ BLE.}}
-\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ It\ doesn't\ need\ to\ be\ done\ this\ way\ if\ we\ aren't,\ and\ is\ pretty\ cumbersome.}}
-\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ Just\ thought\ you\ might\ be\ wondering\ about\ the\ weirdness.}}
-\DoxyCodeLine{00026\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \textcolor{comment}{//\ moved\ status\ values\ to\ StatusDefs.h}}
-\DoxyCodeLine{00029\ }
-\DoxyCodeLine{00030\ \textcolor{comment}{//\ Type\ used\ for\ the\ for\ each\ joint\ method,\ the\ function\ should\ take\ JointData\ as\ input\ and\ return\ void}}
-\DoxyCodeLine{00031\ \textcolor{keyword}{typedef}\ void\ (*\mbox{\hyperlink{_exo_data_8h_a50a15ea434093d7638a26e751ea2a397}{for\_each\_joint\_function\_t}})\ (\mbox{\hyperlink{class_joint_data}{JointData}}*,\ \textcolor{keywordtype}{float}*);\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_board_8h}{Board.h}}"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_status_led_8h}{StatusLed.h}}"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_status_defs_8h}{StatusDefs.h}}"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_config_8h}{Config.h}}"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_utilities_8h}{Utilities.h}}"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \#if\ BATTERY\_SENSOR\ ==\ 260}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#include\ <Adafruit\_INA260.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \#elif\ BATTERY\_SENSOR\ ==\ 219}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#include\ <Adafruit\_INA219.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif}}
 \DoxyCodeLine{00032\ }
-\DoxyCodeLine{00033\ }
-\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_exo_data}{ExoData}}\ }
-\DoxyCodeLine{00038\ \{}
-\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_exo_data}{ExoData}}(uint8\_t*\ config\_to\_send);\ \textcolor{comment}{//\ constructor}}
-\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0}{reconfigure}}(uint8\_t*\ config\_to\_send);}
-\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ F>}
-\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e}{for\_each\_joint}}(F\ \&\&func)}
-\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}}.\mbox{\hyperlink{class_leg_data_a9880285edbff6437f8c3f1d30ff297ed}{hip}},\ NULL);}
-\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}}.\mbox{\hyperlink{class_leg_data_a68653046feafd91dbc9828e4b9f93316}{knee}},\ NULL);}
-\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}}.\mbox{\hyperlink{class_leg_data_a90744f9673315b7d4b2d8be0e5050bde}{ankle}},\ NULL);}
-\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}}.\mbox{\hyperlink{class_leg_data_a9880285edbff6437f8c3f1d30ff297ed}{hip}},\ NULL);}
-\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}}.\mbox{\hyperlink{class_leg_data_a68653046feafd91dbc9828e4b9f93316}{knee}},\ NULL);}
-\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}}.\mbox{\hyperlink{class_leg_data_a90744f9673315b7d4b2d8be0e5050bde}{ankle}},\ NULL);}
-\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \textcolor{comment}{/*\ }}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ ExoData\ was\ broken\ out\ from\ the\ Exo\ class\ to\ have\ it\ mirrored\ on\ a\ second\ microcontroller\ that\ handles\ BLE.}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ It\ doesn't\ need\ to\ be\ done\ this\ way\ if\ we\ aren't,\ and\ is\ pretty\ cumbersome.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ Just\ thought\ you\ might\ be\ wondering\ about\ the\ approach.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{//Note:\ Status\ values\ are\ in\ StatusDefs.h}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{//Type\ used\ for\ the\ for\ each\ joint\ method,\ the\ function\ should\ take\ JointData\ as\ input\ and\ return\ void}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ void\ (*\doxymbox{\hyperlink{_exo_data_8h_a50a15ea434093d7638a26e751ea2a397}{for\_each\_joint\_function\_t}})\ (\doxymbox{\hyperlink{class_joint_data}{JointData}}*,\ \textcolor{keywordtype}{float}*);\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4}{ExoData}}\ }
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_exo_data_a87f2f62ff2c961a6a64f5f33a253e8c4}{ExoData}}(uint8\_t*\ config\_to\_send);\ \textcolor{comment}{//Constructor}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_aeaadfb5400c5a7960a0c5363579d53a0}{reconfigure}}(uint8\_t*\ config\_to\_send);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ }
 \DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ F>}
-\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_a125fae8948f327459ec91741089fe2c4}{for\_each\_joint}}(F\ \&\&func,\ \textcolor{keywordtype}{float}*\ args)}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_a2aa97c53cd67d549d14b349cf1b46f0e}{for\_each\_joint}}(F\ \&\&func)}
 \DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}}.\mbox{\hyperlink{class_leg_data_a9880285edbff6437f8c3f1d30ff297ed}{hip}},\ args);}
-\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}}.\mbox{\hyperlink{class_leg_data_a68653046feafd91dbc9828e4b9f93316}{knee}},\ args);}
-\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}}.\mbox{\hyperlink{class_leg_data_a90744f9673315b7d4b2d8be0e5050bde}{ankle}},\ args);}
-\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}}.\mbox{\hyperlink{class_leg_data_a9880285edbff6437f8c3f1d30ff297ed}{hip}},\ args);}
-\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}}.\mbox{\hyperlink{class_leg_data_a68653046feafd91dbc9828e4b9f93316}{knee}},\ args);}
-\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}}.\mbox{\hyperlink{class_leg_data_a90744f9673315b7d4b2d8be0e5050bde}{ankle}},\ args);}
-\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00074\ }
-\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Returns\ a\ list\ of\ all\ of\ the\ joint\ IDs\ that\ are\ currently\ being\ used}}
-\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{class_exo_data_a95318701c50b166d8acc24433edf8a75}{get\_used\_joints}}(uint8\_t*\ used\_joints);}
-\DoxyCodeLine{00077\ }
-\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_joint_data}{JointData}}*\ \mbox{\hyperlink{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e}{get\_joint\_with}}(uint8\_t\ \textcolor{keywordtype}{id});}
-\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2}{print}}();}
-\DoxyCodeLine{00090\ }
-\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782}{set\_status}}(uint16\_t\ status\_to\_set);}
-\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ uint16\_t\ \mbox{\hyperlink{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1}{get\_status}}(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00103\ }
-\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}{set\_default\_parameters}}();}
-\DoxyCodeLine{00109\ }
-\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_exo_data_ac74a7b16376ba236c4ec55a73858996d}{start\_pretrial\_cal}}();}
-\DoxyCodeLine{00115\ }
-\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8}{sync\_led\_state}};\ }
-\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67}{estop}};}
-\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced}{battery\_value}};\ }
-\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_leg_data}{LegData}}\ \mbox{\hyperlink{class_exo_data_af6c87cc40873dbe89146c8742303e7ce}{left\_leg}};}
-\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_leg_data}{LegData}}\ \mbox{\hyperlink{class_exo_data_a55ca7a43ea5f135647cde868c59a1770}{right\_leg}};}
-\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f}{mark}};\ }
-\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ uint8\_t*\ \mbox{\hyperlink{class_exo_data_adb716628633d114cc379c47bcec33c6e}{config}};\ }
-\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{class_exo_data_a985f6529cd415b4e9a95b09e2e059868}{config\_len}};\ }
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14}{error\_code}};\ }
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791}{error\_joint\_id}};}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_exo_data_a47e327da385f78f5a86b421820ccaca8}{user\_paused}};\ }
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ uint16\_t\ \_status;\ }
-\DoxyCodeLine{00135\ \};}
-\DoxyCodeLine{00136\ }
-\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.hip,\ NULL);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.knee,\ NULL);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.ankle,\ NULL);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.elbow,\ NULL);}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.arm\_1,\ NULL);}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.arm\_2,\ NULL);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.hip,\ NULL);}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.knee,\ NULL);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.ankle,\ NULL);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.elbow,\ NULL);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.arm\_1,\ NULL);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.arm\_2,\ NULL);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ F>}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_a125fae8948f327459ec91741089fe2c4}{for\_each\_joint}}(F\ \&\&func,\ \textcolor{keywordtype}{float}*\ args)}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.hip,\ args);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.knee,\ args);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.ankle,\ args);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.elbow,\ args);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.arm\_1,\ args);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}}.arm\_2,\ args);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.hip,\ args);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.knee,\ args);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.ankle,\ args);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.elbow,\ args);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.arm\_1,\ args);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ func(\&\doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}}.arm\_2,\ args);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Returns\ a\ list\ of\ all\ of\ the\ joint\ IDs\ that\ are\ currently\ being\ used}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ uint8\_t\ \doxymbox{\hyperlink{class_exo_data_a95318701c50b166d8acc24433edf8a75}{get\_used\_joints}}(uint8\_t*\ used\_joints);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_joint_data}{JointData}}*\ \doxymbox{\hyperlink{class_exo_data_a891bba5b5066ca4ab674624cccb7ea1e}{get\_joint\_with}}(uint8\_t\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_ad51e5871c99c41f5133eaf95b0fb66a2}{print}}();}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_af8b70c2f823aedcf14cebd69e33f8782}{set\_status}}(uint16\_t\ status\_to\_set);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ uint16\_t\ \doxymbox{\hyperlink{class_exo_data_abefd55ddd1c6824caf8d57f8ba1756e1}{get\_status}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}{set\_default\_parameters}}();}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_a1d3bcaf04d33566a49d9a974f52bc641}{set\_default\_parameters}}(uint8\_t\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_exo_data_ac74a7b16376ba236c4ec55a73858996d}{start\_pretrial\_cal}}();}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \#if\ BATTERY\_SENSOR\ ==\ 260}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Adafruit\_INA260\ ina260\ =\ Adafruit\_INA260();}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \#elif\ BATTERY\_SENSOR\ ==\ 219}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Adafruit\_INA219\ ina219;}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \#endif}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#endif}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_exo_data_abf05aaa299e4a12e6165b2bf639825bf}{get\_batt\_info}}(uint8\_t\ batt\_info\_type);}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_exo_data_afd6a8b542bc4f98929f969d9ae5fd2e8}{sync\_led\_state}};\ \ \ \ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_exo_data_afc05cf740f7ed683274c4d8e0cc55f67}{estop}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_exo_data_a4d9f1d553b6bec56f8a745d8ffc61ced}{battery\_value}};\ \ \ \ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_exo_data_a9c2e14bccfbf0b3308615deadba087b5}{filtered\_batt\_pwr}}\ =\ 0;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_side_data}{SideData}}\ \doxymbox{\hyperlink{class_exo_data_a00d8adbe50195eca3f6c1deec9d0d68c}{left\_side}};\ \ \ \ \ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_side_data}{SideData}}\ \doxymbox{\hyperlink{class_exo_data_ad643c9b995ecd2b48f290c5813cb42fd}{right\_side}};\ \ \ \ }
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ uint32\_t\ \doxymbox{\hyperlink{class_exo_data_a52bbac8beaf3718e7366eb42eb371c1f}{mark}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ uint8\_t*\ \doxymbox{\hyperlink{class_exo_data_adb716628633d114cc379c47bcec33c6e}{config}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ uint8\_t\ \doxymbox{\hyperlink{class_exo_data_a985f6529cd415b4e9a95b09e2e059868}{config\_len}};\ \ \ \ \ }
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a87cc77ebcf2d36db06ac8135093c3b14}{error\_code}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a7c02eb366ac9e7e15e17a22c1998b791}{error\_joint\_id}};}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_exo_data_a47e327da385f78f5a86b421820ccaca8}{user\_paused}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_ab393e80b3da3a03352f1ffbc309cd145}{hip\_torque\_flag}}\ =\ 0;\ \ \ \ }
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a31bb6c3c6a905b13307d10e8ef2088d6}{knee\_torque\_flag}}\ =\ 0;\ \ \ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a870fcd2e0602e04f8695b266d08b559d}{ankle\_torque\_flag}}\ =\ 0;\ \ }
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a743f148c196a8458d8463573d95f1780}{elbow\_torque\_flag}}\ =\ 0;\ \ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a0273da4fd8b8c52e9584f46e1fcb6d12}{arm\_1\_torque\_flag}}\ =\ 0;\ \ }
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_exo_data_a0d1513777cd78daebb0ae702aaf46f2e}{arm\_2\_torque\_flag}}\ =\ 0;\ \ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ uint16\_t\ \_status;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00184\ \};}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

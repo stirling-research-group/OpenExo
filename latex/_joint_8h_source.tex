@@ -1,160 +1,209 @@
 \doxysection{Joint.\+h}
 \hypertarget{_joint_8h_source}{}\label{_joint_8h_source}\index{ExoCode/src/Joint.h@{ExoCode/src/Joint.h}}
-\mbox{\hyperlink{_joint_8h}{Go to the documentation of this file.}}
+\doxymbox{\hyperlink{_joint_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
-\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ Joint\_h}}
-\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ Joint\_h}}
-\DoxyCodeLine{00013\ }
-\DoxyCodeLine{00014\ \textcolor{comment}{//\ Arduino\ compiles\ everything\ in\ the\ src\ folder\ even\ if\ not\ included\ so\ it\ causes\ and\ error\ for\ the\ nano\ if\ this\ is\ not\ included.}}
-\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)}}
-\DoxyCodeLine{00016\ }
-\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}Arduino.h"{}}}
-\DoxyCodeLine{00018\ }
-\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_exo_data_8h}{ExoData.h}}"{}}}
-\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motor_8h}{Motor.h}}"{}}}
-\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_controller_8h}{Controller.h}}"{}}}
-\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_torque_sensor_8h}{TorqueSensor.h}}"{}}}
-\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
-\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_board_8h}{board.h}}"{}}}
-\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_joint_8h}{Joint.h}}"{}}}
-\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_config_8h}{config.h}}"{}}}
-\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_utilities_8h}{Utilities.h}}"{}}}
-\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_status_defs_8h}{StatusDefs.h}}"{}}}
-\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_ankle_angles_8h}{AnkleAngles.h}}"{}}}
-\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_ankle_i_m_u_8h}{AnkleIMU.h}}"{}}}
-\DoxyCodeLine{00031\ }
-\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
-\DoxyCodeLine{00033\ }
-\DoxyCodeLine{00044\ \textcolor{keyword}{class\ }\_Joint}
-\DoxyCodeLine{00045\ \{}
-\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ left\_torque\_sensor\_used\_count;\ }
-\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ right\_torque\_sensor\_used\_count;}
-\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ left\_motor\_used\_count;}
-\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ right\_motor\_used\_count;}
-\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ TODO:\ create\ object\ for\ each\ type\ of\ controller\ (joint\ type\ specific)\ and\ pointer\ to\ current\ controller.}}
-\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ TODO:\ Create\ object\ for\ specific\ motor\ used\ based\ on\ config.}}
-\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{//\ TODO:\ Create\ joint\ base\ class\ that\ can\ then\ be\ used\ for\ each\ joint\ so\ that\ hip,\ knee,\ and\ ankle\ can\ each\ have\ joint\ specific\ controllers.}}
-\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \_Joint(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);\ \ \textcolor{comment}{//\ constructor:\ \ }}
-\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \string~\_Joint()\{\};}
-\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run\_joint()\ =\ 0;\ \ \ }
-\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ read\_data();\ }
-\DoxyCodeLine{00075\ }
-\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ check\_calibration();\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t)\ =\ 0;\ \ }
-\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_motor(\_Motor*\ new\_motor);}
-\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ create\ some\ static\ member\ functions\ we\ can\ use\ for\ the\ initializer\ list.}}
-\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ get\_torque\_sensor\_pin(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*);}
-\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ get\_motor\_enable\_pin(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*);}
-\DoxyCodeLine{00121\ }
-\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \_Motor*\ \_motor;\ }
-\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ TorqueSensor\ \_torque\_sensor;\ }
-\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \_Controller*\ \_controller;\ }
-\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ give\ access\ to\ the\ larger\ data\ object\ and\ the\ joint\ specific\ data\ }}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ \_data;}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_joint_data}{JointData}}*\ \_joint\_data;}
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ IO\ objects\ for\ the\ joint}}
-\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\_Motor*\ \_motor;\ /**<\ pointer\ to\ the\ base\ \_Motor\ class\ so\ we\ can\ use\ any\ motor\ type.*/}}
-\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{comment}{//TorqueSensor\ \_torque\_sensor;\ /**<\ Torque\ sensor\ for\ the\ joint*/}}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\_Controller*\ \_controller;\ /**<\ Pointer\ to\ the\ current\ controller.\ \ Using\ pointer\ so\ we\ just\ need\ to\ change\ the\ object\ we\ are\ pointing\ to\ when\ the\ controller\ changes.*/}}
-\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ joint\ info}}
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \_id;\ }
-\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \_is\_left;\ }
-\DoxyCodeLine{00142\ \};}
-\DoxyCodeLine{00143\ }
-\DoxyCodeLine{00147\ \textcolor{keyword}{class\ }HipJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
-\DoxyCodeLine{00148\ \{}
-\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ HipJoint(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \string~HipJoint()\{\};}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();\ \ }
-\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//void\ read\_data();\ //\ See\ \_Joint\ }}
-\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);\ \ }
-\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Objects\ for\ joint\ specific\ controllers}}
-\DoxyCodeLine{00167\ }
-\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ ZeroTorque\ \_zero\_torque;\ }
-\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ HeelToe\ \_heel\_toe;\ }
-\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ ExtensionAngle\ \_extension\_angle;\ }
-\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ BangBang\ \_bang\_bang;\ }
-\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ LateStance\ \_late\_stance;\ }
-\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ GaitPhase\ \_gait\_phase;\ }
-\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ FranksCollinsHip\ \_franks\_collins\_hip;\ }
-\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UserDefined\ \_user\_defined;\ /**<\ user\ defined\ controller*/}}
-\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ Sine\ \_sine;\ }
-\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ Stasis\ \_stasis;\ }
-\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ Perturbation\ \_perturbation;\ \ \ \ }
-\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ Parabolic\ \_parabolic;\ \ \ \ }
-\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ ConstantTorque\ \_constant\_torque;\ }
-\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ PtbGeneral\ \_ptb\_general;\ }
-\DoxyCodeLine{00182\ \};}
-\DoxyCodeLine{00183\ }
-\DoxyCodeLine{00187\ \textcolor{keyword}{class\ }KneeJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
-\DoxyCodeLine{00188\ \{}
-\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ KneeJoint(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \string~KneeJoint()\{\};}
-\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();\ \ \textcolor{comment}{//\ See\ \_Joint}}
-\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \textcolor{comment}{//void\ read\_data();\ //\ See\ \_Joint}}
-\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);\ \ \textcolor{comment}{//\ See\ \_Joint}}
-\DoxyCodeLine{00205\ \ \ \ \ }
-\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Objects\ for\ joint\ specific\ controllers\ \ \ }}
-\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ ZeroTorque\ \_zero\_torque;\ }
-\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UserDefined\ \_user\_defined;\ /**<\ user\ defined\ controller*/}}
-\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ Sine\ \_sine;\ }
-\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ Stasis\ \_stasis;\ }
-\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ Perturbation\ \_perturbation;\ \ \ \ }
-\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ ConstantTorque\ \_constant\_torque;\ }
-\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ ElbowMinMax\ \_elbow\_min\_max;}
-\DoxyCodeLine{00215\ \};}
-\DoxyCodeLine{00216\ }
-\DoxyCodeLine{00220\ \textcolor{keyword}{class\ }AnkleJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
-\DoxyCodeLine{00221\ \{}
-\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ AnkleJoint(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \string~AnkleJoint()\{\};}
-\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();\ \ \textcolor{comment}{//\ See\ \_Joint}}
-\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{comment}{//void\ read\_data();\ //\ See\ \_Joint}}
-\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);\ \ \textcolor{comment}{//\ See\ \_Joint}}
-\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_ankle_i_m_u}{AnkleIMU}}\ \_imu;}
-\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_imu\_sample\_rate\_us\{15000.0f\};}
-\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_previous\_sample\_us\{0.0f\};}
-\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ AnkleAngles\ \_ankle\_angle;}
-\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Objects\ for\ joint\ specific\ controllers}}
-\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ }
-\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ ProportionalJointMoment\ \_proportional\_joint\_moment;}
-\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ ZhangCollins\ \_zhang\_collins;}
-\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UserDefined\ \_user\_defined;\ /**<\ user\ defined\ controller*/}}
-\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ Sine\ \_sine;\ }
-\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ Stasis\ \_stasis;\ }
-\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ Perturbation\ \_perturbation;\ \ \ \ }
-\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ ConstantTorque\ \_constant\_torque;\ }
-\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ PtbGeneral\ \_ptb\_general;\ }
-\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ PropulsiveAssistive\ \_propulsive\_assistive;\ }
-\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ ElbowMinMax\ \_elbow\_min\_max;\ }
-\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ CalibrManager\ \_calibr\_manager;\ }
-\DoxyCodeLine{00258\ \};}
-\DoxyCodeLine{00259\ }
-\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ Joint\_h}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ Joint\_h}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//Arduino\ compiles\ everything\ in\ the\ src\ folder\ even\ if\ not\ included\ so\ it\ causes\ and\ error\ for\ the\ nano\ if\ this\ is\ not\ included.}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}Arduino.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_exo_data_8h}{ExoData.h}}"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_motor_8h}{Motor.h}}"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_controller_8h}{Controller.h}}"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_torque_sensor_8h}{TorqueSensor.h}}"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_board_8h}{board.h}}"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_joint_8h}{Joint.h}}"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_config_8h}{config.h}}"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_utilities_8h}{Utilities.h}}"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_status_defs_8h}{StatusDefs.h}}"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_error_manager_8h}{ErrorManager.h}}"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_ankle_angles_8h}{AnkleAngles.h}}"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_ankle_i_m_u_8h}{AnkleIMU.h}}"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{class\ }\_Joint}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ left\_torque\_sensor\_used\_count;\ \ \ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ right\_torque\_sensor\_used\_count;\ \ }
+\DoxyCodeLine{00049\ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ left\_motor\_used\_count;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ right\_motor\_used\_count;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \_Joint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);\ \ \textcolor{comment}{//Constructor:\ \ }}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \string~\_Joint()\{\};}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run\_joint()\ =\ 0;\ \ \ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ read\_data();\ }
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ check\_calibration();\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t)\ =\ 0;\ \ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_motor(\_Motor*\ new\_motor);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ get\_torque\_sensor\_pin(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}},\ ExoData*);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ get\_motor\_enable\_pin(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}},\ ExoData*);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \_Motor*\ \_motor;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ TorqueSensor\ \_torque\_sensor;\ \ \ \ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \_Controller*\ \_controller;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Give\ access\ to\ the\ larger\ data\ object\ and\ the\ joint\ specific\ data\ }}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ ExoData*\ \_data;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ JointData*\ \_joint\_data;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ ErrorManager\ \_error\_manager;\ \ \ \ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Joint\ info}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \_id;\ \ \ \ \ \ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \_is\_left;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00131\ \ \ \ \ }
+\DoxyCodeLine{00132\ \};}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00137\ \textcolor{keyword}{class\ }HipJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
+\DoxyCodeLine{00138\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ HipJoint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \string~HipJoint()\{\};}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();\ \ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);\ }
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Objects\ for\ joint\ specific\ controllers}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ FranksCollinsHip\ \_franks\_collins\_hip;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ Spline\ \_spline;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ ConstantTorque\ \_constant\_torque;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ Chirp\ \_chirp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ Step\ \_step;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ ProportionalHipMoment\ \_proportional\_hip\_moment;\ }
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ CalibrManager\ \_calibr\_manager;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00167\ \};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00172\ \textcolor{keyword}{class\ }KneeJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
+\DoxyCodeLine{00173\ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ KneeJoint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \string~KneeJoint()\{\};}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);}
+\DoxyCodeLine{00189\ \ \ \ \ }
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Objects\ for\ joint\ specific\ controllers\ \ \ \ }}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ ConstantTorque\ \_constant\_torque;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ Chirp\ \_chirp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ Step\ \_step;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ CalibrManager\ \_calibr\_manager;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00198\ \};}
+\DoxyCodeLine{00199\ \ }
+\DoxyCodeLine{00203\ \textcolor{keyword}{class\ }AnkleJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
+\DoxyCodeLine{00204\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ AnkleJoint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \string~AnkleJoint()\{\};}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Ankle\ IMU\ Information}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ AnkleIMU\ \_imu;}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_imu\_sample\_rate\_us\{15000.0f\};}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_previous\_sample\_us\{0.0f\};}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Ankle\ Angle\ Infromation}}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ AnkleAngles\ \_ankle\_angle;}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Objects\ for\ joint\ specific\ controllers}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ ProportionalJointMoment\ \_proportional\_joint\_moment;\ \ \ \ \ }
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ ZhangCollins\ \_zhang\_collins;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ Spline\ \_spline;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ ConstantTorque\ \_constant\_torque;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ TREC\ \_trec;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ CalibrManager\ \_calibr\_manager;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ Chirp\ \_chirp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ Step\ \_step;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ SPV2\ \_spv2;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ PJMC\_PLUS\ \_pjmc\_plus;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00243\ \};}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00248\ \textcolor{keyword}{class\ }ElbowJoint\ :\ \textcolor{keyword}{public}\ \_Joint}
+\DoxyCodeLine{00249\ \{}
+\DoxyCodeLine{00250\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00251\ \ \ \ \ ElbowJoint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00252\ \ \ \ \ \string~ElbowJoint()\ \{\};}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{comment}{//Objects\ for\ joint\ specific\ controllers}}
+\DoxyCodeLine{00269\ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00270\ \ \ \ \ ElbowMinMax\ \_elbow\_min\_max;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00271\ \ \ \ \ CalibrManager\ \_calibr\_manager;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00272\ \ \ \ \ Chirp\ \_chirp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00273\ \ \ \ \ Step\ \_step;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \};}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00280\ \textcolor{keyword}{class\ }Arm1Joint\ :\ \textcolor{keyword}{public}\ \_Joint}
+\DoxyCodeLine{00281\ \{}
+\DoxyCodeLine{00282\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00283\ \ \ \ \ Arm1Joint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00284\ \ \ \ \ \string~Arm1Joint()\ \{\};}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00296\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00299\ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00300\ \ \ \ \ Spline\ \_spline;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00301\ \ \ \ \ ConstantTorque\ \_constant\_torque;}
+\DoxyCodeLine{00302\ \};}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00307\ \textcolor{keyword}{class\ }Arm2Joint\ :\ \textcolor{keyword}{public}\ \_Joint}
+\DoxyCodeLine{00308\ \{}
+\DoxyCodeLine{00309\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00310\ \ \ \ \ Arm2Joint(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00311\ \ \ \ \ \string~Arm2Joint()\ \{\};}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{void}\ run\_joint();}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_controller(uint8\_t);}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00326\ \ \ \ \ ZeroTorque\ \_zero\_torque;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00327\ \ \ \ \ Spline\ \_spline;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00328\ \ \ \ \ ConstantTorque\ \_constant\_torque;}
+\DoxyCodeLine{00329\ \};}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

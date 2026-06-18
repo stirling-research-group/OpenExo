@@ -152,7 +152,8 @@ void ComsMCU::update_gui()
 
     static Time_Helper* t_helper = Time_Helper::get_instance();
     static float my_mark = _data->mark;
-    static float* rt_floats = new float(rt_data::len);
+    //static float* rt_floats = new float(rt_data::len);
+    static float* rt_floats = new float[rt_data::len]();
     #if COMSMCU_DEBUG
             logger::println("ComsMCU::update_gui->RT floats before poll");
             //logger::println(rt_floats);
@@ -231,35 +232,45 @@ void ComsMCU::update_gui()
     static float status_context = t_helper->generate_new_context(); 
     static float del_t_status = 0;
     del_t_status += t_helper->tick(status_context);
-//    BleMessage pid_msg = BleMessage();
-//    pid_msg.command = ble_names::get_pid;
-//    pid_msg.expecting = ble_command_helpers::get_length_for_command(pid_msg.command);
 
     if (del_t_status > BLE_times::_status_msg_delay)
     {
         #if COMSMCU_DEBUG
             logger::println("ComsMCU::update_gui->Sending status");
         #endif
-        float q =0;
+
         //Send status data
         /* BleMessage batt_msg = BleMessage();
         batt_msg.command = ble_names::send_batt;
         batt_msg.expecting = ble_command_helpers::get_length_for_command(batt_msg.command);
         batt_msg.data[0] = _data->battery_value;
         _exo_ble->send_message(batt_msg); */
-        BleMessage pid_msg = BleMessage();
-        pid_msg.command = ble_names::get_pid;
-        pid_msg.expecting = ble_command_helpers::get_length_for_command(pid_msg.command);
 
         // start of pid addition
+        BleMessage pid_msg = BleMessage();
+        pid_msg.command = ble_names::send_pid;
+        pid_msg.expecting = 3; // could also use ble_command_helpers::get_length_for_command(pid_msg.command);
+        bool found = false;
+//          #if COMSMCU_DEBUG
+                logger::println("ComsMCU::update_gui->Before each joint");
+//          #endif
 
+//
         int idx = 0;
         _data->for_each_joint([&](JointData* j, float*) {
-             #if COMSMCU_DEBUG
+//             #if COMSMCU_DEBUG
                 logger::println("ComsMCU::update_gui->In each joint loop");
-             #endif
-//            if (j->is_used) { // might need to edit
+                logger::println(j->is_used);
+//             #endif
+         });
+
+//            if (found || j->is_used) { // might need to edit
+//                 #if COMSMCU_DEBUG
+//                    logger::println("ComsMCU::update_gui->In found || j->is_used section");
+//                    logger::println(j->controller.controller);
+//                #endif
 //                switch (j->controller.controller){
+//
 //                    case 2:
 //                        pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::p_gain_idx];
 //                        pid_msg.data[idx++] = j->controller.parameters[controller_defs::zero_torque::i_gain_idx];
@@ -285,22 +296,27 @@ void ComsMCU::update_gui()
 //                        pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::i_gain_idx];
 //                        pid_msg.data[idx++] = j->controller.parameters[controller_defs::step::d_gain_idx];
 //                        break;
+//                    default:
+//                        pid_msg.data[idx++] = 0;
+//                        pid_msg.data[idx++] = 0;
+//                        pid_msg.data[idx++] = 0;
+//                        break;
 //                        }
 //                    #if COMSMCU_DEBUG
 //                        logger::println("ComsMCU::update_gui->End of joint loop");
 //                    #endif
 //                }
-        });
-
-        #if COMSMCU_DEBUG
-          logger::println("ComsMCU::update_gui-> PID Message");
-          //print(pid_msg);
-        #endif
-        //_exo_ble->send_message(pid_msg);
-        #if COMSMCU_DEBUG
-          //  logger::println(f"ComsMCU::update_gui-> PID Message")
-            logger::println("ComsMCU::update_gui->PID sent message");
-        #endif
+//        });
+//
+//        #if COMSMCU_DEBUG
+//          logger::println("ComsMCU::update_gui-> PID Message");
+//          //print(pid_msg);
+//        #endif
+//        _exo_ble->send_message(pid_msg);
+//        #if COMSMCU_DEBUG
+//          //  logger::println(f"ComsMCU::update_gui-> PID Message")
+//            logger::println("ComsMCU::update_gui->PID sent message");
+//        #endif
         //end of pid addition
 
         del_t_status = 0;

@@ -1,190 +1,272 @@
-\doxysection{Exo\+Code/src/\+Config.h File Reference}
+\doxysection{Exo\+Code/\+src/\+\+Config.h File Reference}
 \hypertarget{_config_8h}{}\label{_config_8h}\index{ExoCode/src/Config.h@{ExoCode/src/Config.h}}
-{\ttfamily \#include \"{}Arduino.\+h\"{}}\newline
-{\ttfamily \#include \"{}Log\+Levels.\+h\"{}}\newline
-Include dependency graph for Config.\+h\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=222pt]{_config_8h__incl}
-\end{center}
-\end{figure}
-This graph shows which files directly or indirectly include this file\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{_config_8h__dep__incl}
-\end{center}
-\end{figure}
+
+
+Configuration variables for the codebase.  
+
+
+{\ttfamily \+\#include "{}Arduino.\+h"{}}\newline
+{\ttfamily \+\#include "{}Log\+Levels.\+h"{}}\newline
+Include dependency graph for Config.\+h:\+
+% FIG 0
+This graph shows which files directly or indirectly include this file:\+
+% FIG 1
 \doxysubsubsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
-namespace \mbox{\hyperlink{namespacelogging}{logging}}
+namespace \doxymbox{\hyperlink{namespacelogging}{logging}}
 \item 
-namespace \mbox{\hyperlink{namespacesync__time}{sync\+\_\+time}}
+namespace \doxymbox{\hyperlink{namespacesync__time}{sync\+\_\+time}}
 \item 
-namespace \mbox{\hyperlink{namespacefsr__config}{fsr\+\_\+config}}
+namespace \doxymbox{\hyperlink{namespacefsr__config}{fsr\+\_\+config}}
 \item 
-namespace \mbox{\hyperlink{namespaceanalog}{analog}}
+namespace \doxymbox{\hyperlink{namespaceangle__sensor}{angle\+\_\+sensor}}
 \item 
-namespace \mbox{\hyperlink{namespacetorque__calibration}{torque\+\_\+calibration}}
+namespace \doxymbox{\hyperlink{namespaceanalog}{analog}}
 \item 
-namespace \mbox{\hyperlink{namespace_b_l_e__times}{BLE\+\_\+times}}
+namespace \doxymbox{\hyperlink{namespacetorque__calibration}{torque\+\_\+calibration}}
 \item 
-namespace \mbox{\hyperlink{namespaceexo__info}{exo\+\_\+info}}
+namespace \doxymbox{\hyperlink{namespace_b_l_e__times}{BLE\+\_\+times}}
 \item 
-namespace \mbox{\hyperlink{namespace_u_a_r_t__times}{UART\+\_\+times}}
+namespace \doxymbox{\hyperlink{namespaceexo__info}{exo\+\_\+info}}
+\item 
+namespace \doxymbox{\hyperlink{namespace_u_a_r_t__times}{UART\+\_\+times}}
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \mbox{\hyperlink{_config_8h_aa14dc39d52ab121ceb570f1a265385e0}{FIRMWARE\+\_\+\+VERSION}}~0\+\_\+1\+\_\+0
+\+\#define \doxymbox{\hyperlink{_config_8h_a2a81bced09147698e8977dac1cedc5a5}{SIMPLE\+\_\+\+DEBUG}}
 \item 
-\#define \mbox{\hyperlink{_config_8h_a82bdada809263922e5af23ddd7e44c09}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+1}}~1
+\+\#define \doxymbox{\hyperlink{_config_8h_aa14dc39d52ab121ceb570f1a265385e0}{FIRMWARE\+\_\+\+VERSION}}~0\+\_\+1\+\_\+0
 \item 
-\#define \mbox{\hyperlink{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+3}}~2
+\+\#define \doxymbox{\hyperlink{_config_8h_a82bdada809263922e5af23ddd7e44c09}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+1}}~1
 \item 
-\#define \mbox{\hyperlink{_config_8h_a5f58b1936105ee214da61e6f013c5fd8}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+4}}~3
+\+\#define \doxymbox{\hyperlink{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+3}}~2
 \item 
-\#define \mbox{\hyperlink{_config_8h_a1ee80da70605eafcf7876bd94a0958e7}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+5\+\_\+1}}~4
+\+\#define \doxymbox{\hyperlink{_config_8h_a5f58b1936105ee214da61e6f013c5fd8}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+4}}~3
 \item 
-\#define \mbox{\hyperlink{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f}{BOARD\+\_\+\+VERSION}}~\mbox{\hyperlink{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+3}}
+\+\#define \doxymbox{\hyperlink{_config_8h_a1ee80da70605eafcf7876bd94a0958e7}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+5\+\_\+1}}~4
 \item 
-\#define \mbox{\hyperlink{_config_8h_ab4a023361971d87d67f5d143d14a71b8}{REAL\+\_\+\+TIME\+\_\+\+I2C}}~1
+\+\#define \doxymbox{\hyperlink{_config_8h_a1428455ed33bff2adca9ea9249125f6f}{Open\+Exo\+\_\+\+Board\+\_\+\+V0\+\_\+6\+\_\+\+Maxon}}~5
 \item 
-\#define \mbox{\hyperlink{_config_8h_a1ff4ea5999dbe65bcdc1d02d90eb8525}{LOOP\+\_\+\+FREQ\+\_\+\+HZ}}~500
+\+\#define \doxymbox{\hyperlink{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f}{BOARD\+\_\+\+VERSION}}~\doxymbox{\hyperlink{_config_8h_a1ee80da70605eafcf7876bd94a0958e7}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+5\+\_\+1}}
 \item 
-\#define \mbox{\hyperlink{_config_8h_a5738ad79e73c6c6dc8453fbd9cb57ccf}{LOOP\+\_\+\+TIME\+\_\+\+TOLERANCE}}~0.\+1
+\+\#define \doxymbox{\hyperlink{_config_8h_a00f5327bcdeb188e121bc64f08633602}{BATTERY\+\_\+\+SENSOR}}~0
 \item 
-\#define \mbox{\hyperlink{_config_8h_a6fe4741d3d95f35dcd6e49eab28c0eb9}{USE\+\_\+\+SPEED\+\_\+\+CHECK}}~0
+\+\#define \doxymbox{\hyperlink{_config_8h_abf4773d3bbfe27af876950bf920c199a}{CRITICAL\+\_\+\+BATT\+\_\+\+VAL}}~18
 \item 
-\#define \mbox{\hyperlink{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}{VAL}}(str)~\#str
+\+\#define \doxymbox{\hyperlink{_config_8h_aff1ab674e260b7941236f8dc48aa83c4}{RESISTOR\+\_\+1}}~46700
 \item 
-\#define \mbox{\hyperlink{_config_8h_a936059ff6981db7fe4eefa988f423d57}{TOSTRING}}(str)~\mbox{\hyperlink{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}{VAL}}(str)
+\+\#define \doxymbox{\hyperlink{_config_8h_a7bdf7a53c16e5133978df4544ded3073}{RESISTOR\+\_\+2}}~4670
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_ab4a023361971d87d67f5d143d14a71b8}{REAL\+\_\+\+TIME\+\_\+\+I2C}}~1
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_a1ff4ea5999dbe65bcdc1d02d90eb8525}{LOOP\+\_\+\+FREQ\+\_\+\+HZ}}~500
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_a5738ad79e73c6c6dc8453fbd9cb57ccf}{LOOP\+\_\+\+TIME\+\_\+\+TOLERANCE}}~0.\+1
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_a6fe4741d3d95f35dcd6e49eab28c0eb9}{USE\+\_\+\+SPEED\+\_\+\+CHECK}}~0
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_a27eef160cab50abd6806fcc74adfb955}{USE\+\_\+\+ANGLE\+\_\+\+SENSORS}}~1
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}{VAL}}(str)
+\item 
+\+\#define \doxymbox{\hyperlink{_config_8h_a936059ff6981db7fe4eefa988f423d57}{TOSTRING}}(str)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-const \mbox{\hyperlink{_log_levels_8h_a9cf4d2a890c8688e0fe1bc38fa88de94}{Log\+Level}} \mbox{\hyperlink{namespacelogging_ad898846ac4878a064c2b09a55d8879e1}{logging\+::level}} = \mbox{\hyperlink{_log_levels_8h_a9cf4d2a890c8688e0fe1bc38fa88de94ab8e7b465df7c5979dc731d06e84ce2cf}{Log\+Level\+::\+Release}}
+const \doxymbox{\hyperlink{_log_levels_8h_a9cf4d2a890c8688e0fe1bc38fa88de94}{Log\+Level}} \doxymbox{\hyperlink{namespacelogging_ad898846ac4878a064c2b09a55d8879e1}{logging::\+level}} = \doxymbox{\hyperlink{_log_levels_8h_a9cf4d2a890c8688e0fe1bc38fa88de94aa603905470e2a5b8c13e96b579ef0dba}{Log\+Level::\+\+Debug}}
 \item 
-const int \mbox{\hyperlink{namespacelogging_ab736a60f54f48e134f757fb36048ac96}{logging\+::baud\+\_\+rate}} = 115200
+const int \doxymbox{\hyperlink{namespacelogging_ab736a60f54f48e134f757fb36048ac96}{logging::\+baud\+\_\+rate}} = 115200
 \item 
-const unsigned int \mbox{\hyperlink{namespacesync__time_a2c92e886962d2146e9542aa06f755a2d}{sync\+\_\+time\+::\+NUM\+\_\+\+START\+\_\+\+STOP\+\_\+\+BLINKS}} = 1
+const unsigned int \doxymbox{\hyperlink{namespacesync__time_a2c92e886962d2146e9542aa06f755a2d}{sync\+\_\+time::\+\+NUM\+\_\+\+START\+\_\+\+STOP\+\_\+\+BLINKS}} = 1
 \item 
-const unsigned int \mbox{\hyperlink{namespacesync__time_a018cc1f0731c471c01160c84eaea7472}{sync\+\_\+time\+::\+SYNC\+\_\+\+HALF\+\_\+\+PERIOD\+\_\+\+US}} = 125000
+const unsigned int \doxymbox{\hyperlink{namespacesync__time_a018cc1f0731c471c01160c84eaea7472}{sync\+\_\+time::\+\+SYNC\+\_\+\+HALF\+\_\+\+PERIOD\+\_\+\+US}} = 125000
 \item 
-const unsigned int \mbox{\hyperlink{namespacesync__time_a3c8b19f78d8d7cc8f2c87c4acbb82981}{sync\+\_\+time\+::\+SYNC\+\_\+\+START\+\_\+\+STOP\+\_\+\+HALF\+\_\+\+PERIOD\+\_\+\+US}} = 4 \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{namespacesync__time_a018cc1f0731c471c01160c84eaea7472}{SYNC\+\_\+\+HALF\+\_\+\+PERIOD\+\_\+\+US}}
+const unsigned int \doxymbox{\hyperlink{namespacesync__time_a3c8b19f78d8d7cc8f2c87c4acbb82981}{sync\+\_\+time::\+\+SYNC\+\_\+\+START\+\_\+\+STOP\+\_\+\+HALF\+\_\+\+PERIOD\+\_\+\+US}} = 4 \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{namespacesync__time_a018cc1f0731c471c01160c84eaea7472}{SYNC\+\_\+\+HALF\+\_\+\+PERIOD\+\_\+\+US}}
 \item 
-const float \mbox{\hyperlink{namespacefsr__config_a310a6cbbe113e31cdf36e43e497e5141}{fsr\+\_\+config\+::\+FSR\+\_\+\+UPPER\+\_\+\+THRESHOLD}} = 0.\+25
+const float \doxymbox{\hyperlink{namespacefsr__config_a310a6cbbe113e31cdf36e43e497e5141}{fsr\+\_\+config::\+\+FSR\+\_\+\+UPPER\+\_\+\+THRESHOLD}} = 0.\+25
 \item 
-const float \mbox{\hyperlink{namespacefsr__config_a1e7261df7f72f49af98e957dd5b03507}{fsr\+\_\+config\+::\+FSR\+\_\+\+LOWER\+\_\+\+THRESHOLD}} = 0.\+15
+const float \doxymbox{\hyperlink{namespacefsr__config_a1e7261df7f72f49af98e957dd5b03507}{fsr\+\_\+config::\+\+FSR\+\_\+\+LOWER\+\_\+\+THRESHOLD}} = 0.\+15
 \item 
-const float \mbox{\hyperlink{namespacefsr__config_aed952b4c8fa3264e85f5c6e1ea757a21}{fsr\+\_\+config\+::\+SCHMITT\+\_\+\+DELTA}} = (\mbox{\hyperlink{namespacefsr__config_a310a6cbbe113e31cdf36e43e497e5141}{FSR\+\_\+\+UPPER\+\_\+\+THRESHOLD}} -\/ \mbox{\hyperlink{namespacefsr__config_a1e7261df7f72f49af98e957dd5b03507}{FSR\+\_\+\+LOWER\+\_\+\+THRESHOLD}})/2
+const float \doxymbox{\hyperlink{namespacefsr__config_aed952b4c8fa3264e85f5c6e1ea757a21}{fsr\+\_\+config::\+\+SCHMITT\+\_\+\+DELTA}} = (\doxymbox{\hyperlink{namespacefsr__config_a310a6cbbe113e31cdf36e43e497e5141}{FSR\+\_\+\+UPPER\+\_\+\+THRESHOLD}} -\/ \doxymbox{\hyperlink{namespacefsr__config_a1e7261df7f72f49af98e957dd5b03507}{FSR\+\_\+\+LOWER\+\_\+\+THRESHOLD}})/\+2
 \item 
-const float \mbox{\hyperlink{namespaceanalog_a79d06ae925c44093af883c31e3114ca2}{analog\+::\+RESOLUTION}} = 12
+const float \doxymbox{\hyperlink{namespaceangle__sensor_a706636d9166dc9447ca86567c79543a8}{angle\+\_\+sensor::\+\+ANGLE\+\_\+\+UPPER\+\_\+\+THRESHOLD}} = 0.\+9
 \item 
-const float \mbox{\hyperlink{namespaceanalog_a82da6c158d0dd0002da687f392f6836c}{analog\+::\+COUNTS}} = 4096
+const float \doxymbox{\hyperlink{namespaceangle__sensor_a3805b9252b32dda54c3dbfb0a1ca0e7f}{angle\+\_\+sensor::\+\+ANGLE\+\_\+\+LOWER\+\_\+\+THRESHOLD}} = 0.\+1
 \item 
-const float \mbox{\hyperlink{namespacetorque__calibration_a765e3690aadfd871a3db2f425f0da9e2}{torque\+\_\+calibration\+::\+AI\+\_\+\+CNT\+\_\+\+TO\+\_\+V}} = 3.\+3 / 4096
+const float \doxymbox{\hyperlink{namespaceangle__sensor_a800af275710894a2bbe4b9096c28d244}{angle\+\_\+sensor::\+\+ROM\+\_\+\+LEFT}} = 103.\+2f
 \item 
-const float \mbox{\hyperlink{namespacetorque__calibration_a6693cd19ee28e8b1db6c4521996f6f05}{torque\+\_\+calibration\+::\+TRQ\+\_\+\+V\+\_\+\+TO\+\_\+\+NM}} = 53.\+70
+const float \doxymbox{\hyperlink{namespaceangle__sensor_ac6d08407b51e4d336a337c172373969c}{angle\+\_\+sensor::\+\+ROM\+\_\+\+RIGHT}} = 91.\+4f
 \item 
-const float \mbox{\hyperlink{namespace_b_l_e__times_a12d90ec982adfba29655d3bf689c4f5f}{BLE\+\_\+times\+::\+\_\+status\+\_\+msg\+\_\+delay}} = 1000000
+const float \doxymbox{\hyperlink{namespaceanalog_a79d06ae925c44093af883c31e3114ca2}{analog::\+\+RESOLUTION}} = 12
 \item 
-const float \mbox{\hyperlink{namespace_b_l_e__times_a53f5205ff55ca4b18ffa294c9ddf9ede}{BLE\+\_\+times\+::\+\_\+real\+\_\+time\+\_\+msg\+\_\+delay}} = 20000
+const float \doxymbox{\hyperlink{namespaceanalog_a82da6c158d0dd0002da687f392f6836c}{analog::\+\+COUNTS}} = 4096
 \item 
-const float \mbox{\hyperlink{namespace_b_l_e__times_a467fc34974955544be0d3b93bdf0edf0}{BLE\+\_\+times\+::\+\_\+update\+\_\+delay}} = 1000
+const float \doxymbox{\hyperlink{namespacetorque__calibration_a765e3690aadfd871a3db2f425f0da9e2}{torque\+\_\+calibration::\+\+AI\+\_\+\+CNT\+\_\+\+TO\+\_\+V}} = 3.\+3 /\+ 4096
 \item 
-const float \mbox{\hyperlink{namespace_b_l_e__times_a058196d2b0edbafb9cb1174d1f8c5350}{BLE\+\_\+times\+::\+\_\+poll\+\_\+timeout}} = 4
+const float \doxymbox{\hyperlink{namespacetorque__calibration_a6693cd19ee28e8b1db6c4521996f6f05}{torque\+\_\+calibration::\+\+TRQ\+\_\+\+V\+\_\+\+TO\+\_\+\+NM}} = 53.\+70
 \item 
-const String \mbox{\hyperlink{namespaceexo__info_a0188ede54de78e91b5c5a5b4c8aa430a}{exo\+\_\+info\+::\+Firmware\+Version}} = String(\mbox{\hyperlink{_config_8h_a936059ff6981db7fe4eefa988f423d57}{TOSTRING}}(\mbox{\hyperlink{_config_8h_aa14dc39d52ab121ceb570f1a265385e0}{FIRMWARE\+\_\+\+VERSION}}))
+const float \doxymbox{\hyperlink{namespace_b_l_e__times_a12d90ec982adfba29655d3bf689c4f5f}{BLE\+\_\+times::\+\+\_\+status\+\_\+msg\+\_\+delay}} = 2000000
 \item 
-const String \mbox{\hyperlink{namespaceexo__info_ad05ddd9b42e394df2901fc949ea20414}{exo\+\_\+info\+::\+PCBVersion}} = String(\mbox{\hyperlink{_config_8h_a936059ff6981db7fe4eefa988f423d57}{TOSTRING}}(\mbox{\hyperlink{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f}{BOARD\+\_\+\+VERSION}}))
+const float \doxymbox{\hyperlink{namespace_b_l_e__times_a53f5205ff55ca4b18ffa294c9ddf9ede}{BLE\+\_\+times::\+\+\_\+real\+\_\+time\+\_\+msg\+\_\+delay}} = 9000
 \item 
-const String \mbox{\hyperlink{namespaceexo__info_aaae40255d1f0f73e03423836e895da50}{exo\+\_\+info\+::\+Device\+Name}} = String(\"{}NULL\"{})
+const float \doxymbox{\hyperlink{namespace_b_l_e__times_a467fc34974955544be0d3b93bdf0edf0}{BLE\+\_\+times::\+\+\_\+update\+\_\+delay}} = 1000
 \item 
-const float \mbox{\hyperlink{namespace_u_a_r_t__times_a4aa373d00d67a7b56daa9cad3d768af2}{UART\+\_\+times\+::\+UPDATE\+\_\+\+PERIOD}} = 1000
+const float \doxymbox{\hyperlink{namespace_b_l_e__times_a058196d2b0edbafb9cb1174d1f8c5350}{BLE\+\_\+times::\+\+\_\+poll\+\_\+timeout}} = 4
 \item 
-const float \mbox{\hyperlink{namespace_u_a_r_t__times_a022ba057e396e1f4909fc11be148266d}{UART\+\_\+times\+::\+COMS\+\_\+\+MCU\+\_\+\+TIMEOUT}} = 5000
+const String \doxymbox{\hyperlink{namespaceexo__info_a0188ede54de78e91b5c5a5b4c8aa430a}{exo\+\_\+info::\+\+Firmware\+Version}} = String(\doxymbox{\hyperlink{_config_8h_a936059ff6981db7fe4eefa988f423d57}{TOSTRING}}(\doxymbox{\hyperlink{_config_8h_aa14dc39d52ab121ceb570f1a265385e0}{FIRMWARE\+\_\+\+VERSION}}))
 \item 
-const float \mbox{\hyperlink{namespace_u_a_r_t__times_ae8cd2e18c4cd9e16308b0e8c3dfe794d}{UART\+\_\+times\+::\+CONT\+\_\+\+MCU\+\_\+\+TIMEOUT}} = 1000
+const String \doxymbox{\hyperlink{namespaceexo__info_ad05ddd9b42e394df2901fc949ea20414}{exo\+\_\+info::\+\+PCBVersion}} = String(\doxymbox{\hyperlink{_config_8h_a936059ff6981db7fe4eefa988f423d57}{TOSTRING}}(\doxymbox{\hyperlink{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f}{BOARD\+\_\+\+VERSION}}))
 \item 
-const float \mbox{\hyperlink{namespace_u_a_r_t__times_a341eba5786159662ac0f4bfdddcfb99e}{UART\+\_\+times\+::\+CONFIG\+\_\+\+TIMEOUT}} = 8000
+const String \doxymbox{\hyperlink{namespaceexo__info_aaae40255d1f0f73e03423836e895da50}{exo\+\_\+info::\+\+Device\+Name}} = String("{}NULL"{})
+\item 
+const float \doxymbox{\hyperlink{namespace_u_a_r_t__times_a4aa373d00d67a7b56daa9cad3d768af2}{UART\+\_\+times::\+\+UPDATE\+\_\+\+PERIOD}} = 1000
+\item 
+const float \doxymbox{\hyperlink{namespace_u_a_r_t__times_a022ba057e396e1f4909fc11be148266d}{UART\+\_\+times::\+\+COMS\+\_\+\+MCU\+\_\+\+TIMEOUT}} = 5000
+\item 
+const float \doxymbox{\hyperlink{namespace_u_a_r_t__times_ae8cd2e18c4cd9e16308b0e8c3dfe794d}{UART\+\_\+times::\+\+CONT\+\_\+\+MCU\+\_\+\+TIMEOUT}} = 1000
+\item 
+const float \doxymbox{\hyperlink{namespace_u_a_r_t__times_a341eba5786159662ac0f4bfdddcfb99e}{UART\+\_\+times::\+\+CONFIG\+\_\+\+TIMEOUT}} = 8000
 \end{DoxyCompactItemize}
 
 
+\doxysubsection{Detailed Description}
+Configuration variables for the codebase. 
+
+\begin{DoxyAuthor}{Author}
+Chancelor Cuddeback 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2023-\/07-\/18 
+\end{DoxyDate}
+
+
+\label{_config_8h_doc-define-members}
+\Hypertarget{_config_8h_doc-define-members}
 \doxysubsection{Macro Definition Documentation}
-\Hypertarget{_config_8h_a82bdada809263922e5af23ddd7e44c09}\label{_config_8h_a82bdada809263922e5af23ddd7e44c09} 
-\index{Config.h@{Config.h}!AK\_Board\_V0\_1@{AK\_Board\_V0\_1}}
+\Hypertarget{_config_8h_a82bdada809263922e5af23ddd7e44c09}\index{Config.h@{Config.h}!AK\_Board\_V0\_1@{AK\_Board\_V0\_1}}
 \index{AK\_Board\_V0\_1@{AK\_Board\_V0\_1}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{AK\_Board\_V0\_1}{AK\_Board\_V0\_1}}
-{\footnotesize\ttfamily \#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+1~1}
+{\footnotesize\ttfamily \label{_config_8h_a82bdada809263922e5af23ddd7e44c09} 
+\+\#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+1~1}
 
-\Hypertarget{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24}\label{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24} 
-\index{Config.h@{Config.h}!AK\_Board\_V0\_3@{AK\_Board\_V0\_3}}
+\Hypertarget{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24}\index{Config.h@{Config.h}!AK\_Board\_V0\_3@{AK\_Board\_V0\_3}}
 \index{AK\_Board\_V0\_3@{AK\_Board\_V0\_3}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{AK\_Board\_V0\_3}{AK\_Board\_V0\_3}}
-{\footnotesize\ttfamily \#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+3~2}
+{\footnotesize\ttfamily \label{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24} 
+\+\#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+3~2}
 
-\Hypertarget{_config_8h_a5f58b1936105ee214da61e6f013c5fd8}\label{_config_8h_a5f58b1936105ee214da61e6f013c5fd8} 
-\index{Config.h@{Config.h}!AK\_Board\_V0\_4@{AK\_Board\_V0\_4}}
+\Hypertarget{_config_8h_a5f58b1936105ee214da61e6f013c5fd8}\index{Config.h@{Config.h}!AK\_Board\_V0\_4@{AK\_Board\_V0\_4}}
 \index{AK\_Board\_V0\_4@{AK\_Board\_V0\_4}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{AK\_Board\_V0\_4}{AK\_Board\_V0\_4}}
-{\footnotesize\ttfamily \#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+4~3}
+{\footnotesize\ttfamily \label{_config_8h_a5f58b1936105ee214da61e6f013c5fd8} 
+\+\#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+4~3}
 
-\Hypertarget{_config_8h_a1ee80da70605eafcf7876bd94a0958e7}\label{_config_8h_a1ee80da70605eafcf7876bd94a0958e7} 
-\index{Config.h@{Config.h}!AK\_Board\_V0\_5\_1@{AK\_Board\_V0\_5\_1}}
+\Hypertarget{_config_8h_a1ee80da70605eafcf7876bd94a0958e7}\index{Config.h@{Config.h}!AK\_Board\_V0\_5\_1@{AK\_Board\_V0\_5\_1}}
 \index{AK\_Board\_V0\_5\_1@{AK\_Board\_V0\_5\_1}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{AK\_Board\_V0\_5\_1}{AK\_Board\_V0\_5\_1}}
-{\footnotesize\ttfamily \#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+5\+\_\+1~4}
+{\footnotesize\ttfamily \label{_config_8h_a1ee80da70605eafcf7876bd94a0958e7} 
+\+\#define AK\+\_\+\+Board\+\_\+\+V0\+\_\+5\+\_\+1~4}
 
-\Hypertarget{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f}\label{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f} 
-\index{Config.h@{Config.h}!BOARD\_VERSION@{BOARD\_VERSION}}
+\Hypertarget{_config_8h_a00f5327bcdeb188e121bc64f08633602}\index{Config.h@{Config.h}!BATTERY\_SENSOR@{BATTERY\_SENSOR}}
+\index{BATTERY\_SENSOR@{BATTERY\_SENSOR}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{BATTERY\_SENSOR}{BATTERY\_SENSOR}}
+{\footnotesize\ttfamily \label{_config_8h_a00f5327bcdeb188e121bc64f08633602} 
+\+\#define BATTERY\+\_\+\+SENSOR~0}
+
+\Hypertarget{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f}\index{Config.h@{Config.h}!BOARD\_VERSION@{BOARD\_VERSION}}
 \index{BOARD\_VERSION@{BOARD\_VERSION}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{BOARD\_VERSION}{BOARD\_VERSION}}
-{\footnotesize\ttfamily \#define BOARD\+\_\+\+VERSION~\mbox{\hyperlink{_config_8h_ad52fdb84a9f1564a8b05a6f8b342dc24}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+3}}}
+{\footnotesize\ttfamily \label{_config_8h_a146f7b921fbc7d5d5a93d7da402ad70f} 
+\+\#define BOARD\+\_\+\+VERSION~\doxymbox{\hyperlink{_config_8h_a1ee80da70605eafcf7876bd94a0958e7}{AK\+\_\+\+Board\+\_\+\+V0\+\_\+5\+\_\+1}}}
 
-\Hypertarget{_config_8h_aa14dc39d52ab121ceb570f1a265385e0}\label{_config_8h_aa14dc39d52ab121ceb570f1a265385e0} 
-\index{Config.h@{Config.h}!FIRMWARE\_VERSION@{FIRMWARE\_VERSION}}
+\Hypertarget{_config_8h_abf4773d3bbfe27af876950bf920c199a}\index{Config.h@{Config.h}!CRITICAL\_BATT\_VAL@{CRITICAL\_BATT\_VAL}}
+\index{CRITICAL\_BATT\_VAL@{CRITICAL\_BATT\_VAL}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{CRITICAL\_BATT\_VAL}{CRITICAL\_BATT\_VAL}}
+{\footnotesize\ttfamily \label{_config_8h_abf4773d3bbfe27af876950bf920c199a} 
+\+\#define CRITICAL\+\_\+\+BATT\+\_\+\+VAL~18}
+
+\Hypertarget{_config_8h_aa14dc39d52ab121ceb570f1a265385e0}\index{Config.h@{Config.h}!FIRMWARE\_VERSION@{FIRMWARE\_VERSION}}
 \index{FIRMWARE\_VERSION@{FIRMWARE\_VERSION}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{FIRMWARE\_VERSION}{FIRMWARE\_VERSION}}
-{\footnotesize\ttfamily \#define FIRMWARE\+\_\+\+VERSION~0\+\_\+1\+\_\+0}
+{\footnotesize\ttfamily \label{_config_8h_aa14dc39d52ab121ceb570f1a265385e0} 
+\+\#define FIRMWARE\+\_\+\+VERSION~0\+\_\+1\+\_\+0}
 
-\Hypertarget{_config_8h_a1ff4ea5999dbe65bcdc1d02d90eb8525}\label{_config_8h_a1ff4ea5999dbe65bcdc1d02d90eb8525} 
-\index{Config.h@{Config.h}!LOOP\_FREQ\_HZ@{LOOP\_FREQ\_HZ}}
+\Hypertarget{_config_8h_a1ff4ea5999dbe65bcdc1d02d90eb8525}\index{Config.h@{Config.h}!LOOP\_FREQ\_HZ@{LOOP\_FREQ\_HZ}}
 \index{LOOP\_FREQ\_HZ@{LOOP\_FREQ\_HZ}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{LOOP\_FREQ\_HZ}{LOOP\_FREQ\_HZ}}
-{\footnotesize\ttfamily \#define LOOP\+\_\+\+FREQ\+\_\+\+HZ~500}
+{\footnotesize\ttfamily \label{_config_8h_a1ff4ea5999dbe65bcdc1d02d90eb8525} 
+\+\#define LOOP\+\_\+\+FREQ\+\_\+\+HZ~500}
 
-\Hypertarget{_config_8h_a5738ad79e73c6c6dc8453fbd9cb57ccf}\label{_config_8h_a5738ad79e73c6c6dc8453fbd9cb57ccf} 
-\index{Config.h@{Config.h}!LOOP\_TIME\_TOLERANCE@{LOOP\_TIME\_TOLERANCE}}
+\Hypertarget{_config_8h_a5738ad79e73c6c6dc8453fbd9cb57ccf}\index{Config.h@{Config.h}!LOOP\_TIME\_TOLERANCE@{LOOP\_TIME\_TOLERANCE}}
 \index{LOOP\_TIME\_TOLERANCE@{LOOP\_TIME\_TOLERANCE}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{LOOP\_TIME\_TOLERANCE}{LOOP\_TIME\_TOLERANCE}}
-{\footnotesize\ttfamily \#define LOOP\+\_\+\+TIME\+\_\+\+TOLERANCE~0.\+1}
+{\footnotesize\ttfamily \label{_config_8h_a5738ad79e73c6c6dc8453fbd9cb57ccf} 
+\+\#define LOOP\+\_\+\+TIME\+\_\+\+TOLERANCE~0.\+1}
 
-\Hypertarget{_config_8h_ab4a023361971d87d67f5d143d14a71b8}\label{_config_8h_ab4a023361971d87d67f5d143d14a71b8} 
-\index{Config.h@{Config.h}!REAL\_TIME\_I2C@{REAL\_TIME\_I2C}}
+\Hypertarget{_config_8h_a1428455ed33bff2adca9ea9249125f6f}\index{Config.h@{Config.h}!OpenExo\_Board\_V0\_6\_Maxon@{OpenExo\_Board\_V0\_6\_Maxon}}
+\index{OpenExo\_Board\_V0\_6\_Maxon@{OpenExo\_Board\_V0\_6\_Maxon}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{OpenExo\_Board\_V0\_6\_Maxon}{OpenExo\_Board\_V0\_6\_Maxon}}
+{\footnotesize\ttfamily \label{_config_8h_a1428455ed33bff2adca9ea9249125f6f} 
+\+\#define Open\+Exo\+\_\+\+Board\+\_\+\+V0\+\_\+6\+\_\+\+Maxon~5}
+
+\Hypertarget{_config_8h_ab4a023361971d87d67f5d143d14a71b8}\index{Config.h@{Config.h}!REAL\_TIME\_I2C@{REAL\_TIME\_I2C}}
 \index{REAL\_TIME\_I2C@{REAL\_TIME\_I2C}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{REAL\_TIME\_I2C}{REAL\_TIME\_I2C}}
-{\footnotesize\ttfamily \#define REAL\+\_\+\+TIME\+\_\+\+I2C~1}
+{\footnotesize\ttfamily \label{_config_8h_ab4a023361971d87d67f5d143d14a71b8} 
+\+\#define REAL\+\_\+\+TIME\+\_\+\+I2C~1}
 
-\Hypertarget{_config_8h_a936059ff6981db7fe4eefa988f423d57}\label{_config_8h_a936059ff6981db7fe4eefa988f423d57} 
-\index{Config.h@{Config.h}!TOSTRING@{TOSTRING}}
+\Hypertarget{_config_8h_aff1ab674e260b7941236f8dc48aa83c4}\index{Config.h@{Config.h}!RESISTOR\_1@{RESISTOR\_1}}
+\index{RESISTOR\_1@{RESISTOR\_1}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{RESISTOR\_1}{RESISTOR\_1}}
+{\footnotesize\ttfamily \label{_config_8h_aff1ab674e260b7941236f8dc48aa83c4} 
+\+\#define RESISTOR\+\_\+1~46700}
+
+\Hypertarget{_config_8h_a7bdf7a53c16e5133978df4544ded3073}\index{Config.h@{Config.h}!RESISTOR\_2@{RESISTOR\_2}}
+\index{RESISTOR\_2@{RESISTOR\_2}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{RESISTOR\_2}{RESISTOR\_2}}
+{\footnotesize\ttfamily \label{_config_8h_a7bdf7a53c16e5133978df4544ded3073} 
+\+\#define RESISTOR\+\_\+2~4670}
+
+\Hypertarget{_config_8h_a2a81bced09147698e8977dac1cedc5a5}\index{Config.h@{Config.h}!SIMPLE\_DEBUG@{SIMPLE\_DEBUG}}
+\index{SIMPLE\_DEBUG@{SIMPLE\_DEBUG}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{SIMPLE\_DEBUG}{SIMPLE\_DEBUG}}
+{\footnotesize\ttfamily \label{_config_8h_a2a81bced09147698e8977dac1cedc5a5} 
+\+\#define SIMPLE\+\_\+\+DEBUG}
+
+\Hypertarget{_config_8h_a936059ff6981db7fe4eefa988f423d57}\index{Config.h@{Config.h}!TOSTRING@{TOSTRING}}
 \index{TOSTRING@{TOSTRING}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{TOSTRING}{TOSTRING}}
-{\footnotesize\ttfamily \#define TOSTRING(\begin{DoxyParamCaption}\item[{}]{str }\end{DoxyParamCaption})~\mbox{\hyperlink{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}{VAL}}(str)}
+{\footnotesize\ttfamily \label{_config_8h_a936059ff6981db7fe4eefa988f423d57} 
+\+\#define TOSTRING(\begin{DoxyParamCaption}\item[{}]{str}{}\end{DoxyParamCaption})}
 
-\Hypertarget{_config_8h_a6fe4741d3d95f35dcd6e49eab28c0eb9}\label{_config_8h_a6fe4741d3d95f35dcd6e49eab28c0eb9} 
-\index{Config.h@{Config.h}!USE\_SPEED\_CHECK@{USE\_SPEED\_CHECK}}
+{\bfseries Value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\doxymbox{\hyperlink{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}{VAL}}(str)}
+
+\end{DoxyCode}
+\Hypertarget{_config_8h_a27eef160cab50abd6806fcc74adfb955}\index{Config.h@{Config.h}!USE\_ANGLE\_SENSORS@{USE\_ANGLE\_SENSORS}}
+\index{USE\_ANGLE\_SENSORS@{USE\_ANGLE\_SENSORS}!Config.h@{Config.h}}
+\doxysubsubsection{\texorpdfstring{USE\_ANGLE\_SENSORS}{USE\_ANGLE\_SENSORS}}
+{\footnotesize\ttfamily \label{_config_8h_a27eef160cab50abd6806fcc74adfb955} 
+\+\#define USE\+\_\+\+ANGLE\+\_\+\+SENSORS~1}
+
+\Hypertarget{_config_8h_a6fe4741d3d95f35dcd6e49eab28c0eb9}\index{Config.h@{Config.h}!USE\_SPEED\_CHECK@{USE\_SPEED\_CHECK}}
 \index{USE\_SPEED\_CHECK@{USE\_SPEED\_CHECK}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{USE\_SPEED\_CHECK}{USE\_SPEED\_CHECK}}
-{\footnotesize\ttfamily \#define USE\+\_\+\+SPEED\+\_\+\+CHECK~0}
+{\footnotesize\ttfamily \label{_config_8h_a6fe4741d3d95f35dcd6e49eab28c0eb9} 
+\+\#define USE\+\_\+\+SPEED\+\_\+\+CHECK~0}
 
-\Hypertarget{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}\label{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa} 
-\index{Config.h@{Config.h}!VAL@{VAL}}
+\Hypertarget{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa}\index{Config.h@{Config.h}!VAL@{VAL}}
 \index{VAL@{VAL}!Config.h@{Config.h}}
 \doxysubsubsection{\texorpdfstring{VAL}{VAL}}
-{\footnotesize\ttfamily \#define VAL(\begin{DoxyParamCaption}\item[{}]{str }\end{DoxyParamCaption})~\#str}
+{\footnotesize\ttfamily \label{_config_8h_aeddbb44c257870e9b294ddfe1e1a51aa} 
+\+\#define VAL(\begin{DoxyParamCaption}\item[{}]{str}{}\end{DoxyParamCaption})}
 
+{\bfseries Value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#str}}
+
+\end{DoxyCode}

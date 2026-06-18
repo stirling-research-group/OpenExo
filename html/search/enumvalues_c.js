@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['motor_5finertia_5ferror_0',['MOTOR_INERTIA_ERROR',['../error__types_8h.html#af0a8653c4876ac7c5b5d4b03962fc73aac00a36e08f9640686d73cbdf4d0e2fff',1,'error_types.h']]],
-  ['motor_5fpostion_5fout_5fof_5fbounds_1',['MOTOR_POSTION_OUT_OF_BOUNDS',['../error__types_8h.html#af0a8653c4876ac7c5b5d4b03962fc73aa53443a54a67b7d8dd8a7668519599f30',1,'error_types.h']]],
-  ['motor_5ftimeout_2',['MOTOR_TIMEOUT',['../error__types_8h.html#af0a8653c4876ac7c5b5d4b03962fc73aa0ea5d3c730216f320cbb2a57b1c36912',1,'error_types.h']]]
+  ['maxonmotor_0',['MaxonMotor',['../namespaceconfig__defs.html#a64d8ee71e1fb3878941605aa90a66195ad8901a7d2439601002681a1d2a6b72ee',1,'config_defs']]],
+  ['motor_5ftimeout_5ferror_1',['MOTOR_TIMEOUT_ERROR',['../error__codes_8h.html#af0a8653c4876ac7c5b5d4b03962fc73aa7afd92b13c2dff85963759510e77e3bc',1,'error_codes.h']]]
 ];

@@ -165,16 +165,6 @@ _Controller::_Controller(config_defs::joint_id id, ExoData* exo_data)
 
 //****************************************************
 
-void _Controller::reset_integral()
-{
-    _pid_error_sum = 0;
-    _prev_input = 0;
-    _prev_de_dt = 0;
-    _prev_pid_time = 0;
-}
-
-//****************************************************
-
 float _Controller::_cf_mfac(float reference, float current_measurement)         //Compact Form Model Free Adaptive Controller (In-development, not yet employed)
 {
     //Calculate k-1 (k_0) delta
@@ -1278,10 +1268,25 @@ ElbowMinMax::ElbowMinMax(config_defs::joint_id id, ExoData* exo_data)
 float ElbowMinMax::calc_motor_cmd()
 {
 
+    // alpha3 = _controller_data->parameters[controller_defs::elbow_min_max::FiltStrength_idx] * 0.01;
+
+    // float Sig_Flex = _side_data->toe_fsr;   //(Sensor 1)
+    // float Sig_Ext = _side_data->heel_fsr;   //(Sensor 2)
+
+    // //Filter the incoming FSR signals
+    // Smoothed_Sig_Flex = ((alpha0 * Sig_Flex) + ((1 - alpha0) * Smoothed_Sig_Flex));
+    // Smoothed_Sig_Ext = ((alpha0 * Sig_Ext) + ((1 - alpha0) * Smoothed_Sig_Ext));
+
+    //Local FSR direct read
+    float elbow_toe_fsr;
+    float elbow_heel_fsr;
+    elbow_toe_fsr = analogRead(_joint_data->is_left ? logic_micro_pins::fsr_sense_left_toe_pin : logic_micro_pins::fsr_sense_right_toe_pin);
+    elbow_heel_fsr = analogRead(_joint_data->is_left ? logic_micro_pins::fsr_sense_left_heel_pin : logic_micro_pins::fsr_sense_right_heel_pin);
+
     alpha3 = _controller_data->parameters[controller_defs::elbow_min_max::FiltStrength_idx] * 0.01;
 
-    float Sig_Flex = _side_data->toe_fsr;   //(Sensor 1)
-    float Sig_Ext = _side_data->heel_fsr;   //(Sensor 2)
+    float Sig_Flex = elbow_toe_fsr;   //(Sensor 1)
+    float Sig_Ext = elbow_heel_fsr;   //(Sensor 2)
 
     //Filter the incoming FSR signals
     Smoothed_Sig_Flex = ((alpha0 * Sig_Flex) + ((1 - alpha0) * Smoothed_Sig_Flex));
@@ -1751,25 +1756,6 @@ float Step::calc_motor_cmd()
     float Spacing = _controller_data->parameters[controller_defs::step::spacing_idx];               //Time Between Each Step Response
 
     float tt = 0;
-    uint16_t exo_status = _data->get_status();
-    const bool active_trial = (exo_status == status_defs::messages::trial_on) ||
-        (exo_status == status_defs::messages::fsr_calibration) ||
-        (exo_status == status_defs::messages::fsr_refinement);
-
-    if (_data->user_paused || !active_trial)
-    {
-        n = 1;
-        start_flag = 1;
-        start_time = 0;
-        previous_time = 0;
-        end_time = 0;
-        cmd_ff = 0;
-        previous_command = 0;
-        _controller_data->ff_setpoint = 0;
-        _controller_data->desired_torque = 0;
-        reset_integral();
-        return 0;
-    }
 
     if (n <= Repetitions)                                          //If we are less than the number of desired repetitions
     {
@@ -1862,6 +1848,10 @@ float Step::calc_motor_cmd()
     previous_command = cmd_ff;
 
     previous_torque_reading = _controller_data->filtered_torque_reading;
+
+    uint16_t exo_status = _data->get_status();
+    
+    bool active_trial = (exo_status == status_defs::messages::trial_on) || (exo_status == status_defs::messages::fsr_calibration) || (exo_status == status_defs::messages::fsr_refinement);
 
     //if (active_trial)
     //{

@@ -5,6 +5,7 @@ var searchData=
   ['joint_5fid_2',['joint_id',['../struct_u_a_r_t__msg__t.html#a89a2fdf8dc093d96cc876d1bda646316',1,'UART_msg_t']]],
   ['joint_5fposition_3',['joint_position',['../class_joint_data.html#aaee486eb0ddfdfd5d13e7f19a1114586',1,'JointData']]],
   ['joint_5fposition_5falpha_4',['joint_position_alpha',['../class_joint_data.html#af0821a3736964b10909bd17b7c286993',1,'JointData']]],
-  ['joint_5fvelocity_5',['joint_velocity',['../class_joint_data.html#a1c35091d470e4bb27d1aabf6cacdc383',1,'JointData']]],
-  ['joint_5fvelocity_5falpha_6',['joint_velocity_alpha',['../class_joint_data.html#aa0c3fa50cc0f109a654e36d5bf68f199',1,'JointData']]]
+  ['joint_5from_5',['joint_RoM',['../class_joint_data.html#a9f8bdcb0cf20e3db72af587dc2bfdbb0',1,'JointData']]],
+  ['joint_5fvelocity_6',['joint_velocity',['../class_joint_data.html#a1c35091d470e4bb27d1aabf6cacdc383',1,'JointData']]],
+  ['joint_5fvelocity_5falpha_7',['joint_velocity_alpha',['../class_joint_data.html#aa0c3fa50cc0f109a654e36d5bf68f199',1,'JointData']]]
 ];
