@@ -7,12 +7,12 @@
  * 
  */
 
-
+// edited 2026-05-20 by Sophia Khan
 #ifndef EXOBLE_H
 #define EXOBLE_H
 #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
 
-//#define EXOBLE_DEBUG      //Uncomment if you want to print debug statements to the serial monitor
+#define EXOBLE_DEBUG      //Uncomment if you want to print debug statements to the serial monitor
 #define MAX_PARSER_CHARACTERS       8
 #define NAME_PREAMBLE               "EXOBLE_"
 #define MAC_ADDRESS_TOTAL_LENGTH    17

@@ -181,6 +181,7 @@ class ExoData
 		
         private:
         uint16_t _status;           /**< Status of the system*/
+
 };
 
 #endif

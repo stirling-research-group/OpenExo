@@ -56,6 +56,7 @@ class ComsMCU
          * every 1000000/(BLE_time::_real_time_msg_delay) Hz. The battery and error reset data are sent
          * every 1000000/(BLE_time::_status_msg_delay) Hz.
          */
+
         void update_gui();
 
         /**

@@ -36,6 +36,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
     deviceStartRequested = QtCore.Signal()
     deviceStopRequested = QtCore.Signal()
     csvPreambleChanged = QtCore.Signal(str)
+    PIDRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -43,7 +44,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self._base_button_font_size = 13  # Store base size for scaling
         self._build_ui()
         self._init_state()
-    
+        self._pid_values: list = []
     def resizeEvent(self, event):
         """Dynamically adjust font sizes and button heights."""
         super().resizeEvent(event)
@@ -67,7 +68,7 @@ class ActiveTrialPage(QtWidgets.QWidget):
             self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
             self.btn_set_preamble, self.btn_update_controller, self.btn_bio_feedback,
             self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr, self.btn_recal_torque,
-            self.btn_mark, self.btn_pause_play,
+            self.btn_mark, self.btn_pause_play, self.btn_get_pid
         ]
         target_width = None
         try:
@@ -161,11 +162,39 @@ class ActiveTrialPage(QtWidgets.QWidget):
         
         self.btn_save_csv = QtWidgets.QPushButton("Save & New CSV")
         controls.addWidget(self.btn_save_csv)
-        
+
+        # ##my addition
+        # self.btn_get_pid = QtWidgets.QPushButton("Get current PID values")
+        # controls.addWidget(self.btn_get_pid)
+
+
         # Separator
         controls.addSpacing(UIConfig.SPACING_XLARGE)
         controls.addWidget(create_separator())
-        
+        # ═══════ PID Values  ═══════
+        controls.addWidget(create_section_label("Current PID Values"))
+        controls.addSpacing(UIConfig.SPACING_SMALL)
+        # Create a grid layout for PID values
+        self.btn_get_pid = QtWidgets.QPushButton("Get current PID values")
+        controls.addWidget(self.btn_get_pid)
+        pid_layout = QtWidgets.QGridLayout()
+        pid_layout.setSpacing(UIConfig.SPACING_SMALL)
+
+
+        lbl_elbow = QtWidgets.QLabel("Elbow:")
+        lbl_elbow.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL}pt; font-weight: bold;")
+        self.lbl_elbow_kp = QtWidgets.QLabel("Kp: --")
+        self.lbl_elbow_ki = QtWidgets.QLabel("Ki: --")
+        self.lbl_elbow_kd = QtWidgets.QLabel("Kd: --")
+        self.lbl_elbow_kp.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_elbow_ki.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_elbow_kd.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        pid_layout.addWidget( lbl_elbow, 0, 0)
+        pid_layout.addWidget(self.lbl_elbow_kp, 0, 1)
+        pid_layout.addWidget(self.lbl_elbow_ki, 0, 2)
+        pid_layout.addWidget(self.lbl_elbow_kd, 0, 3)
+        controls.addLayout(pid_layout)
+        controls.addSpacing(UIConfig.SPACING_XLARGE)
         # ═══════ SETTINGS ═══════
         controls.addWidget(create_section_label("Settings"))
         controls.addSpacing(UIConfig.SPACING_SMALL)
@@ -269,13 +298,13 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.btn_send_preset_fsr.clicked.connect(self.sendPresetFSRRequested.emit)
         self.btn_recal_torque.clicked.connect(self.recalibrateTorqueRequested.emit)
         self.btn_mark.clicked.connect(self.markTrialRequested.emit)
-
+        self.btn_get_pid.clicked.connect(self.PIDRequested.emit)
         # Apply consistent button styling
         buttons = [
             self.btn_toggle_points, self.btn_end_trial, self.btn_save_csv,
             self.btn_set_preamble, self.btn_update_controller, self.btn_bio_feedback,
             self.btn_ml, self.btn_recal_fsr, self.btn_send_preset_fsr, self.btn_recal_torque,
-            self.btn_mark, self.btn_pause_play,
+            self.btn_mark, self.btn_pause_play, self.btn_get_pid
         ]
         apply_button_style_batch(buttons, height=UIConfig.BTN_HEIGHT_SMALL, padding="6px 10px")
         
@@ -537,6 +566,23 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.curve_bot_b.setData(self.t_vals, self.bot_b_vals)
 
 
+    def update_pid_values(self, pid_data: list):
+        #Update PID display with new values.
+
+        try:
+
+
+                self.lbl_elbow_kp.setText(f"Kp: {pid_data[0]:.4f}")
+                self.lbl_elbow_ki.setText(f"Ki: {pid_data[1]:.4f}")
+                self.lbl_elbow_kd.setText(f"Kd: {pid_data[2]:.4f}")
+
+
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to update PID values: {e}")
+
+   # def set_pid_values(self):
 # Standalone demo
 def _demo():
     app = QtWidgets.QApplication(sys.argv)
