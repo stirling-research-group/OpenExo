@@ -4,7 +4,7 @@
 #include "BleMessageQueue.h"
 #include "Logger.h"
 
-#define BLE_PARSER_DEBUG 0  //Make 1 if you want to enable Debug prints
+#define BLE_PARSER_DEBUG 1  //Make 1 if you want to enable Debug prints
 
 BleParser::BleParser()
 {

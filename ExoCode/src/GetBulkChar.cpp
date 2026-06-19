@@ -49,7 +49,7 @@ void readSingleMessageBlocking() {
     // This is the most efficient method for large C-strings on Arduino.
     while (!Serial1.available()) {
 		Serial1.write(txBuffer_NanoReady, message_length);
-		//Serial.print("\nCharacter R sent.");
+		//Serial.print("\nCharacter R sent."); Magenta
 		digitalWrite(LEDR, HIGH);
 		digitalWrite(LEDG, LOW);
 		digitalWrite(LEDB, HIGH);
@@ -58,7 +58,7 @@ void readSingleMessageBlocking() {
 			break;
 		}
 	}
-	
+	// red
 	digitalWrite(LEDR, HIGH);
 	digitalWrite(LEDG, LOW);
 	digitalWrite(LEDB, LOW);
@@ -167,7 +167,7 @@ void readSingleMessageBlocking() {
     // messageComplete = false; // We don't reset this, as it's the loop exit condition.
     currentState = WAITING_FOR_F;
     rxIndex = 0;
-	
+	//white
 	digitalWrite(LEDR, HIGH);
 	digitalWrite(LEDG, HIGH);
 	digitalWrite(LEDB, HIGH);
