@@ -10,10 +10,11 @@
 #include "Logger.h"
 #include "ComsLed.h"
 #include "SystemReset.h"
+#include "ParseIni.h"
 
 #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
 
-#define COMSMCU_DEBUG 0
+#define COMSMCU_DEBUG 1 // Switch back
 
 ComsMCU::ComsMCU(ExoData* data, uint8_t* config_to_send):_data{data}
 {
@@ -147,24 +148,24 @@ void ComsMCU::update_UART()
 void ComsMCU::update_gui() 
 {
     #if COMSMCU_DEBUG
-        logger::println("ComsMCU::update_gui->Start");
+        logger::println("Step 1 ComsMCU::update_gui->Start");
     #endif
 
     static Time_Helper* t_helper = Time_Helper::get_instance();
     static float my_mark = _data->mark;
-    static float* rt_floats = new float(rt_data::len);
+    //static float* rt_floats = new float(rt_data::len);
+    static float* rt_floats = new float[rt_data::len]();
 
     //Get real time data from ExoData and send to GUI
     const bool new_rt_data = real_time_i2c::poll(rt_floats);
+
+
     static float del_t_no_msg = millis();
 
     if (new_rt_data || rt_data::new_rt_msg)
     {
         del_t_no_msg = millis();
 
-        #if COMSMCU_DEBUG
-            logger::println("ComsMCU::update_gui->new_rt_data");
-        #endif
 
         _life_pulse();
         rt_data::new_rt_msg = false;
@@ -191,7 +192,7 @@ void ComsMCU::update_gui()
         _exo_ble->send_message(rt_data_msg);
 
         #if COMSMCU_DEBUG
-            logger::println("ComsMCU::update_gui->sent message");
+            logger::println(" Step 2 ComsMCU::update_gui->sent message");
         #endif
     } 
     else 
@@ -223,10 +224,28 @@ void ComsMCU::update_gui()
     static float status_context = t_helper->generate_new_context(); 
     static float del_t_status = 0;
     del_t_status += t_helper->tick(status_context);
+
+      JointData* r_elbow = &this->_data->right_side.elbow;
+      JointData* l_elbow = &this->_data->left_side.elbow;
+     #if COMSMCU_DEBUG
+            logger::println(del_t_status);
+            logger::println(BLE_times::_status_msg_delay);
+              #if COMSMCU_DEBUG
+
+            logger::println("Step 3.5  ComsMCU::update_gui");
+           // logger::println(j->is_used);
+            logger::println("AA Joint ID (R,L):");
+            logger::println((uint8_t)r_elbow->id);
+            logger::println((uint8_t)l_elbow->id);
+            logger::println("AA Controller ID (R,L):");
+            logger::println(r_elbow->controller.controller);
+            logger::println(l_elbow->controller.controller);
+         #endif
+     #endif
     if (del_t_status > BLE_times::_status_msg_delay)
     {
         #if COMSMCU_DEBUG
-            logger::println("ComsMCU::update_gui->Sending status");
+            logger::println(" Step 3 ComsMCU::update_gui->Sending status");
         #endif
 
         //Send status data
@@ -236,15 +255,119 @@ void ComsMCU::update_gui()
         batt_msg.data[0] = _data->battery_value;
         _exo_ble->send_message(batt_msg); */
 
+        // start of pid addition
+        BleMessage pid_msg = BleMessage();
+        pid_msg.command = ble_names::send_pid;
+        pid_msg.expecting = 3; // could also use ble_command_helpers::get_length_for_command(pid_msg.command);
+        //bool found = false;
+
+
+
+        int idx = 0;
+//        _data->for_each_joint([&](JointData* j, float*) {
+
+
+         #if COMSMCU_DEBUG
+
+            logger::println("Step 4 ComsMCU::update_gui->Start of Joint loop");
+           // logger::println(j->is_used);
+            logger::println("Joint ID (R,L):");
+            logger::println((uint8_t)r_elbow->id);
+            logger::println((uint8_t)l_elbow->id);
+         #endif
+
+//        uint8_t left_id_check = 72;
+//        uint8_t right_id_check = 40;
+//        bool matches_id = ((uint8_t)j->id == left_id_check || (uint8_t)j->id == right_id_check );
+//            if (j->is_used && matches_id) { // might need to edit
+
+             #if COMSMCU_DEBUG
+                logger::println("Step 5 ComsMCU::update_gui->In j->is_used section");
+                logger::println("Controller ID (R,L):");
+                logger::println(r_elbow->controller.controller);
+                logger::println(l_elbow->controller.controller);
+
+            #endif
+            //found = true;
+            switch (l_elbow->controller.controller){
+                case 0: // none
+                    pid_msg.data[0]=0;
+                    pid_msg.data[1]=0;
+                    pid_msg.data[2]=0;
+                    break;
+                case 1: // disabled
+                    pid_msg.data[0]=0;
+                    pid_msg.data[1]=0;
+                    pid_msg.data[2]=0;
+                    break;
+                case 2: // zero torque
+                    logger::println("P gain:");
+                    logger::println(l_elbow->controller.parameters[controller_defs::zero_torque::p_gain_idx]);
+                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::zero_torque::p_gain_idx];
+                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::zero_torque::i_gain_idx];
+                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::zero_torque::d_gain_idx];
+                    break;
+                case 3: // elbow_min_max
+                    logger::println("P gain:");
+                    logger::println(l_elbow->controller.parameters[controller_defs::elbow_min_max::P_gain_idx]);
+                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::elbow_min_max::P_gain_idx];
+                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::elbow_min_max::I_gain_idx];
+                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::elbow_min_max::D_gain_idx];
+                    break;
+                case 4: // Calibration manager
+                    //logger::println();
+                    pid_msg.data[0] = 0;
+                    pid_msg.data[1] = 0;
+                    pid_msg.data[2] = 0;
+                    break;
+
+                case 5: // chirp
+                    logger::println("P gain:");
+                    logger::println(l_elbow->controller.parameters[controller_defs::chirp::p_gain_idx]);
+                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::chirp::p_gain_idx];
+                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::chirp::i_gain_idx];
+                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::chirp::d_gain_idx];
+                    break;
+                 case 6: // step
+                    logger::println("P gain:");
+                    logger::println(l_elbow->controller.parameters[controller_defs::step::p_gain_idx]);
+                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::step::p_gain_idx];
+                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::step::i_gain_idx];
+                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::step::d_gain_idx];
+                    break;
+                default:
+                    //logger::println();
+                    pid_msg.data[0] = 0;
+                    pid_msg.data[1] = 0;
+                    pid_msg.data[2] = 0;
+                    break;
+
+
+            }
+//        });
+
+        #if COMSMCU_DEBUG
+          logger::println("Step 6 ComsMCU::update_gui-> PID Message");
+          //logger::println(pid_msg);
+          BleMessage::print(pid_msg);
+        #endif
+
+        _exo_ble->send_message(pid_msg);
+        #if COMSMCU_DEBUG
+          //  logger::println(f"ComsMCU::update_gui-> PID Message")
+            logger::println("Step 7 ComsMCU::update_gui->PID sent message");
+        #endif
+        //end of pid addition
+
         del_t_status = 0;
 
         #if COMSMCU_DEBUG
-            logger::println("ComsMCU::update_gui->sent message");
+            logger::println("Step 8 ComsMCU::update_gui->sent message");
         #endif
     }
 
     #if COMSMCU_DEBUG
-        logger::println("ComsMCU::update_gui->End");
+        logger::println("Step 9ComsMCU::update_gui->End");
     #endif
 }
 
@@ -314,9 +437,6 @@ void ComsMCU::_process_complete_gui_command(BleMessage* msg)
         break;
     case ble_names::reset_system:
         _schedule_system_reset();
-        break;
-     case ble_names::get_pid:
-        ble_handlers::get_pid(_data,msg);
         break;
     default:
         logger::println("ComsMCU::_process_complete_gui_command->No case for command!", LogLevel::Error);

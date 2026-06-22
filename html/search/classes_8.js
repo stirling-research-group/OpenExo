@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['motordata_0',['MotorData',['../class_motor_data.html',1,'']]]
+  ['pilogger_0',['PiLogger',['../class_pi_logger.html',1,'']]]
 ];

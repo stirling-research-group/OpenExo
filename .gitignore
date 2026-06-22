@@ -8,4 +8,7 @@ ExoCode/src/.vs
 ExoCode/.vscode
 */.vs
 Libraries/ArduinoBLE/extras/arduino-ble-parser.py
+.venv/
+OpenExo/*
 .idea/
+Python_GUI/Saved_Data

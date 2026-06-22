@@ -2,6 +2,8 @@ import sys
 import csv
 import time
 import os
+import logging
+import traceback
 from datetime import datetime
 
 try:
@@ -17,6 +19,7 @@ from pages import (
     BioFeedbackPage,
 )
 from services import QtExoDeviceManager, RtBridge
+from utils import SettingsManager
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -26,6 +29,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # Compact default window size (resizable)
         self.setMinimumSize(776, 400)
         self.resize(776, 400)
+        
+        # Setup logger for MainWindow
+        self.logger = logging.getLogger("OpenExo.MainWindow")
+        self.logger.info("Initializing MainWindow...")
 
         self.stack = QtWidgets.QStackedWidget()
         self.setCentralWidget(self.stack)
@@ -67,8 +74,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Bind scan page scanner to use the Qt device manager for scanning
         try:
             self.scan_page.bind_device_manager(self.qt_dev)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to bind device manager to scan page: {e}")
+            self.logger.debug(traceback.format_exc())
         self.rt_bridge = RtBridge(self)
         # Wire bytes to parser and route RT data to plots
         self.qt_dev.dataReceived.connect(self.rt_bridge.feed_bytes)
@@ -78,9 +86,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.rt_bridge.controllersReceived.connect(self._on_controllers)
         # Receive flattened 2D matrix of controllers and parameters
         self.rt_bridge.controllerMatrixReceived.connect(self._on_controller_matrix)
+        self.rt_bridge.controllerValuesReceived.connect(self._on_controller_values)
 
-        #recieve pid values
-        self.rt_bridge.pidValuesReceived.connect(self._on_pid_values_received)
+        ## PID GUI Update start - Sophie
+        self.rt_bridge.pidValuesReceived.connect(self._on_pid_values)
+        ## PID GUI Update end - sophie
 
         # CSV logging state
         self._csv_file = None
@@ -93,10 +103,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._csv_preamble = ""  # Preamble for CSV filename
         # Store controller -> params 2D matrix
         self._controller_matrix = []
-        # Track intentional disconnect
-        self._intentional_disconnect = False
-        # Suppress unexpected-disconnect popup for a brief window after intentional actions (e.g., End Trial)
-        self._suppress_disconnect_popup_until = 0.0
+        # PID controller values
+        self._pid_values = []
+        # Store controller values by (joint_id, controller_id)
+        self._controller_values = {}
         # Device control wiring from ActiveTrialPage
         self.trial_page.deviceStartRequested.connect(self._on_device_start)
         self.trial_page.deviceStopRequested.connect(self._on_device_stop_motors)
@@ -110,7 +120,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trial_page.updateControllerRequested.connect(self._on_update_controller)
         self.trial_page.bioFeedbackRequested.connect(self._on_bio_feedback)
         self.trial_page.machineLearningRequested.connect(self._on_machine_learning)
-        self.trial_page.pidValuesRequested.connect(self._on_request_pid_values)
+
+        #PID Update start -sophie
+
+        self.trial_page.PIDRequested.connect(self._on_pid_button_pressed)
+        #PID Update end - sophie
         # Update Scan page status from device manager
         self.qt_dev.log.connect(self._on_dev_log)
         self.qt_dev.error.connect(self._on_dev_error)
@@ -127,11 +141,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bio_feedback_page.deviceStopRequested.connect(self._on_device_stop_motors)
         self.bio_feedback_page.recalibrateFSRRequested.connect(self._on_recal_fsr)
         self.bio_feedback_page.markTrialRequested.connect(self._on_mark)
+        
+        log_path = self.qt_dev.get_log_file_path()
+        if log_path and log_path != "Log file not available":
+            self.logger.info("Device manager log file: %s", log_path)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        size = self.size()
-        print(f"[MainWindow] size={size.width()}x{size.height()}")
 
     def _go_trial(self):
         self.stack.setCurrentWidget(self.trial_page)
@@ -140,19 +156,28 @@ class MainWindow(QtWidgets.QMainWindow):
         # Clear old plot data
         try:
             self.trial_page.clear_plots()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to clear plots: {e}")
+            self.logger.debug(traceback.format_exc())
+        # Reset data rate monitoring
+        try:
+            self.rt_bridge.reset_monitoring()
+        except Exception as e:
+            self.logger.error(f"Failed to reset monitoring: {e}")
+            self.logger.debug(traceback.format_exc())
         # Ensure CSV logging is started automatically with timestamped filename
         try:
             if self._csv_file is None:
                 self._start_csv_auto()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to start CSV logging: {e}")
+            self.logger.debug(traceback.format_exc())
         # Begin trial sequence (E -> L -> R + thresholds) to ensure FSRs stream
         try:
             self.qt_dev.beginTrial()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to begin trial: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(str)
     def _on_connect_requested(self, mac: str):
@@ -169,8 +194,9 @@ class MainWindow(QtWidgets.QMainWindow):
             try:
                 if self.stack.currentWidget() == self.bio_feedback_page:
                     self.bio_feedback_page.apply_values(values)
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.error(f"Failed to apply values to bio feedback page: {e}")
+                self.logger.debug(traceback.format_exc())
             # CSV logging
             if self._csv_writer is not None:
                 if not self._csv_header_written:
@@ -185,118 +211,191 @@ class MainWindow(QtWidgets.QMainWindow):
                         self._csv_header_written = True
                         if self._t0 is None:
                             self._t0 = time.time()
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        self.logger.error(f"Failed to write CSV header: {e}")
+                        self.logger.debug(traceback.format_exc())
                 # Write row - only include first 10 data values
                 epoch_time = time.time()
                 data_values = values[:10] if len(values) > 10 else values
                 row = [f"{epoch_time:.6f}", str(self._mark_counter)] + [f"{v:.6f}" for v in data_values]
                 try:
                     self._csv_writer.writerow(row)
-                except Exception:
-                    pass
+                except Exception as e:
+                    self.logger.error(f"Failed to write CSV row: {e}")
+                    self.logger.debug(traceback.format_exc())
             
             # Update battery level (assuming it's in the data somewhere)
             try:
                 if len(values) > 10:
                     battery_voltage = values[10]  # Battery is typically at index 10
                     self.trial_page.update_battery_level(battery_voltage)
-            except Exception:
-                pass
-        except Exception:
-            pass
+            except Exception as e:
+                self.logger.error(f"Failed to update battery level: {e}")
+                self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to process RT update: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(str)
     def _on_handshake(self, payload: str):
         try:
-            print(f"MainWindow::_on_handshake -> Handshake payload received")
-        except Exception:
-            pass
+            self.logger.info("Handshake payload received")
+        except Exception as e:
+            self.logger.error(f"Failed to log handshake: {e}")
+            self.logger.debug(traceback.format_exc())
         try:
             self.scan_page.status.setText("Handshake received; controller parameters incoming…")
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update status text for handshake: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(list)
     def _on_param_names(self, names):
         # After receiving parameter names list (ended by END), send ACK so firmware continues (controllers or data)
         try:
+            self.logger.info(f"Received {len(names)} parameter names")
             self.scan_page.status.setText(f"Received {len(names)} param names; sending ACK…")
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update status for param names: {e}")
+            self.logger.debug(traceback.format_exc())
         # Store for CSV header
         try:
             self._param_names = list(names)
-        except Exception:
+        except Exception as e:
+            self.logger.error(f"Failed to store param names: {e}")
+            self.logger.debug(traceback.format_exc())
             self._param_names = []
         try:
             self.trial_page.set_channel_labels(self._param_names)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to set channel labels: {e}")
+            self.logger.debug(traceback.format_exc())
         try:
             self.qt_dev.write(b'$')
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to send ACK for param names: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(list, list)
     def _on_controllers(self, controllers, controller_params):
         # After receiving controllers/params (!… !END), send ACK and optionally start streaming
         try:
+            self.logger.info(f"Received {len(controllers)} controllers")
             self.scan_page.status.setText(f"Received {len(controllers)} controllers; sending ACK…")
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update status for controllers: {e}")
+            self.logger.debug(traceback.format_exc())
         try:
             self.qt_dev.write(b'$')
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to send ACK for controllers: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(list)
     def _on_controller_matrix(self, matrix):
         # Save the 2D [ [controller, p1, p2], ... ] structure in memory
         try:
             self._controller_matrix = list(matrix)
-        except Exception:
+            self.logger.info(f"Received controller matrix with {len(self._controller_matrix)} entries")
+        except Exception as e:
+            self.logger.error(f"Failed to store controller matrix: {e}")
+            self.logger.debug(traceback.format_exc())
             self._controller_matrix = []
         has_matrix = bool(self._controller_matrix)
         try:
             self.settings_page.set_controller_matrix(self._controller_matrix if has_matrix else [])
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to set controller matrix in settings page: {e}")
+            self.logger.debug(traceback.format_exc())
         # Update Controller button is always enabled
         # If no matrix, it will show the legacy basic settings page
         try:
             self.trial_page.set_update_controller_enabled(True)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to enable update controller button: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    def _normalized_controller_values(self, overlay: dict) -> dict:
+        """
+        Build a full value DB aligned to _controller_matrix: one entry per (joint_id, controller_id)
+        with list length matching the parameter name count (row[4:]). Missing overlay entries pad with "0";
+        excess overlay values are truncated.
+        """
+        out: dict = {}
+        overlay = overlay or {}
+        try:
+            for row in self._controller_matrix:
+                if len(row) < 4:
+                    continue
+                jid, cid = str(row[1]), str(row[3])
+                key = (jid, cid)
+                n_params = max(0, len(row) - 4)
+                raw = overlay.get(key, [])
+                vals = [str(v) for v in raw]
+                if len(vals) < n_params:
+                    vals.extend(["0"] * (n_params - len(vals)))
+                elif len(vals) > n_params:
+                    vals = vals[:n_params]
+                out[key] = vals
+        except Exception as e:
+            self.logger.error(f"Failed to normalize controller values: {e}")
+            self.logger.debug(traceback.format_exc())
+        return out
+
+    @QtCore.Slot(list)
+    def _on_controller_values(self, rows):
+        try:
+            overlay = {}
+            for row in rows:
+                if len(row) >= 2:
+                    key = (str(row[0]), str(row[1]))
+                    overlay[key] = [str(v) for v in row[2:]]
+            if self._controller_matrix:
+                self._controller_values = self._normalized_controller_values(overlay)
+            else:
+                self._controller_values = {k: list(v) for k, v in overlay.items()}
+            self.settings_page.set_controller_values(self._controller_values)
+            self.logger.info(
+                f"Controller value DB from device: {len(overlay)} raw keys, "
+                f"{len(self._controller_values)} entries after matrix alignment"
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to store controller value DB: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_device_start(self):
         # Resume motors (play functionality) - just turn motors back on
         try:
+            self.logger.info("Turning motors ON")
             self.qt_dev.motorOn()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to turn motors on: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_device_stop_motors(self):
         # Turn off motors (pause functionality)
         try:
+            self.logger.info("Turning motors OFF")
             self.qt_dev.motorOff()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to turn motors off: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(str)
     def _on_csv_preamble_changed(self, preamble: str):
         """Update CSV filename preamble."""
         self._csv_preamble = preamble
-        print(f"CSV preamble set to: {preamble}")
+        self.logger.info(f"CSV preamble set to: {preamble}")
          # If we're currently logging, roll over immediately (no popup)
         if self._csv_file is not None:
             try:
                 self._csv_file.flush()
                 self._csv_file.close()
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.error(f"Failed to close CSV file during preamble change: {e}")
+                self.logger.debug(traceback.format_exc())
 
             # reset state (same reset you already do in _on_save_csv)
             self._csv_file = None
@@ -311,74 +410,107 @@ class MainWindow(QtWidgets.QMainWindow):
             # optional: show a non-blocking confirmation somewhere
             try:
                 self.trial_page.set_status_text(f"CSV prefix set. New file started: {self._csv_path_last}")
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.error(f"Failed to update status text after preamble change: {e}")
+                self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_recal_fsr(self):
         try:
+            self.logger.info("Calibrating FSRs")
             self.qt_dev.calibrateFSRs()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to calibrate FSRs: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_send_preset_fsr(self):
         try:
+            self.logger.info("Sending preset FSR values")
             self.qt_dev.sendPresetFsrValues()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to send preset FSR values: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_recal_torque(self):
         try:
+            self.logger.info("Calibrating torque")
             self.qt_dev.calibrateTorque()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to calibrate torque: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_mark(self):
         # Increment trial mark counter
         self._mark_counter += 1
+        self.logger.info(f"Trial marked: {self._mark_counter}")
         try:
             self.scan_page.status.setText(f"Trial marked: {self._mark_counter}")
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update scan page status for mark: {e}")
+            self.logger.debug(traceback.format_exc())
         try:
             self.trial_page.update_mark_count(self._mark_counter)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update trial page mark count: {e}")
+            self.logger.debug(traceback.format_exc())
         try:
             self.bio_feedback_page.update_mark_count(self._mark_counter)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update bio feedback page mark count: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_end_trial(self):
         try:
-            # Mark as intentional disconnect
-            self._intentional_disconnect = True
+            self._destroy_controller_db()
+            self.logger.info("Ending trial...")
+            # Print trial summary diagnostics
+            try:
+                self.rt_bridge.print_trial_summary()
+            except Exception as e:
+                self.logger.error(f"Failed to print trial summary: {e}")
+                self.logger.debug(traceback.format_exc())
             
-            # A disconnect may fire more than once (explicit disconnect + OS callback);
-            # suppress the "unexpected disconnect" popup for a short window.
-            self._suppress_disconnect_popup_until = time.monotonic() + 3.0
-
+            # Send stop trial and motor off commands immediately
+            try:
+                self.qt_dev.write(b'G')  # Stop trial
+                self.qt_dev.write(b'w')  # Motor off - CRITICAL SAFETY COMMAND
+                # Reset Nano/Teensy so next reconnect starts from clean firmware state.
+                self.qt_dev.write(b'Z')  # Firmware system reset command
+                self.logger.info("Sent stop trial, motor off, and reset commands")
+            except Exception as e:
+                self.logger.error(f"CRITICAL: Failed to send stop/motor off commands: {e}")
+                self.logger.debug(traceback.format_exc())
+            
+            # Reset scan page buttons immediately
+            self.scan_page.btn_start_trial.setEnabled(False)
+            self.scan_page.btn_calibrate_torque.setEnabled(False)
+            self.scan_page.btn_save_connect.setEnabled(False)
+            
+            # Clear trial page plots
+            try:
+                self.trial_page.clear_plots()
+            except Exception as e:
+                self.logger.error(f"Failed to clear trial page plots: {e}")
+                self.logger.debug(traceback.format_exc())
+            
             # Navigate to scan page immediately
             self.stack.setCurrentWidget(self.scan_page)
             
-            # Send stop trial and motor off commands, then disconnect
-            try:
-                self.qt_dev.write(b'G')  # Stop trial
-                QtCore.QTimer.singleShot(100, lambda: self.qt_dev.write(b'w'))  # Motor off after delay
-                QtCore.QTimer.singleShot(500, self.qt_dev.disconnect)  # Disconnect after commands sent
-            except Exception:
-                pass
+            # Wait 200ms to ensure motor off command is sent before disconnecting
+            QtCore.QTimer.singleShot(200, self.qt_dev.disconnect)
             
             # Stop CSV if running
             if self._csv_file is not None:
                 try:
                     self._csv_file.flush(); self._csv_file.close()
-                except Exception:
-                    pass
+                    self.logger.info(f"CSV file closed: {self._csv_path_last}")
+                except Exception as e:
+                    self.logger.error(f"Failed to close CSV file: {e}")
+                    self.logger.debug(traceback.format_exc())
                 self._csv_file = None
                 self._csv_writer = None
                 self._csv_header_written = False
@@ -387,33 +519,36 @@ class MainWindow(QtWidgets.QMainWindow):
                 try:
                     if self._csv_path_last:
                         self.scan_page.status.setText(f"Trial ended. CSV saved: {self._csv_path_last}")
-                except Exception:
-                    pass
+                except Exception as e:
+                    self.logger.error(f"Failed to update status text after trial end: {e}")
+                    self.logger.debug(traceback.format_exc())
                 try:
                     self.trial_page.update_mark_count(0)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+                except Exception as e:
+                    self.logger.error(f"Failed to reset mark count: {e}")
+                    self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to end trial: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_disconnect(self):
         try:
-            # Mark as intentional disconnect
-            self._intentional_disconnect = True
+            self._destroy_controller_db()
+            self.logger.info("Manual disconnect requested")
+            # Disconnect immediately (non-blocking, no popup)
+            self.qt_dev.disconnect()
             
-            self._suppress_disconnect_popup_until = time.monotonic() + 3.0
-
             # Navigate to scan page immediately
             self.stack.setCurrentWidget(self.scan_page)
-            
-            self.qt_dev.disconnect()
             # Stop CSV if running
             if self._csv_file is not None:
                 try:
                     self._csv_file.flush(); self._csv_file.close()
-                except Exception:
-                    pass
+                    self.logger.info(f"CSV file closed on disconnect: {self._csv_path_last}")
+                except Exception as e:
+                    self.logger.error(f"Failed to close CSV on disconnect: {e}")
+                    self.logger.debug(traceback.format_exc())
                 self._csv_file = None
                 self._csv_writer = None
                 self._csv_header_written = False
@@ -422,21 +557,25 @@ class MainWindow(QtWidgets.QMainWindow):
                 try:
                     if self._csv_path_last:
                         self.scan_page.status.setText(f"Disconnected. CSV saved: {self._csv_path_last}")
-                except Exception:
-                    pass
+                except Exception as e:
+                    self.logger.error(f"Failed to update status on disconnect: {e}")
+                    self.logger.debug(traceback.format_exc())
                 try:
                     self.trial_page.update_mark_count(0)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+                except Exception as e:
+                    self.logger.error(f"Failed to reset mark count on disconnect: {e}")
+                    self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to disconnect: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _navigate_to_scan(self):
         try:
             self._on_disconnect()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed during navigate to scan: {e}")
+            self.logger.debug(traceback.format_exc())
         self.stack.setCurrentWidget(self.scan_page)
 
     @QtCore.Slot()
@@ -446,13 +585,15 @@ class MainWindow(QtWidgets.QMainWindow):
             saved_path = None
             # Close current CSV if open
             if self._csv_file is not None:
-                print("Saving current CSV and starting new one")
+                self.logger.info("Saving current CSV and starting new one")
                 try:
                     self._csv_file.flush()
                     self._csv_file.close()
                     saved_path = self._csv_path_last
-                except Exception:
-                    pass
+                    self.logger.info(f"CSV saved: {saved_path}")
+                except Exception as e:
+                    self.logger.error(f"Failed to save CSV: {e}")
+                    self.logger.debug(traceback.format_exc())
                 self._csv_file = None
                 self._csv_writer = None
                 self._csv_header_written = False
@@ -478,38 +619,44 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     self.scan_page.status.setText("New CSV logging started")
             except Exception as e:
-                print(f"Error showing confirmation: {e}")
-                pass
+                self.logger.error(f"Failed to show CSV save confirmation: {e}")
+                self.logger.debug(traceback.format_exc())
         except Exception as e:
-            print(f"Error in _on_save_csv: {e}")
-            pass
+            self.logger.error(f"Failed in _on_save_csv: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_update_controller(self):
         # Choose page based on whether we have controller metadata (handshake + matrix)
         has_matrix = bool(self._controller_matrix)
+        self.logger.info(f"Update controller requested, has_matrix={has_matrix}")
         if has_matrix:
             try:
                 self.settings_page.set_controller_matrix(self._controller_matrix)
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.error(f"Failed to set controller matrix in settings: {e}")
+                self.logger.debug(traceback.format_exc())
             self.stack.setCurrentWidget(self.settings_page)
         else:
             self.stack.setCurrentWidget(self.basic_settings_page)
 
     @QtCore.Slot()
     def _on_bio_feedback(self):
+        self.logger.info("Navigating to bio feedback page")
         try:
             self.bio_feedback_page.start_plotting()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to start plotting on bio feedback page: {e}")
+            self.logger.debug(traceback.format_exc())
         self.stack.setCurrentWidget(self.bio_feedback_page)
 
     def _on_bio_feedback_back(self):
+        self.logger.info("Navigating back from bio feedback page")
         try:
             self.bio_feedback_page.stop_plotting()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to stop plotting on bio feedback page: {e}")
+            self.logger.debug(traceback.format_exc())
         self.stack.setCurrentWidget(self.trial_page)
 
     @QtCore.Slot()
@@ -520,38 +667,118 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.Slot(list)
     def _on_apply_settings(self, payload):
         # payload: [isBilateral, joint, controller, parameter, value]
+        self.logger.info(f"Applying settings: {payload}")
         try:
             self.qt_dev.updateTorqueValues(payload)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update torque values: {e}")
+            self.logger.debug(traceback.format_exc())
+        try:
+            joint_id = str(payload[1])
+            controller_id = str(payload[2])
+            parameter_idx = int(payload[3])
+            value = payload[4]
+            key = (joint_id, controller_id)
+            values = list(self._controller_values.get(key, []))
+            while len(values) <= parameter_idx:
+                values.append("0")
+            values[parameter_idx] = str(value)
+            self._controller_values[key] = values
+            self.settings_page.set_controller_values(self._controller_values)
+        except Exception as e:
+            self.logger.error(f"Failed to mirror apply into controller value DB: {e}")
+            self.logger.debug(traceback.format_exc())
         # Return to trial page
         try:
             self.stack.setCurrentWidget(self.trial_page)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to navigate to trial page after settings: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    #def find_gains(self):
+
+    def _clear_ble_prefs_on_new_connection(self):
+        """Purge saved Update-Controller prefs and in-memory selections for a new link.
+
+        Does **not** clear ``_controller_matrix`` / ``_controller_values``. Handshake
+        payloads can be processed before the ``connected`` slot runs; wiping the matrix
+        here leaves ``has_matrix`` false and forces Basic settings forever.
+        """
+        try:
+            SettingsManager.purge_ble_device_controller_prefs()
+        except Exception as e:
+            self.logger.error(f"Failed to purge saved controller prefs: {e}")
+            self.logger.debug(traceback.format_exc())
+        try:
+            self.settings_page.clear_device_session_preferences()
+            self.basic_settings_page.clear_device_session_preferences()
+        except Exception as e:
+            self.logger.error(f"Failed to reset settings page device prefs: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    def _destroy_controller_db(self):
+        self._clear_ble_prefs_on_new_connection()
+        try:
+            self._controller_matrix = []
+            self._controller_values = {}
+            self.settings_page.set_controller_matrix([])
+            self.settings_page.set_controller_values({})
+        except Exception as e:
+            self.logger.error(f"Failed to destroy controller DB: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(str)
     def _on_dev_log(self, msg: str):
         try:
             self.scan_page.status.setText(msg)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to update scan page status: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(str)
     def _on_dev_error(self, msg: str):
+        self.logger.error(f"Device error: {msg}")
         try:
             self.scan_page.status.setText(f"Connection failed: {msg}")
-            self.scan_page.btn_save_connect.setEnabled(True)
+            has_manual_selection = bool(self.scan_page.list_devices.selectedItems())
+            self.scan_page.btn_save_connect.setEnabled(has_manual_selection)
             self.scan_page.btn_start_trial.setEnabled(False)
             try:
                 self.scan_page.btn_calibrate_torque.setEnabled(False)
-            except Exception:
-                pass
-        except Exception:
-            pass
+            except Exception as e:
+                self.logger.error(f"Failed to disable calibrate torque button: {e}")
+                self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to handle device error UI update: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot(str, str)
     def _on_dev_connected(self, name: str, addr: str):
+        self.logger.info(f"Device connected: {name} {addr}")
+        # Clear stale **saved** prefs only; do not wipe handshake matrix (handshake can
+        # arrive before this slot — _destroy_controller_db would erase it → Basic-only UI).
+        try:
+            self._clear_ble_prefs_on_new_connection()
+        except Exception as e:
+            self.logger.error(f"Failed to clear BLE prefs on connect: {e}")
+            self.logger.debug(traceback.format_exc())
+        try:
+            self.rt_bridge.reset_for_new_ble_session()
+        except Exception as e:
+            self.logger.error(f"Failed to reset RtBridge for new session: {e}")
+            self.logger.debug(traceback.format_exc())
+        # Keep Update Controller enabled. The old "disable until handshake" logic raced BLE:
+        # handshake + matrix can arrive before this slot runs, then we wiped state and left
+        # the button stuck disabled. Basic vs full settings still chosen in _on_update_controller.
+        try:
+            self.trial_page.set_update_controller_enabled(True)
+            QtCore.QTimer.singleShot(
+                0,
+                lambda: self.trial_page.set_update_controller_enabled(True),
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to enable Update Controller after connect: {e}")
+            self.logger.debug(traceback.format_exc())
         try:
             self.scan_page.status.setText(f"Connected: {name} {addr}")
             # Don't enable Save & Connect after connection - it's already connected
@@ -559,71 +786,94 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scan_page.btn_start_trial.setEnabled(False)  # Enabled after torque calibration
             try:
                 self.scan_page.btn_calibrate_torque.setEnabled(True)
-            except Exception:
-                pass
-        except Exception:
-            pass
+            except Exception as e:
+                self.logger.error(f"Failed to enable calibrate torque button: {e}")
+                self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to update UI on connection: {e}")
+            self.logger.debug(traceback.format_exc())
         # Clear old plot data on reconnect
         try:
             self.trial_page.clear_plots()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to clear plots on connection: {e}")
+            self.logger.debug(traceback.format_exc())
+        # If the handshake already ran, push matrix/values into the settings page.
+        try:
+            if self._controller_matrix:
+                self.settings_page.set_controller_matrix(self._controller_matrix)
+                self.settings_page.set_controller_values(self._controller_values)
+        except Exception as e:
+            self.logger.error(f"Failed to sync settings page after connect: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    def _show_disconnect_warning(self):
+        """Show disconnect warning dialog (called after disconnect handling completes)."""
+        try:
+            QtWidgets.QMessageBox.warning(
+                self, 
+                "Device Disconnected", 
+                "The device has been unexpectedly disconnected.\n\nMotors have been turned off and the trial data has been saved."
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to show disconnect warning: {e}")
+            self.logger.debug(traceback.format_exc())
 
     @QtCore.Slot()
     def _on_dev_disconnected(self):
+        """Handle unexpected disconnects (intentional disconnects don't trigger this)."""
+        self.logger.warning("Device disconnected unexpectedly")
         try:
-            # Check if this was an intentional disconnect (or immediately followed an intentional action)
-            now = time.monotonic()
-            is_intentional = self._intentional_disconnect or (now < self._suppress_disconnect_popup_until)
-            # Reset flag (but keep the time window so duplicate disconnect signals don't trigger a popup)
-            self._intentional_disconnect = False
-
-            
-            self.scan_page.status.setText("Disconnected")
+            self._destroy_controller_db()
+            self.scan_page.status.setText("Disconnected unexpectedly")
             self.scan_page.btn_save_connect.setEnabled(True)
             self.scan_page.btn_start_trial.setEnabled(False)
             try:
                 self.scan_page.btn_calibrate_torque.setEnabled(False)
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.error(f"Failed to disable calibrate torque button: {e}")
+                self.logger.debug(traceback.format_exc())
             
-            # Only show popup for unintentional disconnects
-            if not is_intentional:
-                try:
-                    self.qt_dev.motorOff()
-                    self.qt_dev.stopTrial()
-                except Exception:
-                    pass
-                # Popup dialog informing user of unexpected disconnect
-                try:
-                    QtWidgets.QMessageBox.warning(self, "Device Disconnected", "The device has been unexpectedly disconnected.")
-                except Exception:
-                    pass
-                # Navigate back to the Scan page on unexpected disconnect
-                self.stack.setCurrentWidget(self.scan_page)
+            # Device is already disconnected, no need to send commands
+            # (motorOff/stopTrial would fail with "Not connected" errors)
+            self.logger.info("Device already disconnected - skipping motor off/stop trial commands")
+            # Show non-blocking notification of unexpected disconnect
+            # Use QTimer to defer the dialog so disconnect handling completes first
+            try:
+                QtCore.QTimer.singleShot(100, lambda: self._show_disconnect_warning())
+            except Exception as e:
+                self.logger.error(f"Failed to schedule disconnect warning dialog: {e}")
+                self.logger.debug(traceback.format_exc())
+            # Navigate back to the Scan page on unexpected disconnect
+            self.stack.setCurrentWidget(self.scan_page)
             
             # Ensure CSV is closed and announce saved path
             if self._csv_file is not None:
                 try:
                     self._csv_file.flush(); self._csv_file.close()
-                except Exception:
-                    pass
+                    self.logger.info(f"CSV closed after disconnect: {self._csv_path_last}")
+                except Exception as e:
+                    self.logger.error(f"Failed to close CSV after disconnect: {e}")
+                    self.logger.debug(traceback.format_exc())
                 self._csv_file = None
                 self._csv_writer = None
                 self._csv_header_written = False
                 self._t0 = None
                 self._mark_counter = 0  # Reset mark counter
                 try:
-                    if self._csv_path_last and not is_intentional:
+                    if self._csv_path_last:
                         self.scan_page.status.setText(f"Unexpected disconnect. CSV saved: {self._csv_path_last}")
-                except Exception:
-                    pass
+                except Exception as e:
+                    self.logger.error(f"Failed to update status after disconnect: {e}")
+                    self.logger.debug(traceback.format_exc())
                 try:
                     self.trial_page.update_mark_count(0)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+                except Exception as e:
+                    self.logger.error(f"Failed to reset mark count after disconnect: {e}")
+                    self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to handle device disconnect: {e}")
+            self.logger.debug(traceback.format_exc())
 
     def _start_csv_auto(self):
         # Save within Qt/Saved_Data
@@ -631,8 +881,9 @@ class MainWindow(QtWidgets.QMainWindow):
         save_dir = os.path.join(base_dir, "Saved_Data")
         try:
             os.makedirs(save_dir, exist_ok=True)
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.error(f"Failed to create Saved_Data directory: {e}")
+            self.logger.debug(traceback.format_exc())
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         # Add preamble if set
         if self._csv_preamble:
@@ -646,61 +897,46 @@ class MainWindow(QtWidgets.QMainWindow):
             self._t0 = None
             self._mark_counter = 0  # Reset mark counter for new trial
             self._csv_path_last = fname
+            self.logger.info(f"Started CSV logging to: {fname}")
             try:
                 self.scan_page.status.setText(f"Logging to {fname}")
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.error(f"Failed to update status with CSV path: {e}")
+                self.logger.debug(traceback.format_exc())
             try:
                 self.trial_page.update_mark_count(0)
-            except Exception:
-                pass
-        except Exception:
+            except Exception as e:
+                self.logger.error(f"Failed to reset mark count: {e}")
+                self.logger.debug(traceback.format_exc())
+        except Exception as e:
+            self.logger.error(f"Failed to start CSV auto-logging: {e}")
+            self.logger.debug(traceback.format_exc())
             self._csv_file = None
             self._csv_writer = None
-## my addition
+
+    ## PID GUI Update start - Sophie
+
     @QtCore.Slot()
-    def _on_request_pid_values(self):
-        self.qt_dev.request_pid_values()
-
-    @QtCore.Slot(list)
-    def _on_pid_values_received(self, values):
+    def _on_pid_button_pressed(self):
         try:
-            if len(values) < 4:
-                QtWidgets.QMessageBox.warning(
-                    self,
-                    "PID Values",
-                    f"Received incomplete PID data: {values}"
-                )
-                return
-
-            joint_id, p_gain, i_gain, d_gain = values[:4]
-
-            message = (
-                f"Joint ID: {int(joint_id)}\n\n"
-                f"P: {p_gain:.6f}\n"
-                f"I: {i_gain:.6f}\n"
-                f"D: {d_gain:.6f}"
-            )
-
-            QtWidgets.QMessageBox.information(
-                self,
-                "Current PID Values",
-                message
-            )
-
+            if self._pid_values:
+                self.qt_dev.write(b'p')
+                #self.trial_page.update_pid_values(self._pid_values)
+            else:
+                self.logger.debug("PID button pressed but no PID values received yet")
         except Exception as e:
-            QtWidgets.QMessageBox.warning(
-                self,
-                "PID Values",
-                f"ERROR:\n{e}"
-            )
-    # @QtCore.Slot(list)
-    # def _on_pid_values_received(self, values):
-    #     try:
-    #         msg = f"PID values received: {values}"
-    #         self.scan_page.status.setText(msg)
-    #         QtWidgets.QMessageBox.information(self, "Current PID Values", msg)
-    #     except Exception:
-    #         pass
+            self.logger.error(f"Failed to update PID button: {e}")
+
+    def _on_pid_values(self, pid_values: list):
+        self._pid_values = pid_values
+        self.logger.debug(f"Received PID values: {pid_values}")
+        try:
+
+            self.trial_page.update_pid_values(pid_values)
+        except Exception as e:
+            self.logger.error(f"Failed to update PID values: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    ## PID GUI Update end - sophie
 
 

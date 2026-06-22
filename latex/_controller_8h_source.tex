@@ -1,372 +1,351 @@
 \doxysection{Controller.\+h}
 \hypertarget{_controller_8h_source}{}\label{_controller_8h_source}\index{ExoCode/src/Controller.h@{ExoCode/src/Controller.h}}
-\mbox{\hyperlink{_controller_8h}{Go to the documentation of this file.}}
+\doxymbox{\hyperlink{_controller_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
-\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ Controller\_h}}
-\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ Controller\_h}}
-\DoxyCodeLine{00014\ }
-\DoxyCodeLine{00015\ \textcolor{comment}{//\ Arduino\ compiles\ everything\ in\ the\ src\ folder\ even\ if\ not\ included\ so\ it\ causes\ and\ error\ for\ the\ nano\ if\ this\ is\ not\ included.}}
-\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)}}
-\DoxyCodeLine{00017\ }
-\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <Arduino.h>}}
-\DoxyCodeLine{00019\ }
-\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_exo_data_8h}{ExoData.h}}"{}}}
-\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_board_8h}{Board.h}}"{}}}
-\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
-\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
-\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_utilities_8h}{Utilities.h}}"{}}}
-\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_config_8h}{config.h}}"{}}}
-\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_time___helper_8h}{Time\_Helper.h}}"{}}}
-\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <algorithm>}}
-\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <utility>}}
-\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ Controller\_h}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ Controller\_h}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{//Arduino\ compiles\ everything\ in\ the\ src\ folder\ even\ if\ not\ included\ so\ it\ causes\ and\ error\ for\ the\ nano\ if\ this\ is\ not\ included.}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <Arduino.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_exo_data_8h}{ExoData.h}}"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_board_8h}{Board.h}}"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_parse_ini_8h}{ParseIni.h}}"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_utilities_8h}{Utilities.h}}"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_config_8h}{config.h}}"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_time___helper_8h}{Time\_Helper.h}}"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <Adafruit\_INA260.h>}}
+\DoxyCodeLine{00030\ }
 \DoxyCodeLine{00036\ \textcolor{keyword}{class\ }\_Controller}
 \DoxyCodeLine{00037\ \{}
 \DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \_Controller(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \_Controller(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
 \DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ }
 \DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \string~\_Controller()\{\};}
-\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{comment}{//virtual\ void\ set\_controller(int\ joint,\ int\ controller)\ =\ 0;\ //\ Changes\ the\ controller\ for\ an\ individual\ joint}}
-\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ calc\_motor\_cmd()\ =\ 0;\ }
-\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ reset\_integral();\ }
-\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ \_data;\ }
-\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_controller_data}{ControllerData}}*\ \_controller\_data;\ }
-\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_leg_data}{LegData}}*\ \_leg\_data;\ }
-\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_joint_data}{JointData}}*\ \_joint\_data;\ }
-\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \_id;\ \ }
-\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_time___helper}{Time\_Helper}}*\ \_t\_helper;\ \ }
-\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_t\_helper\_context;\ }
-\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_t\_helper\_delta\_t;\ }
-\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Values\ for\ the\ PID\ controller}}
-\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_integral\_val;\ }
-\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_prev\_input;\ \ \ }
-\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_prev\_de\_dt;\ \ \ }
-\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_prev\_pid\_time;\ }
-\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_pid(\textcolor{keywordtype}{float}\ cmd,\ \textcolor{keywordtype}{float}\ measurement,\ \textcolor{keywordtype}{float}\ p\_gain,\ \textcolor{keywordtype}{float}\ i\_gain,\ \textcolor{keywordtype}{float}\ d\_gain);}
-\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Values\ for\ the\ Compact\ Form\ Model\ Free\ Adaptive\ Controller}}
-\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ measurements;}
-\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ outputs;}
-\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ phi;\ }
-\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ rho;\ }
-\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ lamda;\ }
-\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ etta;\ }
-\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ mu;\ }
-\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ upsilon;\ }
-\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ phi\_1;\ }
-\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_cf\_mfac(\textcolor{keywordtype}{float}\ reference,\ \textcolor{keywordtype}{float}\ current\_measurement);}
-\DoxyCodeLine{00110\ \};}
-\DoxyCodeLine{00111\ }
-\DoxyCodeLine{00112\ \textcolor{keyword}{class\ }PropulsiveAssistive\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00113\ \{}
-\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ PropulsiveAssistive(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \string~PropulsiveAssistive()\{\};}
-\DoxyCodeLine{00117\ }
-\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_reference\_angles(\mbox{\hyperlink{class_leg_data}{LegData}}*\ leg\_data,\ \mbox{\hyperlink{class_controller_data}{ControllerData}}*\ controller\_data,\ \textcolor{keywordtype}{float}\ percent\_grf);}
-\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_capture\_neutral\_angle(\mbox{\hyperlink{class_leg_data}{LegData}}*\ leg\_data,\ \mbox{\hyperlink{class_controller_data}{ControllerData}}*\ controller\_data);}
-\DoxyCodeLine{00122\ \};}
-\DoxyCodeLine{00123\ }
-\DoxyCodeLine{00133\ \textcolor{keyword}{class\ }ProportionalJointMoment\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00134\ \{}
-\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ ProportionalJointMoment(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \string~ProportionalJointMoment()\{\};}
-\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ \_stance\_thresholds\_left,\ \_stance\_thresholds\_right;}
-\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_inclination\_scaling\{1.0f\};}
-\DoxyCodeLine{00144\ \};}
-\DoxyCodeLine{00145\ }
-\DoxyCodeLine{00146\ }
-\DoxyCodeLine{00154\ \textcolor{keyword}{class\ }ZeroTorque\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00155\ \{}
-\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ ZeroTorque(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \string~ZeroTorque()\{\};}
-\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00161\ \};}
-\DoxyCodeLine{00162\ }
-\DoxyCodeLine{00170\ \textcolor{keyword}{class\ }Stasis\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00171\ \{}
-\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ Stasis(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \string~Stasis()\{\};}
-\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00177\ \};}
-\DoxyCodeLine{00178\ }
-\DoxyCodeLine{00190\ \textcolor{keyword}{class\ }HeelToe:\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00191\ \{}
-\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ HeelToe(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \string~HeelToe()\{\};}
-\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00197\ }
-\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cmd\_ff;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ percent\_gait;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ prev\_percent\_gait;}
-\DoxyCodeLine{00202\ }
-\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ fs;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ fs\_previous;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ state;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prev\_state;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ state\_4\_start;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ state\_4\_end;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_state\_4\_duration;\ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ prev\_cmd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ state\_4\_start\_cmd;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ swing\_start;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ swing\_duration;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x1;}
-\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ y1;}
-\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x2;}
-\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ y2;}
-\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x3;}
-\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ y3;}
-\DoxyCodeLine{00227\ }
-\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ A;}
-\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ B;}
-\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ C;}
-\DoxyCodeLine{00232\ \};}
-\DoxyCodeLine{00233\ }
-\DoxyCodeLine{00244\ \textcolor{keyword}{class\ }ExtensionAngle:\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00245\ \{}
-\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ ExtensionAngle(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \string~ExtensionAngle()\{\};}
-\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_max\_angle(\textcolor{keywordtype}{float}\ angle);}
-\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_state(\textcolor{keywordtype}{float}\ angle);}
-\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_reset\_angles();}
-\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ initial\ angles\ used\ for\ tracking\ the\ extent\ of\ the\ range\ of\ motions\ }}
-\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_initial\_max\_angle\ =\ \mbox{\hyperlink{namespaceutils_a93ef823108dc95f6ff5e732b61002eaa}{utils::degrees\_to\_radians}}(10);\ }
-\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_initial\_min\_angle\ =\ \mbox{\hyperlink{namespaceutils_a93ef823108dc95f6ff5e732b61002eaa}{utils::degrees\_to\_radians}}(-\/5);\ }
-\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Used\ to\ track\ the\ range\ of\ motion,\ angles\ are\ in\ rad.}}
-\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_max\_angle;\ }
-\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_min\_angle;\ }
-\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ uint8\_t\ \_state;\ }
-\DoxyCodeLine{00281\ \};}
-\DoxyCodeLine{00282\ }
-\DoxyCodeLine{00293\ \textcolor{keyword}{class\ }BangBang:\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00294\ \{}
-\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ BangBang(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \string~BangBang()\{\};}
-\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_max\_angle(\textcolor{keywordtype}{float}\ angle);}
-\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_state(\textcolor{keywordtype}{float}\ angle);}
-\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_reset\_angles();}
-\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ initial\ angles\ used\ for\ tracking\ the\ extent\ of\ the\ range\ of\ motions\ }}
-\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_initial\_max\_angle\ =\ \mbox{\hyperlink{namespaceutils_a93ef823108dc95f6ff5e732b61002eaa}{utils::degrees\_to\_radians}}(20);\ }
-\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_initial\_min\_angle\ =\ \mbox{\hyperlink{namespaceutils_a93ef823108dc95f6ff5e732b61002eaa}{utils::degrees\_to\_radians}}(-\/5);\ }
-\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Used\ to\ track\ the\ range\ of\ motion,\ angles\ are\ in\ rad.}}
-\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_max\_angle;\ }
-\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_min\_angle;\ }
-\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ uint8\_t\ \_state;\ }
-\DoxyCodeLine{00330\ \};}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ calc\_motor\_cmd()\ =\ 0;\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ reset\_integral();\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ ExoData*\ \_data;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ ControllerData*\ \_controller\_data;\ \ \ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ SideData*\ \_side\_data;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ JointData*\ \_joint\_data;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \_id;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ Time\_Helper*\ \_t\_helper;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_t\_helper\_context;\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_t\_helper\_delta\_t;\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Values\ for\ the\ PID\ controller}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_pid\_error\_sum\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_prev\_input;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_prev\_de\_dt;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_prev\_pid\_time;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_sim\_gait\_context\ =\ 0.0f;\ \ \ \ \ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_sim\_elapsed\_us\ =\ 0.0f;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_pid(\textcolor{keywordtype}{float}\ cmd,\ \textcolor{keywordtype}{float}\ measurement,\ \textcolor{keywordtype}{float}\ p\_gain,\ \textcolor{keywordtype}{float}\ i\_gain,\ \textcolor{keywordtype}{float}\ d\_gain);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_get\_percent\_gait(\textcolor{keywordtype}{bool}\ simulate);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_pjmc\_generic(\textcolor{keywordtype}{float}\ current\_fsr,\ \textcolor{keywordtype}{float}\ fsr\_threshold,\ \textcolor{keywordtype}{float}\ setpoint\_positive,\ \textcolor{keywordtype}{float}\ setpoint\_negative);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Values\ for\ the\ Compact\ Form\ Model\ Free\ Adaptive\ Controller}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ measurements;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ outputs;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ phi;\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ rho;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ lamda;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ etta;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ mu;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ upsilon;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ phi\_1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_cf\_mfac(\textcolor{keywordtype}{float}\ reference,\ \textcolor{keywordtype}{float}\ current\_measurement);}
+\DoxyCodeLine{00126\ \};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00136\ \textcolor{keyword}{class\ }TREC\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00137\ \{}
+\DoxyCodeLine{00138\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00139\ \ \ \ \ TREC(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00140\ \ \ \ \ \string~TREC()\ \{\};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_reference\_angles(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ \textcolor{keywordtype}{float}\ percent\_grf,\ \textcolor{keywordtype}{float}\ percent\_grf\_heel);}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{void}\ \_capture\_neutral\_angle(SideData*\ side\_data,\ ControllerData*\ controller\_data);}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ \_grf\_threshold\_dynamic\_tuner(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ \textcolor{keywordtype}{float}\ threshold,\ \textcolor{keywordtype}{float}\ percent\_grf\_heel);}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{void}\ \_plantar\_setpoint\_adjuster(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ \textcolor{keywordtype}{float}\ pjmcSpringDamper);}
+\DoxyCodeLine{00149\ \};}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00162\ \textcolor{keyword}{class\ }ProportionalJointMoment\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00163\ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ ProportionalJointMoment(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \string~ProportionalJointMoment()\{\};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ std::pair<float,\ float>\ \_stance\_thresholds\_left,\ \_stance\_thresholds\_right;}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_inclination\_scaling\{1.0f\};}
+\DoxyCodeLine{00173\ \};}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00183\ \textcolor{keyword}{class\ }ZeroTorque\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00184\ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ ZeroTorque(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \string~ZeroTorque()\{\};}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00190\ \};}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00206\ \textcolor{keyword}{class\ }ZhangCollins:\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00207\ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ ZhangCollins(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \string~ZhangCollins()\{\};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_spline\_generation(\textcolor{keywordtype}{float}\ node1,\ \textcolor{keywordtype}{float}\ node2,\ \textcolor{keywordtype}{float}\ node3,\ \textcolor{keywordtype}{float}\ torque\_magnitude,\ \textcolor{keywordtype}{float}\ percent\_gait);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_cmd;}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cmd;}
+\DoxyCodeLine{00218\ \};}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00227\ \textcolor{keyword}{class\ }Spline:\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00228\ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ Spline(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \string~Spline()\{\};}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_spline\_interpolate(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ x,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ y,\ \textcolor{keywordtype}{float}\ percent\_gait);}
+\DoxyCodeLine{00237\ \};}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00256\ \textcolor{keyword}{class\ }FranksCollinsHip:\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00257\ \{}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ FranksCollinsHip(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \string~FranksCollinsHip()\{\};}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_spline\_generation(\textcolor{keywordtype}{float}\ node1,\ \textcolor{keywordtype}{float}\ node2,\ \textcolor{keywordtype}{float}\ node3,\ \textcolor{keywordtype}{float}\ torque\_magnitude,\ \textcolor{keywordtype}{float}\ shifted\_percent\_gait);}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ last\_percent\_gait;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ last\_start\_time;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00269\ \};}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00278\ \textcolor{keyword}{class\ }ConstantTorque\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00279\ \{}
+\DoxyCodeLine{00280\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00281\ \ \ \ \ ConstantTorque(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00282\ \ \ \ \ \string~ConstantTorque()\ \{\};}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_command;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ Previous\ Loop's\ Torque\ Command\ */}}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_torque\_reading;\ \ \textcolor{comment}{/*\ Stores\ Previous\ Loop's\ Measured\ Torque\ */}}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keywordtype}{int}\ flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Flag\ that\ Determines\ Filter\ Status\ */}}
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keywordtype}{float}\ difference;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ Difference\ in\ Command\ when\ Changed\ */}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \};}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00304\ \textcolor{keyword}{class\ }ElbowMinMax\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00305\ \{}
+\DoxyCodeLine{00306\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00307\ \ \ \ \ ElbowMinMax(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00308\ \ \ \ \ \string~ElbowMinMax()\ \{\};}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keywordtype}{float}\ alpha0;}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keywordtype}{float}\ alpha1;}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordtype}{float}\ alpha2;}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{float}\ alpha3;}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{float}\ cmd;}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{float}\ Smoothed\_Sig\_Flex;}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordtype}{float}\ Smoothed\_Sig\_Ext;}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordtype}{float}\ Smoothed\_Flex\_Max;}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{float}\ Smoothed\_Flex\_Min;}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keywordtype}{float}\ Smoothed\_Ext\_Max;}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{float}\ Smoothed\_Ext\_Min;}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordtype}{float}\ starttime;}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordtype}{float}\ check;}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keywordtype}{float}\ Angle\_Max;}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordtype}{float}\ Angle\_Min;}
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keywordtype}{float}\ Angle;}
 \DoxyCodeLine{00331\ }
-\DoxyCodeLine{00332\ \textcolor{comment}{/*}}
-\DoxyCodeLine{00333\ \textcolor{comment}{\ *\ LateStance\ Controller}}
-\DoxyCodeLine{00334\ \textcolor{comment}{\ *\ This\ controller\ is\ for\ the\ hip\ joint}}
-\DoxyCodeLine{00335\ \textcolor{comment}{\ *\ Applies\ const\ torque\ during\ late\ stance}}
-\DoxyCodeLine{00336\ \textcolor{comment}{\ *}}
-\DoxyCodeLine{00337\ \textcolor{comment}{\ *\ see\ ControllerData.h\ for\ details\ on\ the\ parameters\ used.}}
-\DoxyCodeLine{00338\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00339\ \textcolor{keyword}{class\ }LateStance\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00340\ \{}
-\DoxyCodeLine{00341\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00342\ \ \ \ \ LateStance(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00343\ \ \ \ \ \string~LateStance()\{\};}
-\DoxyCodeLine{00344\ }
-\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00346\ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_max\_angle(\textcolor{keywordtype}{float}\ angle);}
-\DoxyCodeLine{00348\ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_state(\textcolor{keywordtype}{float}\ angle);}
-\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keywordtype}{void}\ \_reset\_angles();}
-\DoxyCodeLine{00350\ }
-\DoxyCodeLine{00351\ \ \ \ \ \textcolor{comment}{//\ the\ initial\ angles\ used\ for\ tracking\ the\ extent\ of\ the\ range\ of\ motions\ }}
-\DoxyCodeLine{00352\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_initial\_max\_angle\ =\ \mbox{\hyperlink{namespaceutils_a93ef823108dc95f6ff5e732b61002eaa}{utils::degrees\_to\_radians}}(20);}
-\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \_initial\_min\_angle\ =\ \mbox{\hyperlink{namespaceutils_a93ef823108dc95f6ff5e732b61002eaa}{utils::degrees\_to\_radians}}(-\/5);}
-\DoxyCodeLine{00354\ }
-\DoxyCodeLine{00355\ \ \ \ \ \textcolor{comment}{//\ Used\ to\ track\ the\ range\ of\ motion,\ angles\ are\ in\ rad.}}
-\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordtype}{float}\ \_max\_angle;}
-\DoxyCodeLine{00357\ \ \ \ \ \textcolor{keywordtype}{float}\ \_min\_angle;}
-\DoxyCodeLine{00358\ }
-\DoxyCodeLine{00359\ \ \ \ \ \textcolor{comment}{//\ Used\ to\ track\ the\ state\ 0\ is\ extension\ mode,\ 1\ is\ flexion\ mode.}}
-\DoxyCodeLine{00360\ \ \ \ \ uint8\_t\ \_state;}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{bool}\ flexState;}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordtype}{bool}\ extState;}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordtype}{bool}\ nullState;}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_setpoint;}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{float}\ fsr\_toe\_previous\_elbow;}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keywordtype}{float}\ fsr\_heel\_previous\_elbow;}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordtype}{float}\ SpringEffect;}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00344\ \ \ \ \ }
+\DoxyCodeLine{00345\ \};}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00356\ \textcolor{keyword}{class\ }CalibrManager\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00357\ \{}
+\DoxyCodeLine{00358\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00359\ \ \ \ \ CalibrManager(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00360\ \ \ \ \ \string~CalibrManager()\ \{\};}
 \DoxyCodeLine{00361\ }
-\DoxyCodeLine{00362\ \};}
-\DoxyCodeLine{00363\ }
-\DoxyCodeLine{00364\ \textcolor{comment}{/*}}
-\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ GaitPhase\ Controller}}
-\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ This\ controller\ is\ for\ the\ hip\ joint}}
-\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ Applies\ flexion\ or\ extension\ torque\ as\ a\ function\ of\ the\ gait\ phase\ (needs\ heel\ and\ toe\ FSRs)}}
-\DoxyCodeLine{00368\ \textcolor{comment}{\ *}}
-\DoxyCodeLine{00369\ \textcolor{comment}{\ *\ see\ ControllerData.h\ for\ details\ on\ the\ parameters\ used.}}
-\DoxyCodeLine{00370\ \textcolor{comment}{\ *\ }}
-\DoxyCodeLine{00371\ \textcolor{comment}{\ *\ This\ controller\ is\ still\ in\ development,\ this\ is\ just\ meant\ to\ be\ a\ framework\ for\ the\ controller\ that\ will\ be\ filled\ out\ with\ time}}
-\DoxyCodeLine{00372\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00373\ \textcolor{keyword}{class\ }GaitPhase\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00363\ \};}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00373\ \textcolor{keyword}{class\ }Chirp\ :\ \textcolor{keyword}{public}\ \_Controller}
 \DoxyCodeLine{00374\ \{}
-\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ GaitPhase(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \string~GaitPhase()\{\};}
+\DoxyCodeLine{00375\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00376\ \ \ \ \ Chirp(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00377\ \ \ \ \ \string~Chirp()\ \{\};}
 \DoxyCodeLine{00378\ }
-\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00380\ }
-\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ slope;}
-\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ state;}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordtype}{float}\ start\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Flag\ that\ triggers\ recording\ of\ the\ initial\ start\ time\ of\ the\ controller\ upon\ usage.\ */}}
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keywordtype}{float}\ start\_time;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Variable\ that\ stores\ the\ start\ time\ of\ the\ controller.\ */}}
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keywordtype}{float}\ current\_time;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Variable\ that\ stores\ the\ current\ time\ of\ the\ controller.\ */}}
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_amplitude;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Variable\ that\ stores\ the\ previous\ amplitude,\ used\ as\ a\ switch\ to\ restart\ the\ controller\ if\ needed.\ (Set\ amplitude\ to\ 0\ and\ then\ set\ to\ desired\ amplitude).\ */}}
 \DoxyCodeLine{00383\ }
-\DoxyCodeLine{00384\ \};}
+\DoxyCodeLine{00384\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Function\ that\ calculates\ the\ motor\ command.\ */}}
 \DoxyCodeLine{00385\ }
-\DoxyCodeLine{00386\ \textcolor{comment}{/*}}
-\DoxyCodeLine{00387\ \textcolor{comment}{\ *\ Parabolic\ Controller}}
-\DoxyCodeLine{00388\ \textcolor{comment}{\ *\ This\ controller\ is\ for\ the\ hip\ joint}}
-\DoxyCodeLine{00389\ \textcolor{comment}{\ *\ Applies\ flexion\ or\ extension\ torque\ as\ a\ function\ of\ the\ gait\ phase\ (needs\ heel\ and\ toe\ FSRs)}}
-\DoxyCodeLine{00390\ \textcolor{comment}{\ *}}
-\DoxyCodeLine{00391\ \textcolor{comment}{\ *\ see\ ControllerData.h\ for\ details\ on\ the\ parameters\ used.}}
-\DoxyCodeLine{00392\ \textcolor{comment}{\ *}}
-\DoxyCodeLine{00393\ \textcolor{comment}{\ *\ This\ controller\ is\ still\ in\ development,\ this\ is\ just\ meant\ to\ be\ a\ framework\ for\ the\ controller\ that\ will\ be\ filled\ out\ with\ time}}
-\DoxyCodeLine{00394\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00395\ \textcolor{keyword}{class\ }Parabolic\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00396\ \{}
-\DoxyCodeLine{00397\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00398\ \ \ \ \ Parabolic(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00399\ \ \ \ \ \string~Parabolic()\ \{\};}
-\DoxyCodeLine{00400\ }
-\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00402\ \};}
-\DoxyCodeLine{00403\ }
-\DoxyCodeLine{00419\ \textcolor{keyword}{class\ }ZhangCollins:\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00420\ \{}
-\DoxyCodeLine{00421\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ ZhangCollins(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \string~ZhangCollins()\{\};}
-\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00426\ }
-\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_spline\_generation(\textcolor{keywordtype}{float}\ node1,\ \textcolor{keywordtype}{float}\ node2,\ \textcolor{keywordtype}{float}\ node3,\ \textcolor{keywordtype}{float}\ torque\_magnitude,\ \textcolor{keywordtype}{float}\ percent\_gait);}
-\DoxyCodeLine{00428\ }
-\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_cmd;}
-\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cmd;}
-\DoxyCodeLine{00432\ \};}
-\DoxyCodeLine{00433\ }
-\DoxyCodeLine{00452\ \textcolor{keyword}{class\ }FranksCollinsHip:\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00453\ \{}
-\DoxyCodeLine{00454\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ FranksCollinsHip(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \string~FranksCollinsHip()\{\};}
-\DoxyCodeLine{00457\ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00459\ }
-\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \_spline\_generation(\textcolor{keywordtype}{float}\ node1,\ \textcolor{keywordtype}{float}\ node2,\ \textcolor{keywordtype}{float}\ node3,\ \textcolor{keywordtype}{float}\ torque\_magnitude,\ \textcolor{keywordtype}{float}\ shifted\_percent\_gait);}
-\DoxyCodeLine{00461\ }
-\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ last\_percent\_gait;}
-\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ last\_start\_time;}
-\DoxyCodeLine{00464\ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00465\ \};}
-\DoxyCodeLine{00466\ }
-\DoxyCodeLine{00477\ \textcolor{comment}{//\ class\ UserDefined:\ public\ \_Controller}}
-\DoxyCodeLine{00478\ \textcolor{comment}{//\ \{}}
-\DoxyCodeLine{00479\ \ \ \ \ \textcolor{comment}{//\ public:}}
-\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UserDefined(config\_defs::joint\_id\ id,\ ExoData*\ exo\_data);}}
-\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \string~UserDefined()\{\};}}
-\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ float\ calc\_motor\_cmd();}}
-\DoxyCodeLine{00484\ \ \ \ \ \textcolor{comment}{//\ private:}}
-\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ float\ \_percent\_x[controller\_defs::user\_defined::num\_sample\_points];}}
-\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ const\ float\ \_step\_size\ =\ 100/controller\_defs::user\_defined::num\_sample\_points;}}
-\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00489\ \textcolor{comment}{//\ \};}}
-\DoxyCodeLine{00490\ }
-\DoxyCodeLine{00501\ \textcolor{keyword}{class\ }Sine:\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00502\ \{}
-\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ Sine(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \string~Sine()\{\};}
-\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00508\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00511\ \};}
-\DoxyCodeLine{00512\ }
-\DoxyCodeLine{00523\ \textcolor{keyword}{class\ }Perturbation\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00524\ \{}
-\DoxyCodeLine{00525\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00526\ \ \ \ \ Perturbation(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00527\ \ \ \ \ \string~Perturbation()\ \{\};}
-\DoxyCodeLine{00528\ }
-\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00530\ \};}
-\DoxyCodeLine{00531\ }
-\DoxyCodeLine{00532\ \textcolor{keyword}{class\ }ConstantTorque\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00533\ \{}
-\DoxyCodeLine{00534\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00535\ \ \ \ \ ConstantTorque(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00536\ \ \ \ \ \string~ConstantTorque()\ \{\};}
-\DoxyCodeLine{00537\ }
-\DoxyCodeLine{00538\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00539\ }
-\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keywordtype}{float}\ current\_torque;}
-\DoxyCodeLine{00541\ \ \ \ \ \textcolor{keywordtype}{int}\ counter;}
-\DoxyCodeLine{00542\ \};}
-\DoxyCodeLine{00543\ }
-\DoxyCodeLine{00544\ \textcolor{keyword}{class\ }ElbowMinMax\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00545\ \{}
-\DoxyCodeLine{00546\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00547\ \ \ \ \ ElbowMinMax(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00548\ \ \ \ \ \string~ElbowMinMax()\ \{\};}
-\DoxyCodeLine{00549\ }
-\DoxyCodeLine{00550\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00551\ \ \ \ \ }
-\DoxyCodeLine{00552\ \};}
-\DoxyCodeLine{00553\ }
-\DoxyCodeLine{00554\ \textcolor{keyword}{class\ }PtbGeneral\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00555\ \{}
-\DoxyCodeLine{00556\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00557\ \ \ \ \ PtbGeneral(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00558\ \ \ \ \ \string~PtbGeneral()\ \{\};}
-\DoxyCodeLine{00559\ }
-\DoxyCodeLine{00560\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00561\ \};}
-\DoxyCodeLine{00562\ }
-\DoxyCodeLine{00563\ \textcolor{keyword}{class\ }CalibrManager\ :\ \textcolor{keyword}{public}\ \_Controller}
-\DoxyCodeLine{00564\ \{}
-\DoxyCodeLine{00565\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00566\ \ \ \ \ CalibrManager(\mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{class_exo_data}{ExoData}}*\ exo\_data);}
-\DoxyCodeLine{00567\ \ \ \ \ \string~CalibrManager()\ \{\};}
-\DoxyCodeLine{00568\ }
-\DoxyCodeLine{00569\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
-\DoxyCodeLine{00570\ \};}
-\DoxyCodeLine{00571\ }
-\DoxyCodeLine{00572\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00573\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00386\ \};}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00396\ \textcolor{keyword}{class\ }Step\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00397\ \{}
+\DoxyCodeLine{00398\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00399\ \ \ \ \ Step(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00400\ \ \ \ \ \string~Step()\ \{\};}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{int}\ n;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ how\ many\ steps\ have\ been\ performed.\ */}}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keywordtype}{int}\ start\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Flag\ that\ triggers\ the\ recording\ of\ the\ time\ that\ the\ step\ is\ first\ applied.\ */}}
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{keywordtype}{float}\ start\_time;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Time\ that\ the\ step\ was\ first\ applied.\ */}}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordtype}{float}\ cmd\_ff;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Motor\ command.\ */}}
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_time;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ time\ from\ previous\ iteration.\ */}}
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{keywordtype}{float}\ end\_time;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Records\ time\ that\ step\ ended.\ */}}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_command;}
+\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_torque\_reading;}
+\DoxyCodeLine{00411\ \ \ \ \ \textcolor{keywordtype}{int}\ flag;}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordtype}{float}\ difference;}
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{keywordtype}{float}\ turn;}
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keywordtype}{float}\ flag\_time;}
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{keywordtype}{float}\ change\_time;}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Function\ that\ calculates\ the\ motor\ command.\ */}}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ \};}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00430\ \textcolor{keyword}{class\ }ProportionalHipMoment\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00431\ \{}
+\DoxyCodeLine{00432\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00433\ \ \ \ \ ProportionalHipMoment(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00434\ \ \ \ \ \string~ProportionalHipMoment()\ \{\};}
+\DoxyCodeLine{00435\ \ \ \ \ }
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{comment}{/*\ Note:\ Duration\ in\ this\ controller\ is\ in\ terms\ of\ number\ of\ iterations\ in\ that\ window,\ rather\ than\ as\ a\ time.\ */}}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keywordtype}{int}\ state;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ what\ state\ we\ are\ in:\ State\ 1\ -\/\ Mid-\/to-\/Late\ Swing\ (15\%\ onward),\ State\ 2:\ Stance,\ State\ 3:\ Early-\/Swing\ (First\ 15\%).\ */}}
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00440\ \ \ \ \ \textcolor{keywordtype}{bool}\ first\_state2;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Flag\ to\ set\ variable\ values\ upon\ the\ first\ instance\ of\ the\ current\ State\ 2.\ */}}
+\DoxyCodeLine{00441\ \ \ \ \ \textcolor{keywordtype}{bool}\ first\_state3;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Flag\ to\ set\ variable\ values\ upon\ the\ first\ instance\ of\ the\ current\ State\ 3.\ */}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \ \ \ \ \textcolor{keywordtype}{int}\ swing\_counter;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ current\ swing\ phase.\ */}}
+\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keywordtype}{int}\ state1\_counter;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ current\ State\ 1.\ */}}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keywordtype}{int}\ prev\_state1\_counter;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ previous\ duration\ of\ State\ 1,\ used\ to\ estimate\ position\ in\ current\ State\ 1\ relative\ to\ expected\ duration.\ */}}
+\DoxyCodeLine{00446\ \ \ \ \ \textcolor{keywordtype}{int}\ stance\_counter;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ current\ Stance\ Phase.\ */}}
+\DoxyCodeLine{00447\ \ \ \ \ \textcolor{keywordtype}{int}\ swing\_duration;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ duration\ of\ the\ previous\ swing\ phase.\ */}}
+\DoxyCodeLine{00448\ \ }
+\DoxyCodeLine{00449\ \ \ \ \ \textcolor{keywordtype}{float}\ setpoint;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ calculated\ feed-\/foward\ setpoint\ for\ the\ hip\ command.\ */}}
+\DoxyCodeLine{00450\ \ \ \ \ \textcolor{keywordtype}{float}\ old\_setpoint;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ setpoint\ at\ the\ end\ of\ State\ 3\ to\ be\ used\ for\ setpoint\ calculation\ in\ State\ 1.\ */}}
+\DoxyCodeLine{00451\ }
+\DoxyCodeLine{00452\ \ \ \ \ \textcolor{keywordtype}{int}\ state\_count\_12;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ the\ State\ 1\ -\/\ to\ -\/\ State\ 2\ Transition.\ */}}
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{keywordtype}{int}\ state\_count\_23;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ the\ State\ 2\ -\/\ to\ -\/\ State\ 3\ Transition.\ */}}
+\DoxyCodeLine{00454\ \ \ \ \ \textcolor{keywordtype}{int}\ state\_count\_31;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ the\ State\ 3\ -\/\ to\ -\/\ State\ 1\ Transition.\ */}}
+\DoxyCodeLine{00455\ \ \ \ \ }
+\DoxyCodeLine{00456\ \ \ \ \ \textcolor{keywordtype}{int}\ Prev\_latestance\_duration;\ \ \ \textcolor{comment}{/*\ Stores\ the\ previous\ duration\ of\ the\ late-\/stance\ phase\ (part\ of\ the\ late-\/stance\ to\ early-\/swing\ transition\ period.\ */}}
+\DoxyCodeLine{00457\ \ \ \ \ \textcolor{keywordtype}{int}\ latestance\_duration;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Records\ the\ duration\ of\ the\ recently\ ended\ late-\/stance\ phase.\ */}}
+\DoxyCodeLine{00458\ \ \ \ \ \textcolor{keywordtype}{int}\ latestance\_counter;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ the\ current\ Late-\/Stance\ Period.\ */}}
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keywordtype}{float}\ Alpha\_counter;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Keeps\ track\ of\ the\ number\ of\ iterations\ that\ have\ occured\ in\ the\ current\ Late-\/Stance\ -\/\ and\ -\/\ Early\ Swing\ Transition\ Period.\ */}}
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{keywordtype}{float}\ Alpha;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ expected\ duration\ of\ the\ Late-\/Stance\ -\/\ and\ -\/\ Early\ Swing\ Transition\ Period,\ based\ on\ the\ duration\ of\ the\ last\ transition\ period.\ */}}
+\DoxyCodeLine{00461\ \ \ \ \ \textcolor{keywordtype}{float}\ t;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Calculated\ percentage\ of\ stance-\/to-\/swing\ transition\ based\ on\ the\ duration\ of\ the\ previous\ stance-\/to-\/swing\ transition\ (expressed\ as\ 0.1,\ 0.2,...\ rather\ than\ 10\%,\ 20\%,...).\ */}}
+\DoxyCodeLine{00462\ \ \ \ \ }
+\DoxyCodeLine{00463\ \ \ \ \ \textcolor{keywordtype}{float}\ fs;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Ratio\ of\ heel\ and\ toe\ fsrs\ accounting\ for\ GRF\ Ratio\ (0.25).\ */}}
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keywordtype}{float}\ fs\_min;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ minimum\ calculated\ fs\ for\ the\ current\ cycle,\ used\ as\ a\ starting\ estimate\ for\ the\ Late-\/Stance\ -\/\ to\ -\/\ Early\ Swing\ transition\ period.\ */}}
+\DoxyCodeLine{00465\ \ \ \ \ \textcolor{keywordtype}{float}\ prev\_fs;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ previous\ cycle's\ fs\ to\ help\ determine\ the\ slope\ of\ the\ fs\ curve.\ */}}
+\DoxyCodeLine{00466\ \ \ \ \ \textcolor{keywordtype}{float}\ hip\_ratio;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Part\ of\ calculation\ to\ determine\ the\ feed-\/foward\ setpoint\ calculation\ during\ stance-\/phase\ (State\ 2).\ */}}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Function\ to\ calcualte\ the\ desired\ motor\ command.\ */}}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00471\ }
+\DoxyCodeLine{00472\ \};}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00481\ \textcolor{keyword}{class\ }SPV2\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00482\ \{}
+\DoxyCodeLine{00483\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00484\ \ \ \ \ SPV2(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00485\ \ \ \ \ \string~SPV2()\ \{\};}
+\DoxyCodeLine{00486\ \ \ \ \ Adafruit\_INA260\ ina260\ =\ Adafruit\_INA260();}
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00488\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00489\ }
+\DoxyCodeLine{00490\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_plantar\_setpoint\_adjuster(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ \textcolor{keywordtype}{float}\ currentPrescription);}
+\DoxyCodeLine{00492\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_stiffness\_adjustment(uint8\_t\ minAngle,\ uint8\_t\ maxAngle,\ ControllerData*\ controller\_data);}
+\DoxyCodeLine{00493\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_calc\_motor\_current(ControllerData*\ controller\_data);}
+\DoxyCodeLine{00494\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_step\_counter(uint16\_t\ num\_steps\_threshold,\ SideData*\ side\_data,\ ControllerData*\ controller\_data);}
+\DoxyCodeLine{00495\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_golden\_search\_advance();}
+\DoxyCodeLine{00496\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::optimizer\_reset();}
+\DoxyCodeLine{00497\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_SA\_point\_gen(\textcolor{keywordtype}{float}\ step\_size,\ \textcolor{keywordtype}{long}\ bound\_l,\ \textcolor{keywordtype}{long}\ bound\_u,\ \textcolor{keywordtype}{float}\ temp);}
+\DoxyCodeLine{00498\ \ \ \ \ \textcolor{keywordtype}{void}\ SPV2::\_lab\_OP\_point\_gen(\textcolor{keywordtype}{float}\ step\_size,\ \textcolor{keywordtype}{long}\ bound\_l,\ \textcolor{keywordtype}{long}\ bound\_u);}
+\DoxyCodeLine{00499\ \ \ \ \ }
+\DoxyCodeLine{00500\ \ \ \ \ \textcolor{comment}{//from\ TREC}}
+\DoxyCodeLine{00501\ \ \ \ \ \textcolor{keywordtype}{void}\ \_update\_reference\_angles(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ \textcolor{keywordtype}{float}\ percent\_grf,\ \textcolor{keywordtype}{float}\ percent\_grf\_heel);}
+\DoxyCodeLine{00502\ \ \ \ \ \textcolor{keywordtype}{void}\ \_capture\_neutral\_angle(SideData*\ side\_data,\ ControllerData*\ controller\_data);}
+\DoxyCodeLine{00503\ \ \ \ \ \textcolor{keywordtype}{void}\ \_grf\_threshold\_dynamic\_tuner(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ \textcolor{keywordtype}{float}\ threshold,\ \textcolor{keywordtype}{float}\ percent\_grf\_heel);}
+\DoxyCodeLine{00504\ \ \ \ \ \textcolor{comment}{//void\ \_plantar\_setpoint\_adjuster(SideData*\ side\_data,\ ControllerData*\ controller\_data,\ float\ pjmcSpringDamper);}}
+\DoxyCodeLine{00505\ \};}
+\DoxyCodeLine{00506\ }
+\DoxyCodeLine{00514\ \textcolor{keyword}{class\ }PJMC\_PLUS\ :\ \textcolor{keyword}{public}\ \_Controller}
+\DoxyCodeLine{00515\ \{}
+\DoxyCodeLine{00516\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00517\ \ \ \ \ PJMC\_PLUS(\doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{config\_defs::joint\_id}}\ \textcolor{keywordtype}{id},\ ExoData*\ exo\_data);}
+\DoxyCodeLine{00518\ \ \ \ \ \string~PJMC\_PLUS()\ \{\};}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keywordtype}{float}\ calc\_motor\_cmd();}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00523\ }
+\DoxyCodeLine{00524\ \};}
+\DoxyCodeLine{00525\ }
+\DoxyCodeLine{00526\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

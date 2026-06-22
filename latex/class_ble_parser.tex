@@ -2,25 +2,27 @@
 \hypertarget{class_ble_parser}{}\label{class_ble_parser}\index{BleParser@{BleParser}}
 
 
-{\ttfamily \#include $<$Ble\+Parser.\+h$>$}
+{\ttfamily \+\#include $<$Ble\+Parser.\+h$>$}
 
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{class_ble_parser_a94140a12613eb143daccddde23a634a2}{Ble\+Parser}} ()
+\doxymbox{\hyperlink{class_ble_parser_a94140a12613eb143daccddde23a634a2}{Ble\+Parser}} ()
 \begin{DoxyCompactList}\small\item\em Construct a new Ble Parser object. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_ble_message}{Ble\+Message}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5}{handle\+\_\+raw\+\_\+data}} (char \texorpdfstring{$\ast$}{*}buffer, int length)
+\doxymbox{\hyperlink{class_ble_message}{Ble\+Message}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5}{handle\+\_\+raw\+\_\+data}} (char \texorpdfstring{$\ast$}{*}buffer, int length)
 \begin{DoxyCompactList}\small\item\em Given a buffer and buffer length, package the data into a \doxylink{class_ble_message}{Ble\+Message} class. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383}{package\+\_\+raw\+\_\+data}} (byte \texorpdfstring{$\ast$}{*}buffer, \mbox{\hyperlink{class_ble_message}{Ble\+Message}} \&msg)
+int \doxymbox{\hyperlink{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383}{package\+\_\+raw\+\_\+data}} (byte \texorpdfstring{$\ast$}{*}buffer, \doxymbox{\hyperlink{class_ble_message}{Ble\+Message}} \&msg)
 \begin{DoxyCompactList}\small\item\em Packs data to be sent to the GUI, modifies the char array that you send it. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
+\label{class_ble_parser_doc-constructors}
+\Hypertarget{class_ble_parser_doc-constructors}
 \doxysubsection{Constructor \& Destructor Documentation}
-\Hypertarget{class_ble_parser_a94140a12613eb143daccddde23a634a2}\label{class_ble_parser_a94140a12613eb143daccddde23a634a2} 
-\index{BleParser@{BleParser}!BleParser@{BleParser}}
+\Hypertarget{class_ble_parser_a94140a12613eb143daccddde23a634a2}\index{BleParser@{BleParser}!BleParser@{BleParser}}
 \index{BleParser@{BleParser}!BleParser@{BleParser}}
 \doxysubsubsection{\texorpdfstring{BleParser()}{BleParser()}}
-{\footnotesize\ttfamily Ble\+Parser\+::\+Ble\+Parser (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_ble_parser_a94140a12613eb143daccddde23a634a2} 
+Ble\+Parser::\+\+Ble\+Parser (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
@@ -28,12 +30,14 @@ Construct a new Ble Parser object.
 
 
 
+\label{class_ble_parser_doc-func-members}
+\Hypertarget{class_ble_parser_doc-func-members}
 \doxysubsection{Member Function Documentation}
-\Hypertarget{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5}\label{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5} 
-\index{BleParser@{BleParser}!handle\_raw\_data@{handle\_raw\_data}}
+\Hypertarget{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5}\index{BleParser@{BleParser}!handle\_raw\_data@{handle\_raw\_data}}
 \index{handle\_raw\_data@{handle\_raw\_data}!BleParser@{BleParser}}
 \doxysubsubsection{\texorpdfstring{handle\_raw\_data()}{handle\_raw\_data()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{class_ble_message}{Ble\+Message}} \texorpdfstring{$\ast$}{*} Ble\+Parser\+::handle\+\_\+raw\+\_\+data (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{int}]{length }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5} 
+\doxymbox{\hyperlink{class_ble_message}{Ble\+Message}} \texorpdfstring{$\ast$}{*} Ble\+Parser::\+handle\+\_\+raw\+\_\+data (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{buffer}{, }\item[{int}]{length}{}\end{DoxyParamCaption})}
 
 
 
@@ -49,19 +53,13 @@ Given a buffer and buffer length, package the data into a \doxylink{class_ble_me
 \begin{DoxyReturn}{Returns}
 Ble\+Message\texorpdfstring{$\ast$}{*} A pointer to the working message 
 \end{DoxyReturn}
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{class_ble_parser_a88c38aa6cb02a834a7b3006b367a8de5_cgraph}
-\end{center}
-\end{figure}
-\Hypertarget{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383}\label{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383} 
-\index{BleParser@{BleParser}!package\_raw\_data@{package\_raw\_data}}
+Here is the call graph for this function:\+
+% FIG 0
+\Hypertarget{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383}\index{BleParser@{BleParser}!package\_raw\_data@{package\_raw\_data}}
 \index{package\_raw\_data@{package\_raw\_data}!BleParser@{BleParser}}
 \doxysubsubsection{\texorpdfstring{package\_raw\_data()}{package\_raw\_data()}}
-{\footnotesize\ttfamily int Ble\+Parser\+::package\+\_\+raw\+\_\+data (\begin{DoxyParamCaption}\item[{byte \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{\mbox{\hyperlink{class_ble_message}{Ble\+Message}} \&}]{msg }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383} 
+int Ble\+Parser::\+package\+\_\+raw\+\_\+data (\begin{DoxyParamCaption}\item[{byte \texorpdfstring{$\ast$}{*}}]{buffer}{, }\item[{\doxymbox{\hyperlink{class_ble_message}{Ble\+Message}} \&}]{msg}{}\end{DoxyParamCaption})}
 
 
 
@@ -77,17 +75,11 @@ Packs data to be sent to the GUI, modifies the char array that you send it.
 \begin{DoxyReturn}{Returns}
 int Length of the buffer used 
 \end{DoxyReturn}
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=327pt]{class_ble_parser_a21bf7aa1963d30349846fa39d38a9383_cgraph}
-\end{center}
-\end{figure}
+Here is the call graph for this function:\+
+% FIG 1
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
 \item 
-Exo\+Code/src/\mbox{\hyperlink{_ble_parser_8h}{Ble\+Parser.\+h}}\item 
-Exo\+Code/src/\mbox{\hyperlink{_ble_parser_8cpp}{Ble\+Parser.\+cpp}}\end{DoxyCompactItemize}
+Exo\+Code/\+src/\+\doxymbox{\hyperlink{_ble_parser_8h}{Ble\+Parser.\+h}}\item 
+Exo\+Code/\+src/\+\doxymbox{\hyperlink{_ble_parser_8cpp}{Ble\+Parser.\+cpp}}\end{DoxyCompactItemize}

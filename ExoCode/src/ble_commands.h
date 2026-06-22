@@ -51,9 +51,8 @@ namespace ble_names
     static const char mark              = 'N';
     static const char update_param      = 'f';
     static const char reset_system      = 'Z';
+   // static const char get_pid = 'p';
 
-     static const char get_pid  = 'P';
-    // static const char get_param         = 'g';
     //Sending Commands (Firmware->GUI)
     static const char send_real_time_data = '?';
     static const char send_batt           = '~';
@@ -62,7 +61,8 @@ namespace ble_names
     static const char send_trq_cal        = 'H';
     static const char send_step_count     = 's';
     static const char cal_fsr_finished    = 'n';
-    static const char send_pid            = 'p';
+    //static const char send_pid            = 'p';
+    static const char send_pid  = 'P';
 
 };
 
@@ -88,7 +88,9 @@ namespace ble
         {ble_names::new_trq,            4},
         {ble_names::update_param,       4},
         {ble_names::reset_system,       0},
-        {ble_names::get_pid,       0},
+
+        //{ble_names::get_pid,       0}, //May need to update this
+
 
         
         //Sending Commands
@@ -99,7 +101,7 @@ namespace ble
         {ble_names::send_trq_cal,           2},
         {ble_names::send_step_count,        2},
         {ble_names::cal_fsr_finished,       0},
-        {ble_names::send_pid,       4}, //May need to update this
+        {ble_names::send_pid,       3}
     };
 };
 
@@ -440,6 +442,20 @@ namespace ble_handlers
         logger::print("ble_handlers::update_param() - Param Value: "); logger::println((uint8_t)msg->data[3]);
         logger::print("New message\n");
 
+        // PID addition - sophie // this updates the parameters to the nano as well instead of just sending them
+        uint8_t joint_id = (uint8_t)msg->data[0];
+        uint8_t controller_id = (uint8_t)msg->data[1];
+        uint8_t param_idx = (uint8_t)msg->data[2];
+        float param_value = msg->data[3];
+
+        JointData* j_data = data->get_joint_with(joint_id);
+        if (j_data != NULL)
+        {
+            j_data->controller.controller = controller_id;
+            j_data->controller.parameters[param_idx] = param_value;
+        }
+        // PID addition - sophie
+
         UARTHandler* uart_handler = UARTHandler::get_instance();
         UART_msg_t tx_msg;
         tx_msg.command = UART_command_names::update_controller_param;
@@ -462,95 +478,30 @@ namespace ble_handlers
 		Serial.print(tx_msg.data[(uint8_t)UART_command_enums::controller_param::PARAM_VALUE]);
 		#endif
     }
-    //  inline static void get_pid(ExoData* data, BleMessage* msg) {
-
-    //     BleMessage response;
-    //     response.command = ble_names::send_pid;
-    //     int pid_count = 0;
-    //     data->for_each_joint([&](JointData* j, float*) {
-    //         if (j->is_used) pid_count += 3;
-    //     });
-    //     response.expecting = pid_count;
-
-    //     int idx = 0;
-    //     data->for_each_joint([&](JointData* j, float*) {
-    //         if (j->is_used) { // might need to edit
-    //             response.data[idx++] = j->controller.parameters[P_gain_idx];
-    //             response.data[idx++] = j->controller.parameters[I_gain_idx];
-    //             response.data[idx++] = j->controller.parameters[D_gain_idx];
-    //         }
-    //     });
-
-
-//         ExoBLE::get_instance()->send_message(response);
-// }
-
-      inline static void get_pid(ExoData* data, BleMessage* msg)//float* p_gain, float* i_gain, float* d_gain)
-    {
-       JointData* j_data = data->get_joint_with(4); // elbow joint id 
-        BleMessage response;
-        response.command = ble_names::send_pid;
-        response.expecting = 4;
-        float p_gain = 0;
-        float i_gain = 0;
-        float d_gain = 0;
-
-        const uint8_t controller = j_data->controller.controller;
-        const float* params = j_data->controller.parameters;
-
-       switch (controller)
-                {
-                    case (uint8_t)config_defs::elbow_controllers::zero_torque:
-                        p_gain = params[controller_defs::zero_torque::p_gain_idx];
-                        i_gain = params[controller_defs::zero_torque::i_gain_idx];
-                        d_gain = params[controller_defs::zero_torque::d_gain_idx];
-                        break;
-                    case (uint8_t)config_defs::elbow_controllers::elbow_min_max:
-                        p_gain = params[controller_defs::elbow_min_max::P_gain_idx];
-                        i_gain = params[controller_defs::elbow_min_max::I_gain_idx];
-                        d_gain = params[controller_defs::elbow_min_max::D_gain_idx];
-                        break;
-                    case (uint8_t)config_defs::elbow_controllers::chirp:
-                        p_gain = params[controller_defs::chirp::p_gain_idx];
-                        i_gain = params[controller_defs::chirp::i_gain_idx];
-                        d_gain = params[controller_defs::chirp::d_gain_idx];
-                        break;
-                    case (uint8_t)config_defs::elbow_controllers::step:
-                        p_gain = params[controller_defs::step::p_gain_idx];
-                        i_gain = params[controller_defs::step::i_gain_idx];
-                        d_gain = params[controller_defs::step::d_gain_idx];
-                        break;
-                    default:
-                        break;
-            }
-        response.data[0] = (float)((uint8_t)j_data->id);
-        response.data[1] = p_gain;
-        response.data[2] = i_gain;
-        response.data[3] = d_gain;
-        ExoBLE::get_instance()->send_message(response);
-    }
-
-    // inline static bool build_pid_response(JointData* j_data, BleMessage* response)
-    // {
-    //     float p_gain = 0;
-    //     float i_gain = 0;
-    //     float d_gain = 0;
-
-    //     if (j_data == NULL || response == NULL || !j_data->is_used || !get_pid_gains(j_data, &p_gain, &i_gain, &d_gain))
-    //     {
-    //         return false;
-    //     }
-
-    //     response->command = ble_names::send_pid;
-    //     response->expecting = 4;
-    //     response->data[0] = (float)((uint8_t)j_data->id);
-    //     response->data[1] = p_gain;
-    //     response->data[2] = i_gain;
-    //     response->data[3] = d_gain;
-
-    //     return true;
-    // }
-
+//     inline static void get_pid(ExoData* data, BleMessage* msg) {
+//
+//        BleMessage response;
+//        response.command = ble_names::send_pid;
+//        int pid_count = 0;
+//        data->for_each_joint([&](JointData* j, float*) {
+//            if (j->is_used) pid_count += 3;
+//        });
+//        response.expecting = pid_count;
+//
+//        int idx = 0;
+//        data->for_each_joint([&](JointData* j, float*) {
+//            if (j->is_used) { // might need to edit
+//                response.data[idx++] = j->controller.parameters[P_gain_idx];
+//                response.data[idx++] = j->controller.parameters[I_gain_idx];
+//                response.data[idx++] = j->controller.parameters[D_gain_idx];
+//            }
+//        });
+//
+//
+//        ExoBLE::get_instance()->send_message(response);
+//}
+//
+//     }
 }
 
 #endif

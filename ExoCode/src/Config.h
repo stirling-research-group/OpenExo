@@ -40,7 +40,7 @@
 
     namespace logging
     {
-        const LogLevel level = LogLevel::Release; //Release or Debug (Note: Enter Debug to have Logger print to serial monitor)
+        const LogLevel level = LogLevel::Debug; //Release or Debug (Note: Enter Debug to have Logger print to serial monitor)
         const int baud_rate = 115200;
     }
     
@@ -80,8 +80,8 @@
 
     namespace BLE_times
     {
-        const float _status_msg_delay = 2000000;    //Microseconds
-        const float _real_time_msg_delay = 14285;   //Microseconds
+        const float _status_msg_delay = 2000000; //changed from 2000000 to 1000000 - sophie    //Microseconds
+        const float _real_time_msg_delay = 9000;    //Microseconds (~111 Hz target, expect ~100 Hz actual)
         const float _update_delay = 1000;           //Microseconds
         const float _poll_timeout = 4;              //Milliseconds
     }

@@ -1,412 +1,635 @@
 \doxysection{Parse\+Ini.\+h}
 \hypertarget{_parse_ini_8h_source}{}\label{_parse_ini_8h_source}\index{ExoCode/src/ParseIni.h@{ExoCode/src/ParseIni.h}}
-\mbox{\hyperlink{_parse_ini_8h}{Go to the documentation of this file.}}
+\doxymbox{\hyperlink{_parse_ini_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
 \DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ ParseIni\_h}}
 \DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ ParseIni\_h}}
 \DoxyCodeLine{00013\ }
-\DoxyCodeLine{00014\ \textcolor{comment}{//\ used\ for\ uint8\_t}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//Used\ for\ uint8\_t}}
 \DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
 \DoxyCodeLine{00016\ }
-\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceini__config}{ini\_config}}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespaceini__config}{ini\_config}}}
 \DoxyCodeLine{00021\ \{}
-\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespaceini__config_aa95ba5150692cfd3da83f29ba9164a6a}{buffer\_length}}\ =\ 500;\ \ }
-\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespaceini__config_aa25bbdebc37ceb7fbc6fa9c61f2c0c7b}{key\_length}}\ =\ 25;\ }
-\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespaceini__config_a60f9158fc881549dfcc1fdddfe1aa3ad}{section\_length}}\ =\ 10;\ }
-\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespaceini__config_a94be16c85b00371eb4b36558a936c333}{number\_of\_keys}}\ =\ 17;\ }
-\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//const\ char\ *config\_filename\ =\ "{}/config.ini"{};\ \ //\ this\ line\ creates\ an\ "{}Error\ compiling\ for\ board\ Teensy\ 3.6."{}\ so\ I\ am\ just\ hard\ coding\ it.}}
-\DoxyCodeLine{00027\ \}}
-\DoxyCodeLine{00028\ }
-\DoxyCodeLine{00029\ \textcolor{comment}{//\ Includes\ for\ reading\ the\ ini\ file\ from\ the\ SD\ card.}}
-\DoxyCodeLine{00030\ \textcolor{comment}{//\ 1\ is\ the\ lowest\ value\ to\ confirm\ that\ data\ is\ present\ for\ sending\ over\ SPI}}
-\DoxyCodeLine{00031\ }
-\DoxyCodeLine{00032\ \textcolor{comment}{//\ TODO:\ Add\ Bluetooth\ name.}}
-\DoxyCodeLine{00033\ }
-\DoxyCodeLine{00037\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespaceconfig__defs}{config\_defs}}}
-\DoxyCodeLine{00038\ \{}
-\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139be}{board\_name}}\ :\ uint8\_t}
-\DoxyCodeLine{00040\ \ \ \ \ \{}
-\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139bea44c24108a8a891b49f03f55cfcebb7b3}{AK\_board}}\ =\ 1,}
-\DoxyCodeLine{00042\ \ \ \ \ \};}
-\DoxyCodeLine{00043\ \ \ \ \ }
-\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0}{board\_version}}\ :\ uint8\_t}
-\DoxyCodeLine{00045\ \ \ \ \ \{\ }
-\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a5226a92dc7a02342ca2b4ca9818c0a6f}{zero\_one}}\ =\ 1,}
-\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a281573accdaf37cf6b1ca22828501227}{zero\_three}}\ =\ 2,}
-\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0ab60135936a03bc2b7f54dfd4576eb1bc}{zero\_four}}\ =\ 3,}
-\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0ab6d902b00b590e6493ab745d1ba26ba5}{zero\_five\_one}}\ =\ 4,}
-\DoxyCodeLine{00050\ \ \ \ \ \};}
-\DoxyCodeLine{00051\ \ \ \ \ }
-\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0}{battery}}\ :\ uint8\_t}
-\DoxyCodeLine{00053\ \ \ \ \ \{\ }
-\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a8c319f28d81d1527a9428e9a5c2195f5}{smart}}\ =\ 1,}
-\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a665c403aa19fe701b0ea7093ea4d0f45}{dumb}}\ =\ 2,}
-\DoxyCodeLine{00056\ \ \ \ \ \};}
-\DoxyCodeLine{00057\ }
-\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797}{exo\_name}}\ :\ uint8\_t}
-\DoxyCodeLine{00059\ \ \ \ \ \{\ }
-\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a96281b8c1766326cc2f99d44f6950c67}{bilateral\_ankle}}\ =\ 1,\ }
-\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab41922a6b46722ea662e4552a5d4b304}{bilateral\_hip}}\ =\ 2,\ }
-\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3710456ad1658cc1309c7692b8734aa4}{bilateral\_hip\_ankle}}\ =\ 3,}
-\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3bf114dd56933f9ae20ee9dd4d3c7518}{left\_ankle}}\ =\ 4,}
-\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797af2dc1d3b6601076eddc1ca7c21d95706}{right\_ankle}}\ =\ 5,}
-\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a6b8b07c4e8510875f8a4f16b4793d9d5}{left\_hip}}\ =\ 6,}
-\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ae399c9207e140468d805b8172edbdfcc}{right\_hip}}\ =\ 7,}
-\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ac17cf658c012d349878487130b79c237}{left\_hip\_ankle}}\ =\ 8,}
-\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a31db331ea0e672f14056c1b72b88a8dd}{right\_hip\_ankle}}\ =\ 9,}
-\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a098f6bcd4621d373cade4e832627b4f6}{test}}\ =\ 10,}
-\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a5cc826b3e637c8ef62f52d86c2b2cbd1}{right\_knee}}\ =\ 11,}
-\DoxyCodeLine{00071\ \ \ \ \ \};}
-\DoxyCodeLine{00072\ \ \ \ \ }
-\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6ca}{exo\_side}}\ :\ uint8\_t}
-\DoxyCodeLine{00074\ \ \ \ \ \{\ }
-\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caacbf855c3d8a8c6135dab45071c3bbb9d}{bilateral}}\ =\ 1,\ }
-\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 2,\ }
-\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 3,}
-\DoxyCodeLine{00078\ \ \ \ \ \};}
-\DoxyCodeLine{00079\ \ \ \ \ }
-\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72d}{JointType}}}
-\DoxyCodeLine{00081\ \ \ \ \ \{}
-\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}}\ =\ 1,}
-\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}}\ =\ 2,}
-\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}}\ =\ 3,}
-\DoxyCodeLine{00085\ \ \ \ \ \};}
-\DoxyCodeLine{00086\ \ \ \ \ }
-\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195}{motor}}\ :\ uint8\_t}
-\DoxyCodeLine{00088\ \ \ \ \ \{\ }
-\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab3825df282b81f008b13983fb43ffb57}{not\_used}}\ =\ 1,\ }
-\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ada0259409ed9eca2da4a98106778cd1c}{AK60}}\ =\ 2,\ }
-\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a2879aa344f6f75b9b9d8c158d4cb38df}{AK80}}\ =\ 3,}
-\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195abc65f5bfaaea5c911f91590d071f73e4}{AK60\_v1\_1}}\ =\ 4,}
-\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195abd5e041b68bee9a70ece092ff287bbbb}{AK60\_v1\_1\_T}}\ =\ 5,}
-\DoxyCodeLine{00094\ \ \ \ \ \};}
-\DoxyCodeLine{00095\ \ \ \ \ }
-\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755}{gearing}}\ :\ uint8\_t}
-\DoxyCodeLine{00097\ \ \ \ \ \{\ }
-\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755adc57401fb061f3848e586dc172618055}{gearing\_1\_1}}\ =\ 1,}
-\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755aa089123f290d4c144d4a58e55e449b8b}{gearing\_2\_1}}\ =\ 2,}
-\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755acc0d2d5436cefa63a255497b7b8d62b9}{gearing\_3\_1}}\ =\ 3,}
-\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755a36720a88098f425962bd1214f3994f74}{gearing\_4\_5\_1}}\ =\ 4,}
-\DoxyCodeLine{00102\ \ \ \ \ \};}
-\DoxyCodeLine{00103\ \ \ \ \ }
-\DoxyCodeLine{00104\ \ \ \ \ }
-\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{joint\_id}}\ :\ uint8\_t}
-\DoxyCodeLine{00106\ \ \ \ \ \{}
-\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ byte\ format\ :\ [0,\ is\_left,\ !is\_left,\ unused\_joint,\ unused\_joint,\ is\_ankle,\ is\_knee,\ is\_hip]}}
-\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 0b01000000,}
-\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 0b00100000,}
-\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}}\ =\ 0b00000001,}
-\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}}\ =\ 0b00000010,}
-\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}}\ =\ 0b00000100,}
-\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a6b8b07c4e8510875f8a4f16b4793d9d5}{left\_hip}}\ =\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}},}
-\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076a600593aa93d4d9165a0480e63ab8ef92}{left\_knee}}\ =\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}},}
-\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3bf114dd56933f9ae20ee9dd4d3c7518}{left\_ankle}}\ =\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}},}
-\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ae399c9207e140468d805b8172edbdfcc}{right\_hip}}\ =\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}},}
-\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a5cc826b3e637c8ef62f52d86c2b2cbd1}{right\_knee}}\ =\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}},}
-\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797af2dc1d3b6601076eddc1ca7c21d95706}{right\_ankle}}\ =\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\mbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}},}
-\DoxyCodeLine{00122\ \ \ \ \ \};}
-\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491}{hip\_controllers}}\ :\ uint8\_t}
-\DoxyCodeLine{00125\ \ \ \ \ \{}
-\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
-\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
-\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aac997b2344542e904e25772c33171106}{heel\_toe}}\ =\ 3,}
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491af34f31b67085a4f709d3d12dc6b2b24b}{extension\_angle}}\ =\ 4,}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a9ea6e735ff6b882d7008ff5e619387d2}{franks\_collins\_hip}}\ =\ 5,}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a5e2c55e024f55cd931bd04e54da4f79f}{bang\_bang}}\ =\ 6,}
-\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a45f8827656ef42c3c2dd054b93daf0f1}{late\_stance}}\ =\ 7,}
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ad43577ad6e16315e98e2abdd86183dde}{gait\_phase}}\ =\ 8,}
-\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aacf0d09710ee2f2dd6c1124d35d8d842}{user\_defined}}\ =\ 9,}
-\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a925212d1624625aed9491413b4b7be05}{sine}}\ =\ 10,}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a3dd4bbe98cd3ce33bc3dfe91cad73dfd}{stasis}}\ =\ 11,}
-\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a800823c47b8759400d01312793445b0e}{perturbation}}\ =\ 12,}
-\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aac62cafde9aacabff464ccc7ff517b85}{parabolic}}\ =\ 13,}
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 14,}
-\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab0cbddde7837a85bf2863295f34bb397}{ptb\_general}}\ =\ 15,}
-\DoxyCodeLine{00141\ \ \ \ \ \};}
-\DoxyCodeLine{00142\ \ \ \ \ }
-\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6}{knee\_controllers}}\ :\ uint8\_t}
-\DoxyCodeLine{00144\ \ \ \ \ \{}
-\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
-\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
-\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aacf0d09710ee2f2dd6c1124d35d8d842}{user\_defined}}\ =\ 3,}
-\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a925212d1624625aed9491413b4b7be05}{sine}}\ =\ 4,}
-\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a3dd4bbe98cd3ce33bc3dfe91cad73dfd}{stasis}}\ =\ 5,}
-\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a800823c47b8759400d01312793445b0e}{perturbation}}\ =\ 6,}
-\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 7,}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6abb39f1b18f00b8847a32ad069b6dbf10}{elbow\_min\_max}}\ =\ 8,}
-\DoxyCodeLine{00153\ \ \ \ \ \};}
-\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002e}{ankle\_controllers}}\ :\ uint8\_t}
-\DoxyCodeLine{00156\ \ \ \ \ \{}
-\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,\ }
-\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,\ }
-\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eae9ba497e4231c77902ca7bb301d0651f}{pjmc}}\ =\ 3,}
-\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea9772e3e3c0fc114a950f3b532142d9d3}{zhang\_collins}}\ =\ 4,}
-\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aacf0d09710ee2f2dd6c1124d35d8d842}{user\_defined}}\ =\ 5,}
-\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a925212d1624625aed9491413b4b7be05}{sine}}\ =\ 6,}
-\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a3dd4bbe98cd3ce33bc3dfe91cad73dfd}{stasis}}\ =\ 7,}
-\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a800823c47b8759400d01312793445b0e}{perturbation}}\ =\ 8,}
-\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 9,}
-\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab0cbddde7837a85bf2863295f34bb397}{ptb\_general}}\ =\ 10,}
-\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eac836e7e9ebe90e19e16ec2a96a772ebf}{gasp}}\ =\ 11,}
-\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6abb39f1b18f00b8847a32ad069b6dbf10}{elbow\_min\_max}}\ =\ 12,}
-\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab2e0735285d4d48d43ca39b785e396c2}{calibr\_manager}}\ =\ 13,}
-\DoxyCodeLine{00170\ \ \ \ \ \};}
-\DoxyCodeLine{00171\ \ \ \ \ }
-\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542}{flip\_dir}}\ :\ uint8\_t}
-\DoxyCodeLine{00173\ \ \ \ \ \{}
-\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542aedab649646a4c3ebd9770bdfc29534b5}{neither}}\ =\ 1,\ }
-\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 2,\ }
-\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 3,}
-\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542af6cb3e816496528d4187db53bc66567f}{both}}\ =\ 4,}
-\DoxyCodeLine{00178\ \ \ \ \ \};}
-\DoxyCodeLine{00179\ \ \ \ \ }
-\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ board\_name\_idx\ =\ 0;}
-\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ board\_version\_idx\ =\ 1;}
-\DoxyCodeLine{00182\ \ \ \ \ }
-\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ battery\_idx\ =\ 2;}
-\DoxyCodeLine{00184\ \ \ \ \ }
-\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_name\_idx\ =\ 3;}
-\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_side\_idx\ =\ 4;}
-\DoxyCodeLine{00187\ \ \ \ \ }
-\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_idx\ =\ 5;}
-\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_idx\ =\ 6;}
-\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_idx\ =\ 7;}
-\DoxyCodeLine{00191\ \ \ \ \ }
-\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_gear\_idx\ =\ 8;}
-\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_gear\_idx\ =\ 9;}
-\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_gear\_idx\ =\ 10;}
-\DoxyCodeLine{00195\ \ \ \ \ }
-\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_hip\_default\_controller\_idx\ =\ 11;}
-\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_knee\_default\_controller\_idx\ =\ 12;}
-\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_ankle\_default\_controller\_idx\ =\ 13;}
-\DoxyCodeLine{00199\ \ \ \ \ }
-\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_dir\_idx\ =\ 14;}
-\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_dir\_idx\ =\ 15;}
-\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_dir\_idx\ =\ 16;}
-\DoxyCodeLine{00203\ \ \ \ \ }
-\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_motor\_dir\_idx\ =\ 17;}
-\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_motor\_dir\_idx\ =\ 18;}
-\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_motor\_dir\_idx\ =\ 19;}
-\DoxyCodeLine{00207\ \ \ \ \ }
-\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_torque\_dir\_idx\ =\ 20;}
-\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_torque\_dir\_idx\ =\ 21;}
-\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_torque\_dir\_idx\ =\ 22;}
-\DoxyCodeLine{00211\ \ \ \ \ }
-\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_angle\_dir\_idx\ =\ 23;}
-\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_angle\_dir\_idx\ =\ 24;}
-\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_angle\_dir\_idx\ =\ 25;}
-\DoxyCodeLine{00215\ \}}
-\DoxyCodeLine{00216\ }
-\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)\ }}
-\DoxyCodeLine{00218\ \textcolor{preprocessor}{\ \ \ \ \#include\ <SD.h>}}
-\DoxyCodeLine{00219\ \textcolor{preprocessor}{\ \ \ \ \#include\ <SPI.h>}}
-\DoxyCodeLine{00220\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}\mbox{\hyperlink{_ini_file_8h}{IniFile.h}}"{}}}
-\DoxyCodeLine{00221\ }
-\DoxyCodeLine{00222\ \ \ \ \ }
-\DoxyCodeLine{00223\ }
-\DoxyCodeLine{00224\ \ \ \ \ \textcolor{comment}{//\ Need\ to\ install\ ArduinoSTL\ in\ the\ library\ manager\ to\ use\ map}}
-\DoxyCodeLine{00225\ \textcolor{preprocessor}{\ \ \ \ \#include\ <map>}}
-\DoxyCodeLine{00226\ \textcolor{preprocessor}{\ \ \ \ \#include\ <string>}}
-\DoxyCodeLine{00227\ }
-\DoxyCodeLine{00228\ }
-\DoxyCodeLine{00229\ }
-\DoxyCodeLine{00230\ \ \ \ \ \textcolor{comment}{//\ The\ select\ pin\ used\ for\ the\ SD\ card}}
-\DoxyCodeLine{00231\ \textcolor{preprocessor}{\ \ \ \ \#ifndef\ SD\_SELECT}}
-\DoxyCodeLine{00232\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#define\ SD\_SELECT\ BUILTIN\_SDCARD}}
-\DoxyCodeLine{00233\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{namespaceini__config_aa95ba5150692cfd3da83f29ba9164a6a}{buffer\_length}}\ =\ 500;\ \ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{namespaceini__config_aa25bbdebc37ceb7fbc6fa9c61f2c0c7b}{key\_length}}\ =\ 25;\ \ \ \ \ \ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{namespaceini__config_a60f9158fc881549dfcc1fdddfe1aa3ad}{section\_length}}\ =\ 10;\ \ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{namespaceini__config_a94be16c85b00371eb4b36558a936c333}{number\_of\_keys}}\ =\ 71;\ \ }
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{//Reading\ the\ ini\ file\ from\ the\ SD\ card;\ 1\ is\ the\ lowest\ value\ to\ confirm\ that\ data\ is\ present\ for\ sending\ over\ SPI}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{namespace\ }\doxymbox{\hyperlink{namespaceconfig__defs}{config\_defs}}}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139be}{board\_name}}\ :\ uint8\_t}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139bea44c24108a8a891b49f03f55cfcebb7b3}{AK\_board}}\ =\ 1,}
+\DoxyCodeLine{00038\ \ \ \ \ \};}
+\DoxyCodeLine{00039\ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0}{board\_version}}\ :\ uint8\_t\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Board\ version\ options\ (zero\_five\_one\ is\ default\ recommended\ for\ AK\ Motors)}}
+\DoxyCodeLine{00041\ \ \ \ \ \{\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a5226a92dc7a02342ca2b4ca9818c0a6f}{zero\_one}}\ =\ 1,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a281573accdaf37cf6b1ca22828501227}{zero\_three}}\ =\ 2,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0ab60135936a03bc2b7f54dfd4576eb1bc}{zero\_four}}\ =\ 3,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0ab6d902b00b590e6493ab745d1ba26ba5}{zero\_five\_one}}\ =\ 4,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a1dfa1411105398afd098bc76752a463d}{zero\_six\_Maxon}}\ =\ 5,}
+\DoxyCodeLine{00047\ \ \ \ \ \};}
+\DoxyCodeLine{00048\ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0}{battery}}\ :\ uint8\_t}
+\DoxyCodeLine{00050\ \ \ \ \ \{\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a8c319f28d81d1527a9428e9a5c2195f5}{smart}}\ =\ 1,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a665c403aa19fe701b0ea7093ea4d0f45}{dumb}}\ =\ 2,}
+\DoxyCodeLine{00053\ \ \ \ \ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797}{exo\_name}}\ :\ uint8\_t\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Exo\ configuration\ options}}
+\DoxyCodeLine{00056\ \ \ \ \ \{\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a96281b8c1766326cc2f99d44f6950c67}{bilateral\_ankle}}\ =\ 1,\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab41922a6b46722ea662e4552a5d4b304}{bilateral\_hip}}\ =\ 2,\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab6e42861f2b873f60b3406ac55ccfeb2}{bilateral\_knee}}\ =\ 3,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797adabd813f52479b653b97a81896603a14}{bilateral\_elbow}}\ =\ 4,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3710456ad1658cc1309c7692b8734aa4}{bilateral\_hip\_ankle}}\ =\ 5,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a7ecef0b5ebb83ba6576ba95dfa837dd7}{bilateral\_hip\_elbow}}\ =\ 6,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797aac32cd3a7e3ed762079de701193c90b5}{bilateral\_ankle\_elbow}}\ =\ 7,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3bf114dd56933f9ae20ee9dd4d3c7518}{left\_ankle}}\ =\ 8,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797af2dc1d3b6601076eddc1ca7c21d95706}{right\_ankle}}\ =\ 9,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a6b8b07c4e8510875f8a4f16b4793d9d5}{left\_hip}}\ =\ 10,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ae399c9207e140468d805b8172edbdfcc}{right\_hip}}\ =\ 11,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a600593aa93d4d9165a0480e63ab8ef92}{left\_knee}}\ =\ 12,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a5cc826b3e637c8ef62f52d86c2b2cbd1}{right\_knee}}\ =\ 13,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a055f0beb9bb2f34271d0268d1999ef4b}{left\_elbow}}\ =\ 14,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a0a4e8c274bf2d17bc3274f491340ecd8}{right\_elbow}}\ =\ 15,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ac17cf658c012d349878487130b79c237}{left\_hip\_ankle}}\ =\ 16,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a31db331ea0e672f14056c1b72b88a8dd}{right\_hip\_ankle}}\ =\ 17,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a8eee38bfd4dad9a5aa6b4693bdb05374}{left\_hip\_elbow}}\ =\ 18,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a4f6c95ea956200d8dfef2f566002a238}{right\_hip\_elbow}}\ =\ 19,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a8bb9061b5082f8fdd3d3591bb92406d0}{left\_ankle\_elbow}}\ =\ 20,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab942ec475026fffce5de273bcace207c}{right\_ankle\_elbow}}\ =\ 21,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a098f6bcd4621d373cade4e832627b4f6}{test}}\ =\ 22,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a61d65b2925da8f69c9ba31149c482655}{bilateral\_arm}}\ =\ 23,}
+\DoxyCodeLine{00080\ \ \ \ \ \};}
+\DoxyCodeLine{00081\ \ \ \ \ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6ca}{exo\_side}}\ :\ uint8\_t\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Side\ options}}
+\DoxyCodeLine{00083\ \ \ \ \ \{\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caacbf855c3d8a8c6135dab45071c3bbb9d}{bilateral}}\ =\ 1,\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 2,\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 3,}
+\DoxyCodeLine{00087\ \ \ \ \ \};}
+\DoxyCodeLine{00088\ \ \ \ \ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72d}{JointType}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Joints\ options}}
+\DoxyCodeLine{00090\ \ \ \ \ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}}\ =\ 1,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}}\ =\ 2,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}}\ =\ 3,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72daac2b72088d4f7523be683cc5c5266213}{elbow}}\ =\ 4,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da2d4c29e2927db23111516bb16a220eed}{arm\_1}}\ =\ 5,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da4e9ea915ff69b209bbd0839a1525ea38}{arm\_2}}\ =\ 6,}
+\DoxyCodeLine{00097\ \ \ \ \ \};}
+\DoxyCodeLine{00098\ \ \ \ \ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195}{motor}}\ :\ uint8\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Motor\ options}}
+\DoxyCodeLine{00100\ \ \ \ \ \{\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab3825df282b81f008b13983fb43ffb57}{not\_used}}\ =\ 1,\ \textcolor{comment}{//The\ controller\ code\ won't\ run.\ Set\ motor\ type\ to\ NullMotor\ if\ you\ aren't\ attaching\ a\ motor.}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ada0259409ed9eca2da4a98106778cd1c}{AK60}}\ =\ 2,\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a2879aa344f6f75b9b9d8c158d4cb38df}{AK80}}\ =\ 3,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a3308cbbe97bc0047282a8471a6cd2c31}{AK60v1\_1}}\ =\ 4,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a483869ac0cd9da2d29ce63b21b03776c}{AK70}}\ =\ 5,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ad8901a7d2439601002681a1d2a6b72ee}{MaxonMotor}}\ =\ 6,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ad87dc7427176a68a34661bd9f3b81789}{NullMotor}}\ =\ 7,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab17a27f543baa0d1c54af9306d956587}{AK60v3}}\ =\ 8,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab64649df376a1f46a79968099935aaae}{AK45\_36}}\ =\ 9,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a79188d06927dc038374c497df1e6d1ae}{AK45\_10}}\ =\ 10,}
+\DoxyCodeLine{00111\ \ \ \ \ \};}
+\DoxyCodeLine{00112\ \ \ \ \ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755}{gearing}}\ :\ uint8\_t\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Gearing\ ratio\ options}}
+\DoxyCodeLine{00114\ \ \ \ \ \{\ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755adc57401fb061f3848e586dc172618055}{gearing\_1\_1}}\ =\ 1,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755aa089123f290d4c144d4a58e55e449b8b}{gearing\_2\_1}}\ =\ 2,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755acc0d2d5436cefa63a255497b7b8d62b9}{gearing\_3\_1}}\ =\ 3,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755a36720a88098f425962bd1214f3994f74}{gearing\_4\_5\_1}}\ =\ 4,}
+\DoxyCodeLine{00119\ \ \ \ \ \};}
+\DoxyCodeLine{00120\ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076}{joint\_id}}\ :\ uint8\_t\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Joint\ IDs}}
+\DoxyCodeLine{00123\ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Byte\ format\ :\ [arm\_2,\ is\_left,\ !is\_left,\ arm\_1,\ is\_elbow,\ is\_ankle,\ is\_knee,\ is\_hip]}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 0b01000000,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 0b00100000,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}}\ =\ 0b00000001,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}}\ =\ 0b00000010,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}}\ =\ 0b00000100,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72daac2b72088d4f7523be683cc5c5266213}{elbow}}\ =\ 0b00001000,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da2d4c29e2927db23111516bb16a220eed}{arm\_1}}\ =\ 0b00010000,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da4e9ea915ff69b209bbd0839a1525ea38}{arm\_2}}\ =\ 0b10000000,}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a6b8b07c4e8510875f8a4f16b4793d9d5}{left\_hip}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 65}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a600593aa93d4d9165a0480e63ab8ef92}{left\_knee}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 66}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3bf114dd56933f9ae20ee9dd4d3c7518}{left\_ankle}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}},\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 68}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a055f0beb9bb2f34271d0268d1999ef4b}{left\_elbow}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72daac2b72088d4f7523be683cc5c5266213}{elbow}},\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 72}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076a41ac97fc0fc3d59dc7d6eab6e866e014}{left\_arm\_1}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da2d4c29e2927db23111516bb16a220eed}{arm\_1}},\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 80}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076a7a4e44b43f30c8a170df632fa0580cfe}{left\_arm\_2}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da4e9ea915ff69b209bbd0839a1525ea38}{arm\_2}},\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 192}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Unused\ Joint\ ID:\ 96}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ae399c9207e140468d805b8172edbdfcc}{right\_hip}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da997f6b054d31252dfe32ef38f9dddb2a}{hip}},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 33}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a5cc826b3e637c8ef62f52d86c2b2cbd1}{right\_knee}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da22b84b6e35ace0cd87f805ecf020ff36}{knee}},\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 34}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797af2dc1d3b6601076eddc1ca7c21d95706}{right\_ankle}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da12a0852b1a5f77f797900387fca77bf4}{ankle}},\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 36}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a0a4e8c274bf2d17bc3274f491340ecd8}{right\_elbow}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72daac2b72088d4f7523be683cc5c5266213}{elbow}},\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 40}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076a147f8985adf7e96603dded046ef794d2}{right\_arm\_1}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da2d4c29e2927db23111516bb16a220eed}{arm\_1}},\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 48}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a2d58dbc79a5104d434847439a5d6f076a0969abbbb8f1567b20bb3bbe2f3590e8}{right\_arm\_2}}\ =\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}|\doxymbox{\hyperlink{namespaceconfig__defs_a8b1d8e3fa0b565044bbffccabea7a72da4e9ea915ff69b209bbd0839a1525ea38}{arm\_2}},\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Set\ Motor\ ID\ to:\ 160}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//Unused\ Joint\ ID:\ 56}}
+\DoxyCodeLine{00150\ \ \ \ \ \};}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491}{hip\_controllers}}\ :\ uint8\_t\ \ \ \textcolor{comment}{//Hip\ Controller\ IDs}}
+\DoxyCodeLine{00153\ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a9ea6e735ff6b882d7008ff5e619387d2}{franks\_collins\_hip}}\ =\ 3,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 4,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a80be224388ca185662472f28f16a73a5}{chirp}}\ =\ 5,}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a2764ca9d34e90313978d044f27ae433b}{step}}\ =\ 6,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a378030c4e296b0485ae8ab4166a00d4b}{phmc}}\ =\ 7,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab2e0735285d4d48d43ca39b785e396c2}{calibr\_manager}}\ =\ 8,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab1f1bf466909fa829f364cb0ffeac2db}{spline}}\ =\ 9,}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ae93f994f01c537c4e2f7d8528c3eb5e9}{Count}}\ \textcolor{comment}{//Leave\ this\ at\ the\ end\ of\ the\ enum\ class.\ Count\ can\ be\ used\ to\ get\ the\ total\ number\ of\ controllers\ defined\ for\ this\ joint.}}
+\DoxyCodeLine{00165\ \ \ \ \ \};}
+\DoxyCodeLine{00166\ \ \ \ \ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6}{knee\_controllers}}\ :\ uint8\_t\ \ \ \textcolor{comment}{//Knee\ Controller\ IDs}}
+\DoxyCodeLine{00168\ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 3,}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a80be224388ca185662472f28f16a73a5}{chirp}}\ =\ 4,}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a2764ca9d34e90313978d044f27ae433b}{step}}\ =\ 5,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab2e0735285d4d48d43ca39b785e396c2}{calibr\_manager}}\ =\ 6,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ae93f994f01c537c4e2f7d8528c3eb5e9}{Count}}\ \textcolor{comment}{//Leave\ this\ at\ the\ end\ of\ the\ enum\ class.\ Count\ can\ be\ used\ to\ get\ the\ total\ number\ of\ controllers\ defined\ for\ this\ joint.}}
+\DoxyCodeLine{00177\ \ \ \ \ \};}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002e}{ankle\_controllers}}\ :\ uint8\_t\ \ \textcolor{comment}{//Ankle\ Controller\ IDs}}
+\DoxyCodeLine{00180\ \ \ \ \ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,\ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eae9ba497e4231c77902ca7bb301d0651f}{pjmc}}\ =\ 3,}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea9772e3e3c0fc114a950f3b532142d9d3}{zhang\_collins}}\ =\ 4,}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 5,}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab2b2e7238c3749fc72530af2c55eca8d}{trec}}\ =\ 6,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab2e0735285d4d48d43ca39b785e396c2}{calibr\_manager}}\ =\ 7,}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a80be224388ca185662472f28f16a73a5}{chirp}}\ =\ 8,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a2764ca9d34e90313978d044f27ae433b}{step}}\ =\ 9,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea8830f1402798f12b85edc1606e4117d2}{spv2}}\ =\ 10,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea271a48f2d554083e579a77f7f706dceb}{pjmc\_plus}}\ =\ 11,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab1f1bf466909fa829f364cb0ffeac2db}{spline}}\ =\ 12,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ae93f994f01c537c4e2f7d8528c3eb5e9}{Count}}\ \textcolor{comment}{//Leave\ this\ at\ the\ end\ of\ the\ enum\ class.\ Count\ can\ be\ used\ to\ get\ the\ total\ number\ of\ controllers\ defined\ for\ this\ joint.}}
+\DoxyCodeLine{00195\ \ \ \ \ \};}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970}{elbow\_controllers}}\ :\ uint8\_t\ \ \textcolor{comment}{//Elbow\ Controller\ IDs}}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970abb39f1b18f00b8847a32ad069b6dbf10}{elbow\_min\_max}}\ =\ 3,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab2e0735285d4d48d43ca39b785e396c2}{calibr\_manager}}\ =\ 4,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a80be224388ca185662472f28f16a73a5}{chirp}}\ =\ 5,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a2764ca9d34e90313978d044f27ae433b}{step}}\ =\ 6,}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ae93f994f01c537c4e2f7d8528c3eb5e9}{Count}}\ \textcolor{comment}{//Leave\ this\ at\ the\ end\ of\ the\ enum\ class.\ Count\ can\ be\ used\ to\ get\ the\ total\ number\ of\ controllers\ defined\ for\ this\ joint.}}
+\DoxyCodeLine{00207\ \ \ \ \ \};}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a2a080ab4e5ebc154b205c21e069e051f}{arm\_1\_controllers}}\ :\ uint8\_t\ \ \textcolor{comment}{//Arm\ 1\ Controller\ IDs}}
+\DoxyCodeLine{00210\ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 3,}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab1f1bf466909fa829f364cb0ffeac2db}{spline}}\ =\ 4,}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ae93f994f01c537c4e2f7d8528c3eb5e9}{Count}}\ \textcolor{comment}{//Leave\ this\ at\ the\ end\ of\ the\ enum\ class.\ Count\ can\ be\ used\ to\ get\ the\ total\ number\ of\ controllers\ defined\ for\ this\ joint.}}
+\DoxyCodeLine{00217\ \ \ \ \ \};}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a07ca5503928b458a67b25d1a103ac3cc}{arm\_2\_controllers}}\ :\ uint8\_t\ \ \textcolor{comment}{//Arm\ 2\ Controller\ IDs}}
+\DoxyCodeLine{00220\ \ \ \ \ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{disabled}}\ =\ 1,}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{zero\_torque}}\ =\ 2,}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{constant\_torque}}\ =\ 3,}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab1f1bf466909fa829f364cb0ffeac2db}{spline}}\ =\ 4,}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ae93f994f01c537c4e2f7d8528c3eb5e9}{Count}}\ \textcolor{comment}{//Leave\ this\ at\ the\ end\ of\ the\ enum\ class.\ Count\ can\ be\ used\ to\ get\ the\ total\ number\ of\ controllers\ defined\ for\ this\ joint.}}
+\DoxyCodeLine{00227\ \ \ \ \ \};}
+\DoxyCodeLine{00228\ \ \ \ \ }
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_af00e73caf979d3d8037b93f2e2fda507}{use\_torque\_sensor}}\ :\ uint8\_t\ \ \textcolor{comment}{//Option\ to\ use\ or\ not\ use\ torque\ sensor\ for\ low-\/level\ control}}
+\DoxyCodeLine{00230\ \ \ \ \ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_af00e73caf979d3d8037b93f2e2fda507a7fa3b767c460b54a2be4d49030b349c7}{no}}\ =\ 1,\ }
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_af00e73caf979d3d8037b93f2e2fda507aa6105c0a611b41b08f1209506350279e}{yes}}\ =\ 2,\ }
+\DoxyCodeLine{00233\ \ \ \ \ \};}
 \DoxyCodeLine{00234\ }
-\DoxyCodeLine{00235\ \ \ \ \ }
-\DoxyCodeLine{00236\ }
-\DoxyCodeLine{00237\ }
-\DoxyCodeLine{00238\ }
-\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordtype}{void}\ ini\_parser(uint8\_t*\ config\_to\_send);\ \textcolor{comment}{//\ uses\ default\ filename}}
-\DoxyCodeLine{00245\ \ \ \ \ }
-\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordtype}{void}\ ini\_parser(\textcolor{keywordtype}{char}*\ filename,\ uint8\_t*\ config\_to\_send);\ \textcolor{comment}{//uses\ sent\ filename}}
-\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{//\ TODO:\ create\ non-\/verbose\ version\ of\ get\ section\ keys.}}
-\DoxyCodeLine{00254\ \ \ \ \ }
-\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{void}\ get\_section\_key(\mbox{\hyperlink{class_ini_file}{IniFile}}\ ini,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ section,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{char}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_len);\ \ }
-\DoxyCodeLine{00264\ \ \ \ \ }
-\DoxyCodeLine{00265\ \ \ \ \ \textcolor{comment}{/*}}
-\DoxyCodeLine{00266\ \textcolor{comment}{\ \ \ \ \ *\ ini\_print\_error\_message(uint8\_t\ e,\ bool\ eol\ =\ true)}}
-\DoxyCodeLine{00267\ \textcolor{comment}{\ \ \ \ \ *\ }}
-\DoxyCodeLine{00268\ \textcolor{comment}{\ \ \ \ \ *\ Prints\ the\ error\ messages\ of\ IniFile\ object.}}
-\DoxyCodeLine{00269\ \textcolor{comment}{\ \ \ \ \ *\ e\ is\ the\ error\ message,\ and\ eol\ true\ means\ a\ println\ will\ be\ used\ at\ the\ end.}}
-\DoxyCodeLine{00270\ \textcolor{comment}{\ \ \ \ \ *\ }}
-\DoxyCodeLine{00271\ \textcolor{comment}{\ \ \ \ \ *\ Requires\ that\ Serial\ is\ defined.}}
-\DoxyCodeLine{00272\ \textcolor{comment}{\ \ \ \ \ */}}
-\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{void}\ ini\_print\_error\_message(uint8\_t\ e,\ \textcolor{keywordtype}{bool}\ eol\ =\ \textcolor{keyword}{true});\ }
-\DoxyCodeLine{00282\ }
-\DoxyCodeLine{00283\ }
-\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keyword}{namespace\ }config\_map}
-\DoxyCodeLine{00290\ \ \ \ \ \{\ \ }
-\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00292\ }
-\DoxyCodeLine{00293\ }
-\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ define\ our\ own\ type\ so\ we\ don't\ have\ to\ type\ so\ much}}
-\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ std::map<std::string,\ uint8\_t>\ IniKeyCode;}
-\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139be}{board\_name}}\ =\ \{\{\textcolor{stringliteral}{"{}AK\_Board"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139bea44c24108a8a891b49f03f55cfcebb7b3}{config\_defs::board\_name::AK\_board}}\},\};}
-\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0}{board\_version}}\ =\ }
-\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.1"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a5226a92dc7a02342ca2b4ca9818c0a6f}{config\_defs::board\_version::zero\_one}}\},}
-\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.3"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a281573accdaf37cf6b1ca22828501227}{config\_defs::board\_version::zero\_three}}\},}
-\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.5.1"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0ab6d902b00b590e6493ab745d1ba26ba5}{config\_defs::board\_version::zero\_five\_one}}\},}
-\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0}{battery}}\ =\ }
-\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}smart"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a8c319f28d81d1527a9428e9a5c2195f5}{config\_defs::battery::smart}}\},}
-\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}dumb"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a665c403aa19fe701b0ea7093ea4d0f45}{config\_defs::battery::dumb}}\},\ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00310\ }
-\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797}{exo\_name}}\ }
-\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralAnkle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a96281b8c1766326cc2f99d44f6950c67}{config\_defs::exo\_name::bilateral\_ankle}}\},\ }
-\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralHip"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab41922a6b46722ea662e4552a5d4b304}{config\_defs::exo\_name::bilateral\_hip}}\},\ }
-\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralHipAnkle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3710456ad1658cc1309c7692b8734aa4}{config\_defs::exo\_name::bilateral\_hip\_ankle}}\},}
-\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftAnkle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3bf114dd56933f9ae20ee9dd4d3c7518}{config\_defs::exo\_name::left\_ankle}}\},}
-\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightAnkle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797af2dc1d3b6601076eddc1ca7c21d95706}{config\_defs::exo\_name::right\_ankle}}\},}
-\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftHip"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a6b8b07c4e8510875f8a4f16b4793d9d5}{config\_defs::exo\_name::left\_hip}}\},}
-\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightHip"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ae399c9207e140468d805b8172edbdfcc}{config\_defs::exo\_name::right\_hip}}\},}
-\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftHipAnkle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ac17cf658c012d349878487130b79c237}{config\_defs::exo\_name::left\_hip\_ankle}}\},}
-\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightHipAnkle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a31db331ea0e672f14056c1b72b88a8dd}{config\_defs::exo\_name::right\_hip\_ankle}}\},}
-\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}test"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a098f6bcd4621d373cade4e832627b4f6}{config\_defs::exo\_name::test}}\},}
-\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightKnee"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a5cc826b3e637c8ef62f52d86c2b2cbd1}{config\_defs::exo\_name::right\_knee}}\},}
-\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6ca}{exo\_side}}\ }
-\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateral"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caacbf855c3d8a8c6135dab45071c3bbb9d}{config\_defs::exo\_side::bilateral}}\},\ }
-\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}left"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{config\_defs::exo\_side::left}}\},\ }
-\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}right"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{config\_defs::exo\_side::right}}\},}
-\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195}{motor}}\ }
-\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab3825df282b81f008b13983fb43ffb57}{config\_defs::motor::not\_used}}\},\ }
-\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK60"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ada0259409ed9eca2da4a98106778cd1c}{config\_defs::motor::AK60}}\},\ }
-\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK80"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a2879aa344f6f75b9b9d8c158d4cb38df}{config\_defs::motor::AK80}}\},}
-\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK60v1.1"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195abc65f5bfaaea5c911f91590d071f73e4}{config\_defs::motor::AK60\_v1\_1}}\},}
-\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK60v1.1T"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195abd5e041b68bee9a70ece092ff287bbbb}{config\_defs::motor::AK60\_v1\_1\_T}}\},}
-\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755}{gearing}}\ }
-\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}1"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755adc57401fb061f3848e586dc172618055}{config\_defs::gearing::gearing\_1\_1}}\},\ }
-\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}2"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755aa089123f290d4c144d4a58e55e449b8b}{config\_defs::gearing::gearing\_2\_1}}\},\ }
-\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}3"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755acc0d2d5436cefa63a255497b7b8d62b9}{config\_defs::gearing::gearing\_3\_1}}\},\ }
-\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}4.5"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755a36720a88098f425962bd1214f3994f74}{config\_defs::gearing::gearing\_4\_5\_1}}\},}
-\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491}{hip\_controllers}}\ }
-\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{config\_defs::hip\_controllers::disabled}}\},\ }
-\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::hip\_controllers::zero\_torque}}\},\ }
-\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}heelToe"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aac997b2344542e904e25772c33171106}{config\_defs::hip\_controllers::heel\_toe}}\},}
-\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}extensionAngle"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491af34f31b67085a4f709d3d12dc6b2b24b}{config\_defs::hip\_controllers::extension\_angle}}\},}
-\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}franksCollinsHip"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a9ea6e735ff6b882d7008ff5e619387d2}{config\_defs::hip\_controllers::franks\_collins\_hip}}\},}
-\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bangBang"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a5e2c55e024f55cd931bd04e54da4f79f}{config\_defs::hip\_controllers::bang\_bang}}\},}
-\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}lateStance"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a45f8827656ef42c3c2dd054b93daf0f1}{config\_defs::hip\_controllers::late\_stance}}\},}
-\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}gaitPhase"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ad43577ad6e16315e98e2abdd86183dde}{config\_defs::hip\_controllers::gait\_phase}}\},}
-\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}userDefined"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aacf0d09710ee2f2dd6c1124d35d8d842}{config\_defs::hip\_controllers::user\_defined}}\},}
-\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}sine"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a925212d1624625aed9491413b4b7be05}{config\_defs::hip\_controllers::sine}}\},}
-\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}stasis"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a3dd4bbe98cd3ce33bc3dfe91cad73dfd}{config\_defs::hip\_controllers::stasis}}\},}
-\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}perturbation"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a800823c47b8759400d01312793445b0e}{config\_defs::hip\_controllers::perturbation}}\},}
-\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}parabolic"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aac62cafde9aacabff464ccc7ff517b85}{config\_defs::hip\_controllers::parabolic}}\},}
-\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{config\_defs::hip\_controllers::constant\_torque}}\},}
-\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}ptbGeneral"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab0cbddde7837a85bf2863295f34bb397}{config\_defs::hip\_controllers::ptb\_general}}\},}
-\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6}{knee\_controllers}}\ }
-\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a075ae3d2fc31640504f814f60e5ef713}{config\_defs::knee\_controllers::disabled}}\},\ }
-\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::knee\_controllers::zero\_torque}}\},\ }
-\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}userDefined"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6aacf0d09710ee2f2dd6c1124d35d8d842}{config\_defs::knee\_controllers::user\_defined}}\},}
-\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}sine"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a925212d1624625aed9491413b4b7be05}{config\_defs::knee\_controllers::sine}}\},}
-\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}stasis"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a3dd4bbe98cd3ce33bc3dfe91cad73dfd}{config\_defs::knee\_controllers::stasis}}\},}
-\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}perturbation"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a800823c47b8759400d01312793445b0e}{config\_defs::knee\_controllers::perturbation}}\},}
-\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6aa16f70bf830d4a75f41fb4c825120d67}{config\_defs::knee\_controllers::constant\_torque}}\},}
-\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}elbowMinMax"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6abb39f1b18f00b8847a32ad069b6dbf10}{config\_defs::knee\_controllers::elbow\_min\_max}}\},}
-\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002e}{ankle\_controllers}}\ }
-\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea075ae3d2fc31640504f814f60e5ef713}{config\_defs::ankle\_controllers::disabled}}\},\ }
-\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::ankle\_controllers::zero\_torque}}\},\ }
-\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}PJMC"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eae9ba497e4231c77902ca7bb301d0651f}{config\_defs::ankle\_controllers::pjmc}}\},}
-\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zhangCollins"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea9772e3e3c0fc114a950f3b532142d9d3}{config\_defs::ankle\_controllers::zhang\_collins}}\},}
-\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}userDefined"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eaacf0d09710ee2f2dd6c1124d35d8d842}{config\_defs::ankle\_controllers::user\_defined}}\},}
-\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}sine"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea925212d1624625aed9491413b4b7be05}{config\_defs::ankle\_controllers::sine}}\},}
-\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}stasis"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea3dd4bbe98cd3ce33bc3dfe91cad73dfd}{config\_defs::ankle\_controllers::stasis}}\},}
-\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}perturbation"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea800823c47b8759400d01312793445b0e}{config\_defs::ankle\_controllers::perturbation}}\},}
-\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eaa16f70bf830d4a75f41fb4c825120d67}{config\_defs::ankle\_controllers::constant\_torque}}\},}
-\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}ptbGeneral"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab0cbddde7837a85bf2863295f34bb397}{config\_defs::ankle\_controllers::ptb\_general}}\},}
-\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}GAsP"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eac836e7e9ebe90e19e16ec2a96a772ebf}{config\_defs::ankle\_controllers::gasp}}\},}
-\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}elbowMinMax"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eabb39f1b18f00b8847a32ad069b6dbf10}{config\_defs::ankle\_controllers::elbow\_min\_max}}\},}
-\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}calibrManager"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab2e0735285d4d48d43ca39b785e396c2}{config\_defs::ankle\_controllers::calibr\_manager}}\},}
-\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \};\ \ }
-\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542}{flip\_dir}}\ }
-\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \{\ }
-\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542aedab649646a4c3ebd9770bdfc29534b5}{config\_defs::flip\_dir::neither}}\},\ }
-\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}left"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542a811882fecd5c7618d7099ebbd39ea254}{config\_defs::flip\_dir::left}}\},\ }
-\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}right"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542a7c4f29407893c334a6cb7a87bf045c0d}{config\_defs::flip\_dir::right}}\},}
-\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}both"{}},\ (uint8\_t)\mbox{\hyperlink{namespaceconfig__defs_a41b4816a6d367a50f5188a4505f89542af6cb3e816496528d4187db53bc66567f}{config\_defs::flip\_dir::both}}\},}
-\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \};\ }
-\DoxyCodeLine{00407\ \ \ \ \ \};}
-\DoxyCodeLine{00408\ }
-\DoxyCodeLine{00409\ }
-\DoxyCodeLine{00410\ }
-\DoxyCodeLine{00411\ }
-\DoxyCodeLine{00415\ \ \ \ \ \textcolor{keyword}{struct\ }ConfigData\{}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8e}{flip\_motor\_dir}}\ :\ uint8\_t\ \ \ \ \ \textcolor{comment}{//Flip\ direction\ of\ motor,\ can\ be\ used\ to\ help\ determine\ which\ is\ positive\ in\ controller}}
+\DoxyCodeLine{00236\ \ \ \ \ \{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaedab649646a4c3ebd9770bdfc29534b5}{neither}}\ =\ 1,}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 2,}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 3,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaf6cb3e816496528d4187db53bc66567f}{both}}\ =\ 4,}
+\DoxyCodeLine{00241\ \ \ \ \ \};}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a7593043f9ee5d3045665fe44176c90c6}{flip\_torque\_dir}}\ :\ uint8\_t\ \ \ \ \textcolor{comment}{//Flip\ direction\ for\ torque,\ important\ to\ align\ with\ motor\ directions}}
+\DoxyCodeLine{00244\ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaedab649646a4c3ebd9770bdfc29534b5}{neither}}\ =\ 1,}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 2,}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 3,}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaf6cb3e816496528d4187db53bc66567f}{both}}\ =\ 4,}
+\DoxyCodeLine{00249\ \ \ \ \ \};}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \doxymbox{\hyperlink{namespaceconfig__defs_a1cce9ddcdcbf92adac512d75fd2c747b}{flip\_angle\_dir}}\ :\ uint8\_t\ \ \ \ \ \textcolor{comment}{//Flip\ direciton\ for\ angle\ sensors}}
+\DoxyCodeLine{00252\ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaedab649646a4c3ebd9770bdfc29534b5}{neither}}\ =\ 1,}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{left}}\ =\ 2,}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{right}}\ =\ 3,}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaf6cb3e816496528d4187db53bc66567f}{both}}\ =\ 4,}
+\DoxyCodeLine{00257\ \ \ \ \ \};}
+\DoxyCodeLine{00258\ \ \ \ \ }
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ board\_name\_idx\ =\ 0;}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ board\_version\_idx\ =\ 1;}
+\DoxyCodeLine{00261\ \ \ \ \ }
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ battery\_idx\ =\ 2;}
+\DoxyCodeLine{00263\ \ \ \ \ }
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_name\_idx\ =\ 3;}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_side\_idx\ =\ 4;}
+\DoxyCodeLine{00266\ \ \ \ \ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_idx\ =\ 5;}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_idx\ =\ 6;}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_idx\ =\ 7;}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elbow\_idx\ =\ 8;}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_1\_idx\ =\ 9;}
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_2\_idx\ =\ 10;}
+\DoxyCodeLine{00274\ \ \ \ \ }
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_gear\_idx\ =\ 11;}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_gear\_idx\ =\ 12;}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_gear\_idx\ =\ 13;}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elbow\_gear\_idx\ =\ 14;}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_1\_gear\_idx\ =\ 15;}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_2\_gear\_idx\ =\ 16;}
+\DoxyCodeLine{00281\ \ \ \ \ }
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_hip\_default\_controller\_idx\ =\ 17;}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_knee\_default\_controller\_idx\ =\ 18;}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_ankle\_default\_controller\_idx\ =\ 19;}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_elbow\_default\_controller\_idx\ =\ 20;}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_arm\_1\_default\_controller\_idx\ =\ 21;}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ exo\_arm\_2\_default\_controller\_idx\ =\ 22;}
+\DoxyCodeLine{00288\ \ \ \ \ }
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_use\_torque\_sensor\_idx\ =\ 23;}
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_use\_torque\_sensor\_idx\ =\ 24;}
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_use\_torque\_sensor\_idx\ =\ 25;}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elbow\_use\_torque\_sensor\_idx\ =\ 26;}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_1\_use\_torque\_sensor\_idx\ =\ 27;}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_2\_use\_torque\_sensor\_idx\ =\ 28;}
+\DoxyCodeLine{00295\ \ \ \ \ }
+\DoxyCodeLine{00296\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_motor\_dir\_idx\ =\ 29;}
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_motor\_dir\_idx\ =\ 30;}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_motor\_dir\_idx\ =\ 31;}
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elbow\_flip\_motor\_dir\_idx\ =\ 32;}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_1\_flip\_motor\_dir\_idx\ =\ 33;}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_2\_flip\_motor\_dir\_idx\ =\ 34;}
+\DoxyCodeLine{00302\ \ \ \ \ }
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_torque\_dir\_idx\ =\ 35;}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_torque\_dir\_idx\ =\ 36;}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_torque\_dir\_idx\ =\ 37;}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elbow\_flip\_torque\_dir\_idx\ =\ 38;}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_1\_flip\_torque\_dir\_idx\ =\ 39;}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_2\_flip\_torque\_dir\_idx\ =\ 40;}
+\DoxyCodeLine{00309\ \ \ \ \ }
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ hip\_flip\_angle\_dir\_idx\ =\ 41;}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ knee\_flip\_angle\_dir\_idx\ =\ 42;}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ankle\_flip\_angle\_dir\_idx\ =\ 43;}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elbow\_flip\_angle\_dir\_idx\ =\ 44;}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_1\_flip\_angle\_dir\_idx\ =\ 45;}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ arm\_2\_flip\_angle\_dir\_idx\ =\ 46;}
+\DoxyCodeLine{00316\ \ \ \ \ }
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_hip\_RoM\_idx\ =\ 47;}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_hip\_RoM\_idx\ =\ 48;}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_knee\_RoM\_idx\ =\ 49;}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_knee\_RoM\_idx\ =\ 50;}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_ankle\_RoM\_idx\ =\ 51;}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_ankle\_RoM\_idx\ =\ 52;}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_elbow\_RoM\_idx\ =\ 53;}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_elbow\_RoM\_idx\ =\ 54;}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_arm\_1\_RoM\_idx\ =\ 55;}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_arm\_1\_RoM\_idx\ =\ 56;}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_arm\_2\_RoM\_idx\ =\ 57;}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_arm\_2\_RoM\_idx\ =\ 58;}
+\DoxyCodeLine{00329\ \ \ \ \ }
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_hip\_torque\_offset\_idx\ =\ 59;}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_hip\_torque\_offset\_idx\ =\ 60;}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_knee\_torque\_offset\_idx\ =\ 61;}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_knee\_torque\_offset\_idx\ =\ 62;}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_ankle\_torque\_offset\_idx\ =\ 63;}
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_ankle\_torque\_offset\_idx\ =\ 64;}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_elbow\_torque\_offset\_idx\ =\ 65;}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_elbow\_torque\_offset\_idx\ =\ 66;}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_arm\_1\_torque\_offset\_idx\ =\ 67;}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_arm\_1\_torque\_offset\_idx\ =\ 68;}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left\_arm\_2\_torque\_offset\_idx\ =\ 69;}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right\_arm\_2\_torque\_offset\_idx\ =\ 70;}
+\DoxyCodeLine{00342\ \}}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{preprocessor}{\#if\ defined(ARDUINO\_TEENSY36)\ \ ||\ defined(ARDUINO\_TEENSY41)\ }}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\ \ \ \ \#include\ <SD.h>}}
+\DoxyCodeLine{00346\ \textcolor{preprocessor}{\ \ \ \ \#include\ <SPI.h>}}
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}\doxymbox{\hyperlink{_ini_file_8h}{IniFile.h}}"{}}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{comment}{//Need\ to\ install\ ArduinoSTL\ in\ the\ library\ manager\ to\ use\ map}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\ \ \ \ \#include\ <map>}}
+\DoxyCodeLine{00351\ \textcolor{preprocessor}{\ \ \ \ \#include\ <string>}}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{comment}{//The\ select\ pin\ used\ for\ the\ SD\ card}}
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\ \ \ \ \#ifndef\ SD\_SELECT}}
+\DoxyCodeLine{00355\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#define\ SD\_SELECT\ BUILTIN\_SDCARD}}
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00363\ \ \ \ \ \textcolor{keywordtype}{void}\ ini\_parser(uint8\_t*\ config\_to\_send);\ \textcolor{comment}{//Uses\ default\ filename}}
+\DoxyCodeLine{00364\ \ \ \ \ }
+\DoxyCodeLine{00371\ \ \ \ \ \textcolor{keywordtype}{void}\ ini\_parser(\textcolor{keywordtype}{char}*\ filename,\ uint8\_t*\ config\_to\_send);\ \textcolor{comment}{//uses\ sent\ filename}}
+\DoxyCodeLine{00372\ \ \ \ \ }
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keywordtype}{void}\ get\_section\_key(\doxymbox{\hyperlink{class_ini_file}{IniFile}}\ ini,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ section,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{char}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_len);\ \ }
+\DoxyCodeLine{00382\ \ \ \ \ }
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keywordtype}{void}\ ini\_print\_error\_message(uint8\_t\ e,\ \textcolor{keywordtype}{bool}\ eol\ =\ \textcolor{keyword}{true});\ }
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00398\ \ \ \ \ \textcolor{keyword}{namespace\ }config\_map}
+\DoxyCodeLine{00399\ \ \ \ \ \{\ \ }
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Define\ our\ own\ type\ so\ we\ don't\ have\ to\ type\ so\ much}}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typedef}\ std::map<std::string,\ uint8\_t>\ IniKeyCode;}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139be}{board\_name}}\ =\ }
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK\_Board"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139bea44c24108a8a891b49f03f55cfcebb7b3}{config\_defs::board\_name::AK\_board}}\},}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0}{board\_version}}\ =\ }
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.1"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a5226a92dc7a02342ca2b4ca9818c0a6f}{config\_defs::board\_version::zero\_one}}\},}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.3"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a281573accdaf37cf6b1ca22828501227}{config\_defs::board\_version::zero\_three}}\},}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.5.1"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0ab6d902b00b590e6493ab745d1ba26ba5}{config\_defs::board\_version::zero\_five\_one}}\},}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0.6"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0a1dfa1411105398afd098bc76752a463d}{config\_defs::board\_version::zero\_six\_Maxon}}\},\ \ \ \textcolor{comment}{//Note:\ This\ works\ for\ board\ version\ 0.7\ as\ well,\ hence\ lack\ of\ specific\ version\ for\ it}}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \};}
 \DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139be}{board\_name}};}
-\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0}{board\_version}};}
-\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0}{battery}};}
-\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797}{exo\_name}};}
-\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ std::string\ exo\_sides;}
-\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ std::string\ exo\_hip;}
-\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ std::string\ exo\_knee;}
-\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ std::string\ exo\_ankle;}
-\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ std::string\ hip\_gearing;}
-\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ std::string\ knee\_gearing;}
-\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ std::string\ ankle\_gearing;}
-\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ std::string\ exo\_hip\_default\_controller;}
-\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ std::string\ exo\_knee\_default\_controller;}
-\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ std::string\ exo\_ankle\_default\_controller;}
-\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_dir;}
-\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_dir;}
-\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_dir;}
-\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_motor\_dir;}
-\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_motor\_dir;}
-\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_motor\_dir;}
-\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_torque\_dir;}
-\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_torque\_dir;}
-\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_torque\_dir;}
-\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_angle\_dir;}
-\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_angle\_dir;}
-\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_angle\_dir;}
-\DoxyCodeLine{00452\ \ \ \ \ \};}
-\DoxyCodeLine{00453\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00454\ }
-\DoxyCodeLine{00455\ }
-\DoxyCodeLine{00456\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0}{battery}}\ =\ }
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}smart"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a8c319f28d81d1527a9428e9a5c2195f5}{config\_defs::battery::smart}}\},}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}dumb"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0a665c403aa19fe701b0ea7093ea4d0f45}{config\_defs::battery::dumb}}\},\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797}{exo\_name}}\ }
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Ankle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a96281b8c1766326cc2f99d44f6950c67}{config\_defs::exo\_name::bilateral\_ankle}}\},}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Hip"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab41922a6b46722ea662e4552a5d4b304}{config\_defs::exo\_name::bilateral\_hip}}\},}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Knee"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab6e42861f2b873f60b3406ac55ccfeb2}{config\_defs::exo\_name::bilateral\_knee}}\},}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Elbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797adabd813f52479b653b97a81896603a14}{config\_defs::exo\_name::bilateral\_elbow}}\},}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}HipAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3710456ad1658cc1309c7692b8734aa4}{config\_defs::exo\_name::bilateral\_hip\_ankle}}\},}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}HipElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a7ecef0b5ebb83ba6576ba95dfa837dd7}{config\_defs::exo\_name::bilateral\_hip\_elbow}}\},}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AnkleElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797aac32cd3a7e3ed762079de701193c90b5}{config\_defs::exo\_name::bilateral\_ankle\_elbow}}\},}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a96281b8c1766326cc2f99d44f6950c67}{config\_defs::exo\_name::bilateral\_ankle}}\},\ }
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralHip"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab41922a6b46722ea662e4552a5d4b304}{config\_defs::exo\_name::bilateral\_hip}}\},}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralKnee"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab6e42861f2b873f60b3406ac55ccfeb2}{config\_defs::exo\_name::bilateral\_knee}}\},}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797adabd813f52479b653b97a81896603a14}{config\_defs::exo\_name::bilateral\_elbow}}\},}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralHipAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3710456ad1658cc1309c7692b8734aa4}{config\_defs::exo\_name::bilateral\_hip\_ankle}}\},}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralHipElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a7ecef0b5ebb83ba6576ba95dfa837dd7}{config\_defs::exo\_name::bilateral\_hip\_elbow}}\},}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralAnkleElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797aac32cd3a7e3ed762079de701193c90b5}{config\_defs::exo\_name::bilateral\_ankle\_elbow}}\},}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a3bf114dd56933f9ae20ee9dd4d3c7518}{config\_defs::exo\_name::left\_ankle}}\},}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797af2dc1d3b6601076eddc1ca7c21d95706}{config\_defs::exo\_name::right\_ankle}}\},}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftHip"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a6b8b07c4e8510875f8a4f16b4793d9d5}{config\_defs::exo\_name::left\_hip}}\},}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightHip"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ae399c9207e140468d805b8172edbdfcc}{config\_defs::exo\_name::right\_hip}}\},}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftKnee"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a600593aa93d4d9165a0480e63ab8ef92}{config\_defs::exo\_name::left\_knee}}\},}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightKnee"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a5cc826b3e637c8ef62f52d86c2b2cbd1}{config\_defs::exo\_name::right\_knee}}\},}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a055f0beb9bb2f34271d0268d1999ef4b}{config\_defs::exo\_name::left\_elbow}}\},}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a0a4e8c274bf2d17bc3274f491340ecd8}{config\_defs::exo\_name::right\_elbow}}\},}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftHipAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ac17cf658c012d349878487130b79c237}{config\_defs::exo\_name::left\_hip\_ankle}}\},}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightHipAnkle"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a31db331ea0e672f14056c1b72b88a8dd}{config\_defs::exo\_name::right\_hip\_ankle}}\},}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftHipElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a8eee38bfd4dad9a5aa6b4693bdb05374}{config\_defs::exo\_name::left\_hip\_elbow}}\},}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightHipElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a4f6c95ea956200d8dfef2f566002a238}{config\_defs::exo\_name::right\_hip\_elbow}}\},}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}leftAnkleElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a8bb9061b5082f8fdd3d3591bb92406d0}{config\_defs::exo\_name::left\_ankle\_elbow}}\},}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}rightAnkleElbow"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797ab942ec475026fffce5de273bcace207c}{config\_defs::exo\_name::right\_ankle\_elbow}}\},}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}test"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a098f6bcd4621d373cade4e832627b4f6}{config\_defs::exo\_name::test}}\},}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}Arm"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a61d65b2925da8f69c9ba31149c482655}{config\_defs::exo\_name::bilateral\_arm}}\},}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateralArm"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797a61d65b2925da8f69c9ba31149c482655}{config\_defs::exo\_name::bilateral\_arm}}\},}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6ca}{exo\_side}}\ }
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}bilateral"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caacbf855c3d8a8c6135dab45071c3bbb9d}{config\_defs::exo\_side::bilateral}}\},\ }
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}left"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa811882fecd5c7618d7099ebbd39ea254}{config\_defs::exo\_side::left}}\},\ }
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}right"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ab1c2e166bf731b002f4c860d8a62a6caa7c4f29407893c334a6cb7a87bf045c0d}{config\_defs::exo\_side::right}}\},}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195}{motor}}\ }
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab3825df282b81f008b13983fb43ffb57}{config\_defs::motor::not\_used}}\},\ }
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK60"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ada0259409ed9eca2da4a98106778cd1c}{config\_defs::motor::AK60}}\},\ }
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK80"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a2879aa344f6f75b9b9d8c158d4cb38df}{config\_defs::motor::AK80}}\},}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK60v1.1"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a3308cbbe97bc0047282a8471a6cd2c31}{config\_defs::motor::AK60v1\_1}}\},}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK70"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a483869ac0cd9da2d29ce63b21b03776c}{config\_defs::motor::AK70}}\},}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}MaxonMotor"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ad8901a7d2439601002681a1d2a6b72ee}{config\_defs::motor::MaxonMotor}}\},}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}NullMotor"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ad87dc7427176a68a34661bd9f3b81789}{config\_defs::motor::NullMotor}}\},}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK60v3"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab17a27f543baa0d1c54af9306d956587}{config\_defs::motor::AK60v3}}\},}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK45\_36"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195ab64649df376a1f46a79968099935aaae}{config\_defs::motor::AK45\_36}}\},}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}AK45\_10"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a64d8ee71e1fb3878941605aa90a66195a79188d06927dc038374c497df1e6d1ae}{config\_defs::motor::AK45\_10}}\},}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755}{gearing}}\ }
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}1"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755adc57401fb061f3848e586dc172618055}{config\_defs::gearing::gearing\_1\_1}}\},\ }
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}2"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755aa089123f290d4c144d4a58e55e449b8b}{config\_defs::gearing::gearing\_2\_1}}\},\ }
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}3"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755acc0d2d5436cefa63a255497b7b8d62b9}{config\_defs::gearing::gearing\_3\_1}}\},\ }
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}4.5"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_ade6f32d1e8e74b469d31c1c660d7a755a36720a88098f425962bd1214f3994f74}{config\_defs::gearing::gearing\_4\_5\_1}}\},}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491}{hip\_controllers}}\ }
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a075ae3d2fc31640504f814f60e5ef713}{config\_defs::hip\_controllers::disabled}}\},\ }
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::hip\_controllers::zero\_torque}}\},\ }
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}franksCollinsHip"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a9ea6e735ff6b882d7008ff5e619387d2}{config\_defs::hip\_controllers::franks\_collins\_hip}}\},}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491aa16f70bf830d4a75f41fb4c825120d67}{config\_defs::hip\_controllers::constant\_torque}}\},}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}chirp"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a80be224388ca185662472f28f16a73a5}{config\_defs::hip\_controllers::chirp}}\},}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}step"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a2764ca9d34e90313978d044f27ae433b}{config\_defs::hip\_controllers::step}}\},}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}phmc"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491a378030c4e296b0485ae8ab4166a00d4b}{config\_defs::hip\_controllers::phmc}}\},}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}calibrManager"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab2e0735285d4d48d43ca39b785e396c2}{config\_defs::hip\_controllers::calibr\_manager}}\},}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}spline"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a79f54c273a0030537dd9e71d1ef05491ab1f1bf466909fa829f364cb0ffeac2db}{config\_defs::hip\_controllers::spline}}\},}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6}{knee\_controllers}}\ }
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a075ae3d2fc31640504f814f60e5ef713}{config\_defs::knee\_controllers::disabled}}\},\ }
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::knee\_controllers::zero\_torque}}\},\ }
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6aa16f70bf830d4a75f41fb4c825120d67}{config\_defs::knee\_controllers::constant\_torque}}\},}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}chirp"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a80be224388ca185662472f28f16a73a5}{config\_defs::knee\_controllers::chirp}}\},}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}step"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6a2764ca9d34e90313978d044f27ae433b}{config\_defs::knee\_controllers::step}}\},}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}calibrManager"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_aad31ccd3b86db0b36034ffef91e086c6ab2e0735285d4d48d43ca39b785e396c2}{config\_defs::knee\_controllers::calibr\_manager}}\},}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002e}{ankle\_controllers}}\ }
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea075ae3d2fc31640504f814f60e5ef713}{config\_defs::ankle\_controllers::disabled}}\},\ }
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::ankle\_controllers::zero\_torque}}\},\ }
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}PJMC"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eae9ba497e4231c77902ca7bb301d0651f}{config\_defs::ankle\_controllers::pjmc}}\},}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zhangCollins"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea9772e3e3c0fc114a950f3b532142d9d3}{config\_defs::ankle\_controllers::zhang\_collins}}\},}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eaa16f70bf830d4a75f41fb4c825120d67}{config\_defs::ankle\_controllers::constant\_torque}}\},}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}TREC"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab2b2e7238c3749fc72530af2c55eca8d}{config\_defs::ankle\_controllers::trec}}\},}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}calibrManager"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab2e0735285d4d48d43ca39b785e396c2}{config\_defs::ankle\_controllers::calibr\_manager}}\},}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}chirp"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea80be224388ca185662472f28f16a73a5}{config\_defs::ankle\_controllers::chirp}}\},}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}step"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea2764ca9d34e90313978d044f27ae433b}{config\_defs::ankle\_controllers::step}}\},}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}SPV2"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea8830f1402798f12b85edc1606e4117d2}{config\_defs::ankle\_controllers::spv2}}\},}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}PJMC\_PLUS"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002ea271a48f2d554083e579a77f7f706dceb}{config\_defs::ankle\_controllers::pjmc\_plus}}\},}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}spline"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a343fb0cc1289829ae8dc0b205fdc002eab1f1bf466909fa829f364cb0ffeac2db}{config\_defs::ankle\_controllers::spline}}\},}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \};\ \ }
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970}{elbow\_controllers}}}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970a075ae3d2fc31640504f814f60e5ef713}{config\_defs::elbow\_controllers::disabled}}\},}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970a1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::elbow\_controllers::zero\_torque}}\},}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}elbowMinMax"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970abb39f1b18f00b8847a32ad069b6dbf10}{config\_defs::elbow\_controllers::elbow\_min\_max}}\},}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}calibrManager"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970ab2e0735285d4d48d43ca39b785e396c2}{config\_defs::elbow\_controllers::calibr\_manager}}\},}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}chirp"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970a80be224388ca185662472f28f16a73a5}{config\_defs::elbow\_controllers::chirp}}\},}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}step"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a9cfbe036467b8417d98192b9e7005970a2764ca9d34e90313978d044f27ae433b}{config\_defs::elbow\_controllers::step}}\},}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a2a080ab4e5ebc154b205c21e069e051f}{arm\_1\_controllers}}}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a2a080ab4e5ebc154b205c21e069e051fa075ae3d2fc31640504f814f60e5ef713}{config\_defs::arm\_1\_controllers::disabled}}\},}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a2a080ab4e5ebc154b205c21e069e051fa1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::arm\_1\_controllers::zero\_torque}}\},}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a2a080ab4e5ebc154b205c21e069e051faa16f70bf830d4a75f41fb4c825120d67}{config\_defs::arm\_1\_controllers::constant\_torque}}\},}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}spline"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a2a080ab4e5ebc154b205c21e069e051fab1f1bf466909fa829f364cb0ffeac2db}{config\_defs::arm\_1\_controllers::spline}}\},}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a07ca5503928b458a67b25d1a103ac3cc}{arm\_2\_controllers}}}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a07ca5503928b458a67b25d1a103ac3cca075ae3d2fc31640504f814f60e5ef713}{config\_defs::arm\_2\_controllers::disabled}}\},}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}zeroTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a07ca5503928b458a67b25d1a103ac3cca1f74dd9f329b1ec51a26f2d13988e401}{config\_defs::arm\_2\_controllers::zero\_torque}}\},}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}constantTorque"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a07ca5503928b458a67b25d1a103ac3ccaa16f70bf830d4a75f41fb4c825120d67}{config\_defs::arm\_2\_controllers::constant\_torque}}\},}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}spline"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a07ca5503928b458a67b25d1a103ac3ccab1f1bf466909fa829f364cb0ffeac2db}{config\_defs::arm\_2\_controllers::spline}}\},}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_af00e73caf979d3d8037b93f2e2fda507}{use\_torque\_sensor}}}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \{\ }
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_af00e73caf979d3d8037b93f2e2fda507a7fa3b767c460b54a2be4d49030b349c7}{config\_defs::use\_torque\_sensor::no}}\},}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}yes"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_af00e73caf979d3d8037b93f2e2fda507aa6105c0a611b41b08f1209506350279e}{config\_defs::use\_torque\_sensor::yes}}\},}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \};\ }
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8e}{flip\_motor\_dir}}}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaedab649646a4c3ebd9770bdfc29534b5}{config\_defs::flip\_motor\_dir::neither}}\},}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}left"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8ea811882fecd5c7618d7099ebbd39ea254}{config\_defs::flip\_motor\_dir::left}}\},}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}right"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8ea7c4f29407893c334a6cb7a87bf045c0d}{config\_defs::flip\_motor\_dir::right}}\},}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}both"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7c0269ec196ec07728505d6c0b28cf8eaf6cb3e816496528d4187db53bc66567f}{config\_defs::flip\_motor\_dir::both}}\},}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00567\ }
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a7593043f9ee5d3045665fe44176c90c6}{flip\_torque\_dir}}}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7593043f9ee5d3045665fe44176c90c6aedab649646a4c3ebd9770bdfc29534b5}{config\_defs::flip\_torque\_dir::neither}}\},}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}left"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7593043f9ee5d3045665fe44176c90c6a811882fecd5c7618d7099ebbd39ea254}{config\_defs::flip\_torque\_dir::left}}\},}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}right"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7593043f9ee5d3045665fe44176c90c6a7c4f29407893c334a6cb7a87bf045c0d}{config\_defs::flip\_torque\_dir::right}}\},}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}both"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a7593043f9ee5d3045665fe44176c90c6af6cb3e816496528d4187db53bc66567f}{config\_defs::flip\_torque\_dir::both}}\},}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00575\ }
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IniKeyCode\ \doxymbox{\hyperlink{namespaceconfig__defs_a1cce9ddcdcbf92adac512d75fd2c747b}{flip\_angle\_dir}}}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}0"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a1cce9ddcdcbf92adac512d75fd2c747baedab649646a4c3ebd9770bdfc29534b5}{config\_defs::flip\_angle\_dir::neither}}\},}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}left"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a1cce9ddcdcbf92adac512d75fd2c747ba811882fecd5c7618d7099ebbd39ea254}{config\_defs::flip\_angle\_dir::left}}\},}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}right"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a1cce9ddcdcbf92adac512d75fd2c747ba7c4f29407893c334a6cb7a87bf045c0d}{config\_defs::flip\_angle\_dir::right}}\},}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}both"{}},\ (uint8\_t)\doxymbox{\hyperlink{namespaceconfig__defs_a1cce9ddcdcbf92adac512d75fd2c747baf6cb3e816496528d4187db53bc66567f}{config\_defs::flip\_angle\_dir::both}}\},}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00583\ \ \ \ \ \};}
+\DoxyCodeLine{00584\ }
+\DoxyCodeLine{00588\ \ \ \ \ \textcolor{keyword}{struct\ }ConfigData\{}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ std::string\ \doxymbox{\hyperlink{namespaceconfig__defs_abfdcbca3d6ab767de026688c636139be}{board\_name}};}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ std::string\ \doxymbox{\hyperlink{namespaceconfig__defs_a83652635bbb2eeb40285262913edc9a0}{board\_version}};}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ std::string\ \doxymbox{\hyperlink{namespaceconfig__defs_a363ea1eb7ba37fcb3ae77d9ef61477c0}{battery}};}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ std::string\ \doxymbox{\hyperlink{namespaceconfig__defs_a646a9785fd413ba3e258bc0ba1a1f797}{exo\_name}};}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ std::string\ exo\_sides;}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ std::string\ exo\_hip;}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ std::string\ exo\_knee;}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ std::string\ exo\_ankle;}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ std::string\ exo\_elbow;}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ std::string\ exo\_arm\_1;}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ std::string\ exo\_arm\_2;}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ std::string\ hip\_gearing;}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ std::string\ knee\_gearing;}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ std::string\ ankle\_gearing;}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ std::string\ elbow\_gearing;}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ std::string\ arm\_1\_gearing;}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ std::string\ arm\_2\_gearing;}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ std::string\ exo\_hip\_default\_controller;}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ std::string\ exo\_knee\_default\_controller;}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ std::string\ exo\_ankle\_default\_controller;}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ std::string\ exo\_elbow\_default\_controller;}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ std::string\ exo\_arm\_1\_default\_controller;}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ std::string\ exo\_arm\_2\_default\_controller;}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ std::string\ hip\_use\_torque\_sensor;}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ std::string\ knee\_use\_torque\_sensor;}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ std::string\ ankle\_use\_torque\_sensor;}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ std::string\ elbow\_use\_torque\_sensor;}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ std::string\ arm\_1\_use\_torque\_sensor;}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ std::string\ arm\_2\_use\_torque\_sensor;}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_motor\_dir;}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_motor\_dir;}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_motor\_dir;}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ std::string\ elbow\_flip\_motor\_dir;}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ std::string\ arm\_1\_flip\_motor\_dir;}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ std::string\ arm\_2\_flip\_motor\_dir;}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_torque\_dir;}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_torque\_dir;}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_torque\_dir;}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ std::string\ elbow\_flip\_torque\_dir;}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ std::string\ arm\_1\_flip\_torque\_dir;}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ std::string\ arm\_2\_flip\_torque\_dir;}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ std::string\ hip\_flip\_angle\_dir;}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ std::string\ knee\_flip\_angle\_dir;}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ std::string\ ankle\_flip\_angle\_dir;}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ std::string\ elbow\_flip\_angle\_dir;}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ std::string\ arm\_1\_flip\_angle\_dir;}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ std::string\ arm\_2\_flip\_angle\_dir;}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_hip\_RoM;}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_hip\_RoM;}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_knee\_RoM;}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_knee\_RoM;}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_ankle\_RoM;}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_ankle\_RoM;}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_elbow\_RoM;}
+\DoxyCodeLine{00654\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_elbow\_RoM;}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_arm\_1\_RoM;}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_arm\_1\_RoM;}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_arm\_2\_RoM;}
+\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_arm\_2\_RoM;}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_hip\_torque\_offset;}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_hip\_torque\_offset;}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_knee\_torque\_offset;}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_knee\_torque\_offset;}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_ankle\_torque\_offset;}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_ankle\_torque\_offset;}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_elbow\_torque\_offset;}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_elbow\_torque\_offset;}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_arm\_1\_torque\_offset;}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_arm\_1\_torque\_offset;}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ left\_arm\_2\_torque\_offset;}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ right\_arm\_2\_torque\_offset;}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00673\ \ \ \ \ \};}
+\DoxyCodeLine{00674\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ }
+\DoxyCodeLine{00677\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}
