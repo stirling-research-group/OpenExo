@@ -442,6 +442,20 @@ namespace ble_handlers
         logger::print("ble_handlers::update_param() - Param Value: "); logger::println((uint8_t)msg->data[3]);
         logger::print("New message\n");
 
+        // PID addition - sophie // this updates the parameters to the nano as well instead of just sending them
+        uint8_t joint_id = (uint8_t)msg->data[0];
+        uint8_t controller_id = (uint8_t)msg->data[1];
+        uint8_t param_idx = (uint8_t)msg->data[2];
+        float param_value = msg->data[3];
+
+        JointData* j_data = data->get_joint_with(joint_id);
+        if (j_data != NULL)
+        {
+            j_data->controller.controller = controller_id;
+            j_data->controller.parameters[param_idx] = param_value;
+        }
+        // PID addition - sophie
+
         UARTHandler* uart_handler = UARTHandler::get_instance();
         UART_msg_t tx_msg;
         tx_msg.command = UART_command_names::update_controller_param;
