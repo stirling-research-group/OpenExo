@@ -27,8 +27,10 @@ namespace controller_defs                   /**< Stores the parameter indexes fo
         const uint8_t use_pid_idx = 0;              //Flag to use PID control
         const uint8_t p_gain_idx = 1;               //Value of P Gain for PID control
         const uint8_t i_gain_idx = 2;               //Value of I Gain for PID control
-        const uint8_t d_gain_idx = 3;               //Value of D Gain for PID control 
-        const uint8_t num_parameter = 4;
+        const uint8_t d_gain_idx = 3;               //Value of D Gain for PID control
+        const uint8_t safe_start_idx = 4;  // safe start flag -- sophie
+        const uint8_t num_parameter = 5;
+
     }
     
     namespace proportional_joint_moment
@@ -133,7 +135,8 @@ namespace controller_defs                   /**< Stores the parameter indexes fo
         const uint8_t SpringPkTorque_idx = 11;          // Sets the maximum spring torque (Nm)
         const uint8_t EXTamplitude_idx = 12;            // Extension Torque Setpoint in Nm
         const uint8_t FiltStrength_idx = 13;            // Setpoint Filter Strength
-        const uint8_t num_parameter = 14;               // Number of unique commands      
+         const uint8_t safe_start_idx = 14;  // safe start flag -- sophie
+        const uint8_t num_parameter = 15;               // Number of unique commands
     }
 
     namespace trec 
@@ -168,7 +171,8 @@ namespace controller_defs                   /**< Stores the parameter indexes fo
         const uint8_t p_gain_idx = 6;                           //Value of P Gain for PID control
         const uint8_t i_gain_idx = 7;                           //Value of I Gain for PID control
         const uint8_t d_gain_idx = 8;                           //Value of D Gain for PID control
-        const uint8_t num_parameter = 9;
+        const uint8_t safe_start_idx = 9;  // safe start flag -- sophie
+        const uint8_t num_parameter = 10;
     }
 
     namespace step                                              //Parameters for step torque used in max torque capacity testing
@@ -181,8 +185,10 @@ namespace controller_defs                   /**< Stores the parameter indexes fo
         const uint8_t p_gain_idx = 5;                           //Value of P Gain for PID control
         const uint8_t i_gain_idx = 6;                           //Value of I Gain for PID control
         const uint8_t d_gain_idx = 7;                           //Value of D Gain for PID control
+
         const uint8_t alpha_idx = 8;                            //Filtering term for exponentially wieghted moving average (EWMA) filter, used on torque sensor to cut down on noise.
-        const uint8_t num_parameter = 9;
+        const uint8_t safe_start_idx = 9;  // safe start flag -- sophie
+        const uint8_t num_parameter = 10;
     }
 
     namespace proportional_hip_moment
