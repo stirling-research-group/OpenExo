@@ -299,14 +299,12 @@ class RtBridge(QtCore.QObject):
             event_data = parts[1]
 
             ## Figure out command
-            if len(event_info) < 2:
-                curr_command = event_info[1]
-            else:
-                curr_command = None
-            if len(event_info) >= 3:
-                count_str = event_info[2:]
-            else:
-                count_str = event_info
+            if len(event_info) < 3 or event_info[0] != 'S':
+
+                return
+            curr_command = event_info[1]
+            count_str = event_info[2:]
+
             # Extract count from event_info using regex
             m = self._event_count_regex.match(count_str)
             if not m.hasMatch():

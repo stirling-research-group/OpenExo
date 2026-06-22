@@ -918,17 +918,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @QtCore.Slot()
     def _on_pid_button_pressed(self):
-
-        if self._pid_values:
-            self.trial_page.update_pid_values(self._pid_values)
-        else:
-            self.logger.debug("PID button pressed but no PID values received yet")
-
+        try:
+            if self._pid_values:
+                self.qt_dev.write(b'p')
+                #self.trial_page.update_pid_values(self._pid_values)
+            else:
+                self.logger.debug("PID button pressed but no PID values received yet")
+        except Exception as e:
+            self.logger.error(f"Failed to update PID button: {e}")
 
     def _on_pid_values(self, pid_values: list):
         self._pid_values = pid_values
         self.logger.debug(f"Received PID values: {pid_values}")
         try:
+
             self.trial_page.update_pid_values(pid_values)
         except Exception as e:
             self.logger.error(f"Failed to update PID values: {e}")
