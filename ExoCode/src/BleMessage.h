@@ -9,7 +9,7 @@
 #ifndef BLEMESSAGE_H
 #define BLEMESSAGE_H
 
-static const int _max_size = 10;
+static const int _max_size = 11; // changed in hopes of gui showing channels - sophie
 
 class BleMessage
 {

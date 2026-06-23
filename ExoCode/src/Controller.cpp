@@ -4,7 +4,7 @@
 
 #include "Controller.h"
 #include "Logger.h"
-//#define CONTROLLER_DEBUG          //Uncomment to enable debug statements to be printed to the serial monitor
+#define CONTROLLER_DEBUG          //Uncomment to enable debug statements to be printed to the serial monitor
 
 //Arduino compiles everything in the src folder even if not included so it causes and error for the nano if this is not included.
 #if defined(ARDUINO_TEENSY36)  || defined(ARDUINO_TEENSY41) 
@@ -1718,7 +1718,10 @@ float Chirp::calc_motor_cmd()
 
     //Sets the desired torque for plotting
     _controller_data->desired_torque = _controller_data->ff_setpoint;
-
+    #ifdef CONTROLLER_DEBUG
+        Serial.println("Chirp::calc_motor_cmd()->desired_torque:");
+        Serial.println(_controller_data->desired_torque);
+    #endif
 }
 
 //****************************************************
