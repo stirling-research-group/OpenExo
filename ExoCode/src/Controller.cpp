@@ -1625,7 +1625,7 @@ Chirp::Chirp(config_defs::joint_id id, ExoData* exo_data)
 
 float Chirp::calc_motor_cmd()
 {
-    if (_joint_data->is_left)
+    if (_joint_data->is_left) // only for left?
     {
         float cmd_ff = 0;
 
@@ -1708,11 +1708,24 @@ float Chirp::calc_motor_cmd()
 
         //    }
         //}
-
+        //sophie addition start
+        _controller_data->desired_torque = _controller_data->ff_setpoint;
+        #ifdef CONTROLLER_DEBUG
+        Serial.println("Chirp::calc_motor_cmd()->desired_torque:");
+        Serial.println(_controller_data->desired_torque);
+        #endif
+        // sophie addition end
         return cmd;
     }
     else
     {
+          //sophie addition start
+        _controller_data->desired_torque = _controller_data->ff_setpoint;
+        #ifdef CONTROLLER_DEBUG
+        Serial.println("Chirp::calc_motor_cmd()->desired_torque:");
+        Serial.println(_controller_data->desired_torque);
+        #endif
+        // sophie addition end
         return 0;
     }
 
