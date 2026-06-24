@@ -1649,6 +1649,7 @@ float Chirp::calc_motor_cmd()
 
         float frequency = 0;
 
+
         if (t <= duration)                                                                                  //If time is less than the set duration
         {
             frequency = start_frequency + ((end_frequency - start_frequency) * (t / duration));       //Frequency, linearly increases with each iteration of the controller.
@@ -1676,7 +1677,14 @@ float Chirp::calc_motor_cmd()
            ? _pid(cmd_ff, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::chirp::p_gain_idx], _controller_data->parameters[controller_defs::chirp::i_gain_idx], _controller_data->parameters[controller_defs::chirp::d_gain_idx])
            : 0);
 
+        // Safe start mode
+         if (_controller_data->parameters[controller_defs::chirp::pid_flag_idx])
+        {
+            cmd = 0; //
+        }
+
         //uint16_t exo_status = _data->get_status();
+
 
         //bool active_trial = (exo_status == status_defs::messages::trial_on) || (exo_status == status_defs::messages::fsr_calibration) || (exo_status == status_defs::messages::fsr_refinement);
 
@@ -1708,6 +1716,8 @@ float Chirp::calc_motor_cmd()
 
         //    }
         //}
+
+        
         //sophie addition start
         _controller_data->desired_torque = _controller_data->ff_setpoint;
         #ifdef CONTROLLER_DEBUG
@@ -1715,6 +1725,8 @@ float Chirp::calc_motor_cmd()
         Serial.println(_controller_data->desired_torque);
         #endif
         // sophie addition end
+
+
         return cmd;
     }
     else
