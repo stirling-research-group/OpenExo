@@ -20,9 +20,10 @@ struct SettingsView: View {
     @State private var basicValue: Double = 0
 
     @State private var isBilateral: Bool = false
-    @State private var appliedSuccessfully = false
     @State private var isRestoringState = false
     @State private var dbWarningMessage: String?
+    @State private var isAwaitingAck = false
+    @State private var lastSubmittedKeys: Set<ParamUpdateKey> = []
 
     init(navPath: Binding<NavigationPath>) {
         _navPath = navPath
@@ -59,6 +60,11 @@ struct SettingsView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 6)
                 }
+                if let message = ble.activeParamUpdateMessage, !message.isEmpty {
+                    warningBanner(message)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 6)
+                }
                 ScrollView {
                     if showAdvanced && !joints.isEmpty {
                         advancedForm
@@ -82,6 +88,15 @@ struct SettingsView: View {
         .onChange(of: showAdvanced) { isAdvanced in
             guard isAdvanced, !joints.isEmpty else { return }
             isBilateral = BLEManager.hasBilateralControllerPair(in: joints)
+        }
+        .onReceive(ble.$lastParamUpdateEvent) { event in
+            guard let event, lastSubmittedKeys.contains(event.key) else { return }
+            lastSubmittedKeys.remove(event.key)
+            isAwaitingAck = !lastSubmittedKeys.isEmpty
+            if event.accepted && lastSubmittedKeys.isEmpty && !navPath.isEmpty {
+                saveState()
+                navPath.removeLast()
+            }
         }
     }
 
@@ -370,10 +385,13 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             Divider().background(Color.gray.opacity(0.3))
 
-            if appliedSuccessfully {
+            if isAwaitingAck {
                 HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                    Text("Parameter sent successfully").foregroundStyle(.green).font(.subheadline)
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Waiting for device acknowledgement")
+                        .foregroundStyle(.gray)
+                        .font(.subheadline)
                 }
                 .padding(.vertical, 12)
             }
@@ -392,6 +410,7 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color.blue))
+                    .disabled(isAwaitingAck)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -418,8 +437,33 @@ struct SettingsView: View {
             .foregroundStyle(.gray)
     }
 
+    private func warningBanner(_ message: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+                .font(.caption)
+            Text(message)
+                .font(.caption)
+                .foregroundStyle(.orange)
+                .multilineTextAlignment(.leading)
+            Spacer()
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.orange.opacity(0.12))
+        )
+    }
+
     private func applySettings() {
         if showAdvanced, let joint = currentJoint, let controller = currentController {
+            lastSubmittedKeys = submittedKeys(
+                isBilateral: isBilateral,
+                jointID: joint.jointID,
+                controllerID: controller.controllerID,
+                paramIndex: selectedParamIndex
+            )
+            isAwaitingAck = true
             ble.updateParam(
                 isBilateral: isBilateral,
                 jointID: joint.jointID,
@@ -428,6 +472,13 @@ struct SettingsView: View {
                 value: paramValue
             )
         } else {
+            lastSubmittedKeys = submittedKeys(
+                isBilateral: isBilateral,
+                jointID: basicJointID,
+                controllerID: basicControllerID,
+                paramIndex: basicParamIndex
+            )
+            isAwaitingAck = true
             ble.updateParam(
                 isBilateral: isBilateral,
                 jointID: basicJointID,
@@ -436,18 +487,19 @@ struct SettingsView: View {
                 value: basicValue
             )
         }
-        saveState()
-        withAnimation {
-            appliedSuccessfully = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            navPath.removeLast()
-        }
+    }
+
+    private func submittedKeys(isBilateral: Bool, jointID: Int, controllerID: Int, paramIndex: Int) -> Set<ParamUpdateKey> {
+        let jointIDs = isBilateral ? [jointID, jointID ^ 0x60] : [jointID]
+        return Set(jointIDs.map {
+            ParamUpdateKey(jointID: $0, controllerID: controllerID, paramIndex: paramIndex)
+        })
     }
 
     private func loadSavedState() {
         isRestoringState = true
         let s = GUISettings.load()
+        let shouldUseLiveSnapshot = showAdvanced && ble.consumeSettingsSeedFromLiveHandshake()
         isBilateral = joints.isEmpty ? s.bilateral : BLEManager.hasBilateralControllerPair(in: joints)
 
         // Advanced mode: restore by name first, fall back to index
@@ -479,7 +531,7 @@ struct SettingsView: View {
             selectedParamIndex = s.lastParamIndex
         }
 
-        if let snapshotValue = currentSnapshotParamValue() {
+        if shouldUseLiveSnapshot, let snapshotValue = currentSnapshotParamValue() {
             paramValue = snapshotValue
         } else {
             paramValue = s.lastValue

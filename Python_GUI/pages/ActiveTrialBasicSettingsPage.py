@@ -111,6 +111,13 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
 
         layout.addLayout(form)
 
+        self.lbl_param_update_status = QtWidgets.QLabel("")
+        self.lbl_param_update_status.setWordWrap(True)
+        self.lbl_param_update_status.setStyleSheet(
+            f"font-size: {UIConfig.FONT_TINY}pt; color: {UIConfig.COLOR_PARAM_REJECT}; font-weight: bold;"
+        )
+        layout.addWidget(self.lbl_param_update_status)
+
         # Buttons
         btn_row = QtWidgets.QHBoxLayout()
         self.btn_apply = QtWidgets.QPushButton("Apply")
@@ -127,6 +134,26 @@ class ActiveTrialBasicSettingsPage(QtWidgets.QWidget):
         # Wire
         self.btn_apply.clicked.connect(self._on_apply)
         self.btn_cancel.clicked.connect(self.cancelRequested.emit)
+
+    def set_param_update_status(self, message: str, warning: bool = True):
+        try:
+            text = message or ""
+            color = UIConfig.COLOR_PARAM_REJECT if warning else UIConfig.COLOR_LABEL
+            self.lbl_param_update_status.setStyleSheet(
+                f"font-size: {UIConfig.FONT_TINY}pt; color: {color}; font-weight: bold;"
+            )
+            self.lbl_param_update_status.setText(text)
+            if text and warning:
+                QtCore.QTimer.singleShot(8000, lambda expected=text: self._clear_param_update_status(expected))
+        except Exception:
+            pass
+
+    def _clear_param_update_status(self, expected: str):
+        try:
+            if self.lbl_param_update_status.text() == expected:
+                self.lbl_param_update_status.setText("")
+        except Exception:
+            pass
 
     def clear_device_session_preferences(self):
         """Reset in-memory basic controller fields when switching BLE devices."""

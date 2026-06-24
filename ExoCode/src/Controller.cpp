@@ -595,7 +595,7 @@ float ProportionalJointMoment::calc_motor_cmd()
     }
 
     /* Low-Pass Filter Measured Torque */
-	const float torque = _joint_data->torque_reading;
+    const float torque = _joint_data->torque_reading;
     const float alpha = (_controller_data->parameters[controller_defs::proportional_joint_moment::torque_alpha_idx] != 0) ? _controller_data->parameters[controller_defs::proportional_joint_moment::torque_alpha_idx] : 0.5;
     _controller_data->filtered_torque_reading = utils::ewma(torque, _controller_data->filtered_torque_reading, alpha); 
 
@@ -656,13 +656,15 @@ float ProportionalJointMoment::calc_motor_cmd()
         if (gain_sched_enabled)
         {
             // Conditions for "near zero" gains:
-            // - setpoint is between +/- 3.5 Nm
-            // - measured torque is within +/- 3.5 Nm of setpoint
-            const float ZERO_BAND_NM = 3.5f;
-            const bool near_zero_setpoint = (fabsf(_controller_data->filtered_setpoint) < 4);
-            const bool near_zero_measured  = (fabsf(_controller_data->filtered_torque_reading) <= ZERO_BAND_NM);
+            // - setpoint is close to zero torque
+            // - measured torque is not far from that zero-torque target
+            const float ZERO_SETPOINT_BAND_NM = 0.5f;
+            const float ZERO_ERROR_BAND_NM = 3.5f;
+            const float torque_error = _controller_data->filtered_setpoint - _controller_data->filtered_torque_reading;
+            const bool near_zero_setpoint = (fabsf(_controller_data->filtered_setpoint) <= ZERO_SETPOINT_BAND_NM);
+            const bool near_zero_error = (fabsf(torque_error) <= ZERO_ERROR_BAND_NM);
 
-            if (near_zero_setpoint && near_zero_measured)
+            if (near_zero_setpoint && near_zero_error)
             {
                 kp_use = _controller_data->parameters[controller_defs::proportional_joint_moment::kp_zero];
                 ki_use = _controller_data->parameters[controller_defs::proportional_joint_moment::ki_zero];
@@ -679,11 +681,18 @@ float ProportionalJointMoment::calc_motor_cmd()
         } // End of gain scheduling
 
         // PID on Motor Command
-        cmd =  _pid(_controller_data->filtered_setpoint,
-                            _controller_data->filtered_torque_reading,
-                            kp_use,
-                            ki_use,
-                            kd_use);
+        if (_joint_data->torque_offset_reading == 0)
+        {
+            cmd = _controller_data->filtered_setpoint;
+        }
+        else
+        {
+            cmd = _controller_data->filtered_setpoint + _pid(_controller_data->filtered_setpoint,
+                                _controller_data->filtered_torque_reading,
+                                kp_use,
+                                ki_use,
+                                kd_use);
+        }
 			
     } // End of PID flag check
     else
@@ -2977,7 +2986,14 @@ float PJMC_PLUS::calc_motor_cmd()
 	float cmd;
 	
     //PID on Motor Command
-    cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::pjmc_plus::kp], _controller_data->parameters[controller_defs::pjmc_plus::ki], _controller_data->parameters[controller_defs::pjmc_plus::kd]);
+    if (_joint_data->torque_offset_reading == 0)
+    {
+        cmd = cmd_ff;
+    }
+    else
+    {
+        cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::pjmc_plus::kp], _controller_data->parameters[controller_defs::pjmc_plus::ki], _controller_data->parameters[controller_defs::pjmc_plus::kd]);
+    }
 
     #ifdef CONTROLLER_DEBUG
     logger::println("pjmcPlus::calc_motor_cmd : stop");
@@ -2986,7 +3002,7 @@ float PJMC_PLUS::calc_motor_cmd()
 	//Establish Setpoints
 	_controller_data->ff_setpoint = cmd_ff; 
 	_controller_data->setpoint = cmd;
-    _controller_data->filtered_setpoint = cmd;
+    _controller_data->filtered_setpoint = cmd_ff;
 	
     //Sets the desired torque for plotting
     _controller_data->desired_torque = _controller_data->ff_setpoint;

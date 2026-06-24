@@ -120,6 +120,13 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
 
         layout.addLayout(form)
 
+        self.lbl_param_update_status = QtWidgets.QLabel("")
+        self.lbl_param_update_status.setWordWrap(True)
+        self.lbl_param_update_status.setStyleSheet(
+            f"font-size: {UIConfig.FONT_TINY}pt; color: {UIConfig.COLOR_PARAM_REJECT}; font-weight: bold;"
+        )
+        layout.addWidget(self.lbl_param_update_status)
+
         # Buttons
         btn_row = QtWidgets.QHBoxLayout()
         self.btn_apply = QtWidgets.QPushButton("Apply")
@@ -173,9 +180,30 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
     def set_controller_values(self, values_db: dict):
         try:
             self._controller_values = dict(values_db) if values_db else {}
-            self._refresh_value_from_db()
+            if not self._restore_last_value_if_current():
+                self._refresh_value_from_db()
         except Exception as e:
             _logger.warning("Error setting controller values: %s", e)
+
+    def set_param_update_status(self, message: str, warning: bool = True):
+        try:
+            text = message or ""
+            color = UIConfig.COLOR_PARAM_REJECT if warning else UIConfig.COLOR_LABEL
+            self.lbl_param_update_status.setStyleSheet(
+                f"font-size: {UIConfig.FONT_TINY}pt; color: {color}; font-weight: bold;"
+            )
+            self.lbl_param_update_status.setText(text)
+            if text and warning:
+                QtCore.QTimer.singleShot(8000, lambda expected=text: self._clear_param_update_status(expected))
+        except Exception:
+            pass
+
+    def _clear_param_update_status(self, expected: str):
+        try:
+            if self.lbl_param_update_status.text() == expected:
+                self.lbl_param_update_status.setText("")
+        except Exception:
+            pass
 
     def clear_device_session_preferences(self):
         """Reset persisted Update Controller selections for a disconnected / new BLE device."""
@@ -223,17 +251,19 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
         )
 
     def _apply_bilateral_state_from_matrix(self):
-        """Use the received controller rows as the source of truth for bilateral mode."""
+        """Enable bilateral mode only when received controller rows include both sides."""
         has_bilateral_pair = self._matrix_has_bilateral_pair()
-        self._bilateral_state = has_bilateral_pair
-        self._last_selection["bilateral"] = has_bilateral_pair
+        requested_bilateral = bool(self._last_selection.get("bilateral", False))
+        checked = has_bilateral_pair and requested_bilateral
+        self._bilateral_state = checked
+        self._last_selection["bilateral"] = checked
 
         try:
             self.chk_bilateral.blockSignals(True)
-            self.chk_bilateral.setChecked(has_bilateral_pair)
+            self.chk_bilateral.setChecked(checked)
             self.chk_bilateral.setEnabled(has_bilateral_pair)
             if has_bilateral_pair:
-                self.chk_bilateral.setToolTip("Bilateral mode inferred from received left/right controller metadata.")
+                self.chk_bilateral.setToolTip("Bilateral mode available from received left/right controller metadata.")
             else:
                 self.chk_bilateral.setToolTip("Bilateral mode unavailable: received controller metadata for only one side.")
             self.chk_bilateral.blockSignals(False)
@@ -296,7 +326,42 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
     def _on_bilateral_changed(self, state):
         """Save bilateral state when checkbox changes."""
         self._bilateral_state = bool(state)
+        self._last_selection["bilateral"] = self._bilateral_state
         self._save_settings()
+
+    def _current_selection_matches_last(self) -> bool:
+        try:
+            last_joint = self._last_selection.get("joint")
+            last_controller = self._last_selection.get("controller")
+            last_parameter = self._last_selection.get("parameter")
+            if last_joint is None or last_controller is None or last_parameter is None:
+                return False
+            return (
+                self.combo_joint.currentText() == str(last_joint)
+                and self.combo_controller.currentText() == str(last_controller)
+                and self.combo_param.currentIndex() == int(last_parameter)
+            )
+        except Exception:
+            return False
+
+    def _restore_last_value_if_current(self) -> bool:
+        if not self._current_selection_matches_last():
+            return False
+        value = self._last_selection.get("value")
+        if value is None:
+            return False
+        try:
+            self.spin_value.blockSignals(True)
+            self.spin_value.setValue(float(value))
+            self.spin_value.blockSignals(False)
+            return True
+        except Exception as e:
+            _logger.warning("Error restoring last value: %s", e)
+            try:
+                self.spin_value.blockSignals(False)
+            except Exception:
+                pass
+            return False
 
     def _restore_last_selection(self):
         """Restore UI controls to last saved selection."""
@@ -342,11 +407,7 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                 self.combo_param.setCurrentIndex(param_idx)
             self.combo_param.blockSignals(False)
             
-            # Restore value
-            value = self._last_selection.get("value", 0.0)
-            if value is None:
-                value = 0.0
-            self.spin_value.setValue(float(value))
+            self._restore_last_value_if_current()
         except Exception as e:
             _logger.exception("Error restoring last selection: %s", e)
 
@@ -553,11 +614,13 @@ class ActiveTrialSettingsPage(QtWidgets.QWidget):
                 self.combo_param.blockSignals(False)
             except Exception:
                 pass
-        self._refresh_value_from_db()
+        if not self._restore_last_value_if_current():
+            self._refresh_value_from_db()
 
     @QtCore.Slot(int)
     def _on_param_changed(self, _idx: int):
-        self._refresh_value_from_db()
+        if not self._restore_last_value_if_current():
+            self._refresh_value_from_db()
 
     def _current_jid_cid(self):
         try:

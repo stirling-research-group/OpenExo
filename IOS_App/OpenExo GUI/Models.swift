@@ -35,6 +35,50 @@ struct ControllerInfo: Identifiable {
     let params: [String]
 }
 
+// MARK: - Parameter Update Acknowledgements
+struct ParamUpdateKey: Hashable, Equatable {
+    let jointID: Int
+    let controllerID: Int
+    let paramIndex: Int
+}
+
+enum ParamUpdateAckReason: Int, Codable, Equatable {
+    case accepted = 0
+    case malformed = 1
+    case jointMismatch = 2
+    case controllerMismatch = 3
+    case invalidIndex = 4
+    case outOfBounds = 5
+    case notInteger = 6
+
+    var userMessage: String {
+        switch self {
+        case .accepted:
+            return ""
+        case .malformed:
+            return "Controller update rejected: invalid message"
+        case .jointMismatch:
+            return "Controller update rejected: side or joint mismatch"
+        case .controllerMismatch:
+            return "Controller update rejected: controller mismatch"
+        case .invalidIndex:
+            return "Controller update rejected: invalid parameter index"
+        case .outOfBounds:
+            return "Controller update rejected: value out of bounds"
+        case .notInteger:
+            return "Controller update rejected: integer value required"
+        }
+    }
+}
+
+struct ParamUpdateEvent: Identifiable, Equatable {
+    let id = UUID()
+    let key: ParamUpdateKey
+    let accepted: Bool
+    let reason: ParamUpdateAckReason
+    let message: String?
+}
+
 // MARK: - Known Joints (fallback for Basic Settings)
 struct KnownJoint: Identifiable {
     let id: Int

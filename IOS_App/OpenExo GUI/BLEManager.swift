@@ -51,6 +51,9 @@ class BLEManager: NSObject, ObservableObject {
     @Published var handshakeReceived = false
     @Published var parameterNames: [String] = []
     @Published var joints: [JointInfo] = []
+    @Published var activeParamUpdateMessage: String?
+    @Published var lastParamUpdateEvent: ParamUpdateEvent?
+    @Published var hasPendingParamUpdates = false
 
     // MARK: RT Data
     @Published var rtData: [Double] = Array(repeating: 0, count: 16)
@@ -77,6 +80,13 @@ class BLEManager: NSObject, ObservableObject {
     private var errChar: CBCharacteristic?
     private var handshakeBuffer = ""
     private var isReceivingHandshake = false
+    private var paramUpdateClearTask: DispatchWorkItem?
+    private var pendingParamUpdates: [ParamUpdateKey: [PendingParamUpdate]] = [:]
+    private var queuedReliableWrites: [Data] = []
+    private var isAwaitingReliableWrite = false
+    private var queuedSegmentedWrites: [[Data]] = []
+    private var isSendingSegmentedWrite = false
+    private var shouldSeedSettingsFromLiveHandshake = false
 
     // MARK: Chart Buffer
     private let chartCapacity = 300
@@ -88,6 +98,14 @@ class BLEManager: NSObject, ObservableObject {
     // MARK: Mock
     private var mockDataTimer: Timer?
     private var mockTime: Double = 0
+
+    private struct PendingParamUpdate {
+        let jointIDs: [Int]
+        let controllerID: Int
+        let paramIndex: Int
+        let value: Double
+        let timeoutTask: DispatchWorkItem
+    }
 
     private override init() {
         super.init()
@@ -145,6 +163,12 @@ class BLEManager: NSObject, ObservableObject {
         OpenExoDatabase.shared.saveControllerSnapshot(snap)
     }
 
+    func consumeSettingsSeedFromLiveHandshake() -> Bool {
+        let shouldSeed = shouldSeedSettingsFromLiveHandshake
+        shouldSeedSettingsFromLiveHandshake = false
+        return shouldSeed
+    }
+
     // ─────────────────────────────────────────────
     // MARK: - Scanning
     // ─────────────────────────────────────────────
@@ -183,6 +207,7 @@ class BLEManager: NSObject, ObservableObject {
             parameterNames = []
             handshakeReceived = false
         }
+        shouldSeedSettingsFromLiveHandshake = false
         connectionStatus = "Connecting to \(device.name)…"
         central.stopScan()
         isScanning = false
@@ -203,6 +228,7 @@ class BLEManager: NSObject, ObservableObject {
         }
         let known = central.retrievePeripherals(withIdentifiers: [uuid])
         if let p = known.first {
+            shouldSeedSettingsFromLiveHandshake = false
             connectionStatus = "Reconnecting to saved device…"
             central.connect(p, options: nil)
         } else {
@@ -232,8 +258,61 @@ class BLEManager: NSObject, ObservableObject {
     /// Write with acknowledgment (matches Python's `response=True` for critical commands).
     private func sendReliable(_ data: Data) {
         if MOCK_MODE { return }
-        guard let char = txChar, let p = connectedPeripheral else { return }
-        p.writeValue(data, for: char, type: .withResponse)
+        enqueueReliableWrite(data)
+    }
+
+    private func enqueueReliableWrite(_ data: Data) {
+        queuedReliableWrites.append(data)
+        flushReliableWriteQueueIfNeeded()
+    }
+
+    private func flushReliableWriteQueueIfNeeded() {
+        guard !MOCK_MODE,
+              !isAwaitingReliableWrite,
+              let char = txChar,
+              let p = connectedPeripheral,
+              !queuedReliableWrites.isEmpty else { return }
+        let next = queuedReliableWrites.removeFirst()
+        isAwaitingReliableWrite = true
+        p.writeValue(next, for: char, type: .withResponse)
+    }
+
+    private func enqueueSegmentedWrite(command: Character, doubles: [Double]) {
+        var chunks: [Data] = [Data([command.asciiValue ?? 0])]
+        for var value in doubles {
+            chunks.append(withUnsafeBytes(of: &value) { Data($0) })
+        }
+        queuedSegmentedWrites.append(chunks)
+        flushSegmentedWriteQueueIfNeeded()
+    }
+
+    private func flushSegmentedWriteQueueIfNeeded() {
+        guard !MOCK_MODE,
+              !isSendingSegmentedWrite,
+              !queuedSegmentedWrites.isEmpty else { return }
+        isSendingSegmentedWrite = true
+        let chunks = queuedSegmentedWrites.removeFirst()
+        sendSegmentedChunks(chunks, index: 0)
+    }
+
+    private func sendSegmentedChunks(_ chunks: [Data], index: Int) {
+        guard let char = txChar, let p = connectedPeripheral else {
+            isSendingSegmentedWrite = false
+            return
+        }
+        guard index < chunks.count else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+                guard let self else { return }
+                self.isSendingSegmentedWrite = false
+                self.flushSegmentedWriteQueueIfNeeded()
+            }
+            return
+        }
+
+        p.writeValue(chunks[index], for: char, type: .withoutResponse)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.004) { [weak self] in
+            self?.sendSegmentedChunks(chunks, index: index + 1)
+        }
     }
 
     func calibrateTorque() {
@@ -284,30 +363,31 @@ class BLEManager: NSObject, ObservableObject {
 
     func sendFSRThresholds(left: Double, right: Double) {
         if MOCK_MODE { return }
-        send(byte: "R")
-        var l = left, r = right
-        withUnsafeBytes(of: &l) { sendRaw(Data($0)) }
-        withUnsafeBytes(of: &r) { sendRaw(Data($0)) }
+        enqueueSegmentedWrite(command: "R", doubles: [left, right])
     }
 
     func updateParam(isBilateral: Bool, jointID: Int, controllerID: Int, paramIndex: Int, value: Double) {
         let jointIDs = isBilateral ? [jointID, jointID ^ 0x60] : [jointID]
-        OpenExoDatabase.shared.updateControllerSnapshotValues(
-            jointIDs: jointIDs,
-            controllerID: controllerID,
-            paramIndex: paramIndex,
-            value: value
-        )
+        showParamUpdateMessage(nil)
 
         if MOCK_MODE {
             print("[MockBLE] updateParam joint=\(jointID) ctrl=\(controllerID) param=\(paramIndex) val=\(value)")
+            for jid in jointIDs {
+                enqueuePendingParamUpdate(jointIDs: [jid], controllerID: controllerID, paramIndex: paramIndex, value: value)
+                completePendingParamUpdate(
+                    key: ParamUpdateKey(jointID: jid, controllerID: controllerID, paramIndex: paramIndex),
+                    accepted: true,
+                    reason: .accepted
+                )
+            }
             return
         }
         for jid in jointIDs {
-            send(byte: "f")
-            for var v in [Double(jid), Double(controllerID), Double(paramIndex), value] {
-                withUnsafeBytes(of: &v) { sendRaw(Data($0)) }
-            }
+            enqueuePendingParamUpdate(jointIDs: [jid], controllerID: controllerID, paramIndex: paramIndex, value: value)
+            enqueueSegmentedWrite(
+                command: "f",
+                doubles: [Double(jid), Double(controllerID), Double(paramIndex), value]
+            )
         }
     }
 
@@ -360,6 +440,93 @@ class BLEManager: NSObject, ObservableObject {
         rtPacketCount = _packetCount
     }
 
+    private func enqueuePendingParamUpdate(jointIDs: [Int], controllerID: Int, paramIndex: Int, value: Double) {
+        guard let firstJointID = jointIDs.first else { return }
+        let key = ParamUpdateKey(jointID: firstJointID, controllerID: controllerID, paramIndex: paramIndex)
+        let timeoutTask = DispatchWorkItem { [weak self] in
+            self?.handleParamUpdateTimeout(for: key)
+        }
+        let pending = PendingParamUpdate(
+            jointIDs: jointIDs,
+            controllerID: controllerID,
+            paramIndex: paramIndex,
+            value: value,
+            timeoutTask: timeoutTask
+        )
+        pendingParamUpdates[key, default: []].append(pending)
+        hasPendingParamUpdates = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: timeoutTask)
+    }
+
+    private func handleParamUpdateTimeout(for key: ParamUpdateKey) {
+        guard var queue = pendingParamUpdates[key], !queue.isEmpty else { return }
+        queue.removeFirst()
+        if queue.isEmpty {
+            pendingParamUpdates.removeValue(forKey: key)
+        } else {
+            pendingParamUpdates[key] = queue
+        }
+        hasPendingParamUpdates = !pendingParamUpdates.isEmpty
+
+        let event = ParamUpdateEvent(
+            key: key,
+            accepted: false,
+            reason: .malformed,
+            message: "Controller update failed: no device acknowledgement"
+        )
+        lastParamUpdateEvent = event
+        showParamUpdateMessage(event.message)
+    }
+
+    private func completePendingParamUpdate(key: ParamUpdateKey, accepted: Bool, reason: ParamUpdateAckReason) {
+        guard var queue = pendingParamUpdates[key], !queue.isEmpty else {
+            let event = ParamUpdateEvent(key: key, accepted: accepted, reason: reason, message: accepted ? nil : reason.userMessage)
+            lastParamUpdateEvent = event
+            if !accepted { showParamUpdateMessage(event.message) }
+            return
+        }
+
+        let pending = queue.removeFirst()
+        pending.timeoutTask.cancel()
+        if queue.isEmpty {
+            pendingParamUpdates.removeValue(forKey: key)
+        } else {
+            pendingParamUpdates[key] = queue
+        }
+        hasPendingParamUpdates = !pendingParamUpdates.isEmpty
+
+        if accepted {
+            OpenExoDatabase.shared.updateControllerSnapshotValues(
+                jointIDs: pending.jointIDs,
+                controllerID: pending.controllerID,
+                paramIndex: pending.paramIndex,
+                value: pending.value
+            )
+        }
+
+        let event = ParamUpdateEvent(
+            key: key,
+            accepted: accepted,
+            reason: reason,
+            message: accepted ? nil : reason.userMessage
+        )
+        lastParamUpdateEvent = event
+        if !accepted {
+            showParamUpdateMessage(event.message)
+        }
+    }
+
+    private func showParamUpdateMessage(_ message: String?) {
+        paramUpdateClearTask?.cancel()
+        activeParamUpdateMessage = message
+        guard message != nil else { return }
+        let clearTask = DispatchWorkItem { [weak self] in
+            self?.activeParamUpdateMessage = nil
+        }
+        paramUpdateClearTask = clearTask
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8.0, execute: clearTask)
+    }
+
     // ─────────────────────────────────────────────
     // MARK: - RT Data Ingestion
     // ─────────────────────────────────────────────
@@ -396,68 +563,100 @@ class BLEManager: NSObject, ObservableObject {
     /// Frame format: `<count>c S<cmd><v1>n<v2>n…<vN>n`
     /// Multiple frames may be concatenated when the device sends
     /// faster than the BLE connection interval.
-    private func parseRTData(_ packet: String) {
+    private func parseDelimitedValues(_ payload: String, scaleIntegers: Bool) -> [Double] {
+        payload.components(separatedBy: "n").compactMap { part in
+            let token = part.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !token.isEmpty else { return nil }
+
+            let decimalChars = CharacterSet(charactersIn: ".eE")
+            if token.rangeOfCharacter(from: decimalChars) != nil, let value = Double(token) {
+                return value
+            }
+
+            let digits = token.filter { $0.isNumber || $0 == "-" }
+            guard !digits.isEmpty, digits != "-" else { return nil }
+            if scaleIntegers, let intVal = Int(digits) {
+                return Double(intVal) / 100.0
+            }
+            return Double(digits)
+        }
+    }
+
+    private func handleParamUpdateAck(_ values: [Double]) {
+        guard values.count >= 5,
+              values[0].isFinite,
+              values[1].isFinite,
+              values[2].isFinite,
+              values[3].isFinite,
+              values[4].isFinite else { return }
+
+        let jointID = Int(values[0].rounded())
+        let controllerID = Int(values[1].rounded())
+        let paramIndex = Int(values[2].rounded())
+        let accepted = Int(values[3].rounded()) == 1
+        let reason = ParamUpdateAckReason(rawValue: Int(values[4].rounded())) ?? .malformed
+        let key = ParamUpdateKey(jointID: jointID, controllerID: controllerID, paramIndex: paramIndex)
+        completePendingParamUpdate(key: key, accepted: accepted, reason: accepted ? .accepted : reason)
+    }
+
+    private func handleStructuredFrame(command: Character, values: [Double]) {
+        if command == "a" {
+            handleParamUpdateAck(values)
+            return
+        }
+        guard values.count > 1 else { return }
+        ingestSample(Array(values.prefix(16)))
+    }
+
+    private func parseStructuredPacket(_ packet: String) {
         let segments = packet.components(separatedBy: "c")
 
-        // Primary path: structured frames with <count>c header
+        // Primary path: structured frames with header `S<cmd><count>c`
         if segments.count >= 2 {
             var didParse = false
             for i in 0..<(segments.count - 1) {
-                let trailing = String(segments[i].reversed().prefix(while: { $0.isNumber }).reversed())
-                guard let expectedCount = Int(trailing), expectedCount > 1 else { continue }
+                let header = segments[i].trimmingCharacters(in: .whitespacesAndNewlines)
+                guard header.count >= 3, header.first == "S" else { continue }
+
+                let commandIndex = header.index(after: header.startIndex)
+                let command = header[commandIndex]
+                let countStart = header.index(after: commandIndex)
+                let countText = String(header[countStart...])
+                guard let expectedCount = Int(countText), expectedCount > 1 else { continue }
 
                 let data = segments[i + 1]
-                guard let sIdx = data.firstIndex(of: "S") else { continue }
-                var pos = data.index(after: sIdx)
-                guard pos < data.endIndex else { continue }
-                pos = data.index(after: pos)                    // skip command byte
-
-                var values: [Double] = []
-                var numBuf = ""
-                while pos < data.endIndex && values.count < expectedCount {
-                    let ch = data[pos]
-                    if ch == "n" {
-                        if let intVal = Int(numBuf) { values.append(Double(intVal) / 100.0) }
-                        numBuf = ""
-                    } else if ch.isNumber || ch == "-" {
-                        numBuf.append(ch)
-                    }
-                    pos = data.index(after: pos)
-                }
-                if values.count < expectedCount, let intVal = Int(numBuf) {
-                    values.append(Double(intVal) / 100.0)
-                }
+                let values = Array(parseDelimitedValues(data, scaleIntegers: true).prefix(expectedCount))
 
                 guard values.count > 1 else { continue }
                 didParse = true
-                ingestSample(values)
+                handleStructuredFrame(command: command, values: values)
             }
             if didParse { return }
         }
 
-        // Fallback: extract values after "S", skipping command byte
+        // Fallback: single frame in `S<cmd><count>c<data>` format
         if let sRange = packet.range(of: "S") {
-            let afterS = packet[sRange.upperBound...]
-            guard afterS.count > 1 else { return }
-            let afterCmd = String(afterS[afterS.index(after: afterS.startIndex)...])
-            let values = afterCmd.components(separatedBy: "n").compactMap { part -> Double? in
-                let digits = part.filter { $0.isNumber || $0 == "-" }
-                guard !digits.isEmpty, digits != "-",
-                      let intVal = Int(digits) else { return nil }
-                return Double(intVal) / 100.0
-            }
+            let frame = packet[sRange.lowerBound...]
+            guard let cRange = frame.range(of: "c") else { return }
+
+            let header = String(frame[..<cRange.lowerBound])
+            guard header.count >= 3, header.first == "S" else { return }
+
+            let commandIndex = header.index(after: header.startIndex)
+            let command = header[commandIndex]
+            let countStart = header.index(after: commandIndex)
+            let countText = String(header[countStart...])
+            guard let expectedCount = Int(countText), expectedCount > 1 else { return }
+
+            let data = String(frame[cRange.upperBound...])
+            let values = Array(parseDelimitedValues(data, scaleIntegers: true).prefix(expectedCount))
             guard values.count > 1 else { return }
-            ingestSample(Array(values.prefix(16)))
+            handleStructuredFrame(command: command, values: values)
             return
         }
 
         // Last resort: any n-separated numbers in the packet
-        let values = packet.components(separatedBy: "n").compactMap { part -> Double? in
-            let digits = part.filter { $0.isNumber || $0 == "-" }
-            guard !digits.isEmpty, digits != "-",
-                  let intVal = Int(digits) else { return nil }
-            return Double(intVal) / 100.0
-        }
+        let values = parseDelimitedValues(packet, scaleIntegers: true)
         guard values.count > 1 else { return }
         ingestSample(Array(values.prefix(16)))
     }
@@ -550,6 +749,7 @@ class BLEManager: NSObject, ObservableObject {
             print("[ExoBLE] WARNING: No joints/controllers parsed from handshake")
         }
         handshakeReceived = true
+        shouldSeedSettingsFromLiveHandshake = true
         send(byte: "$")
     }
 
@@ -628,6 +828,7 @@ class BLEManager: NSObject, ObservableObject {
         batteryVoltage = 11.7
         connectionStatus = "Handshake complete — ready to start trial"
         persistHandshakeSnapshot(joints: joints, parameterNames: parameterNames, values: [:])
+        shouldSeedSettingsFromLiveHandshake = true
     }
 
     // MARK: Mock Data Stream (sine waves at 30 Hz)
@@ -716,6 +917,10 @@ extension BLEManager: CBCentralManagerDelegate {
         connectedPeripheral = nil
         isConnected = false
         txChar = nil; rxChar = nil; errChar = nil
+        queuedReliableWrites.removeAll()
+        isAwaitingReliableWrite = false
+        queuedSegmentedWrites.removeAll()
+        isSendingSegmentedWrite = false
         isTrialActive = false
         torqueCalibrated = false
         connectionStatus = "Disconnected"
@@ -740,6 +945,17 @@ extension BLEManager: CBPeripheralDelegate {
             default: break
             }
         }
+    }
+
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard characteristic.uuid == BLEUUID.txChar else { return }
+        isAwaitingReliableWrite = false
+        if let error {
+            print("[ExoBLE] write error: \(error.localizedDescription)")
+            queuedReliableWrites.removeAll()
+            return
+        }
+        flushReliableWriteQueueIfNeeded()
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
@@ -774,6 +990,6 @@ extension BLEManager: CBPeripheralDelegate {
             return
         }
 
-        if str.contains("n") && !str.hasPrefix("t,") { parseRTData(str) }
+        if str.contains("n") && !str.hasPrefix("t,") { parseStructuredPacket(str) }
     }
 }

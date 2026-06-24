@@ -130,6 +130,13 @@ class ActiveTrialPage(QtWidgets.QWidget):
         self.lbl_battery.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         controls.addWidget(self.lbl_battery)
 
+        self.lbl_param_update_status = QtWidgets.QLabel("")
+        self.lbl_param_update_status.setWordWrap(True)
+        self.lbl_param_update_status.setStyleSheet(
+            f"font-size: {UIConfig.FONT_TINY}pt; color: {UIConfig.COLOR_PARAM_REJECT}; font-weight: bold;"
+        )
+        controls.addWidget(self.lbl_param_update_status)
+
         controls.addSpacing(UIConfig.MARGIN_PAGE)
 
         # ═══════ PRIORITY: CRITICAL CONTROLS ═══════
@@ -384,6 +391,26 @@ class ActiveTrialPage(QtWidgets.QWidget):
                 self.lbl_battery.setStyleSheet(
                     f"font-size: {UIConfig.FONT_SMALL}pt; color: {UIConfig.COLOR_SUCCESS}; font-weight: bold;"
                 )
+        except Exception:
+            pass
+
+    def set_param_update_status(self, message: str, warning: bool = True):
+        try:
+            text = message or ""
+            color = UIConfig.COLOR_PARAM_REJECT if warning else UIConfig.COLOR_LABEL
+            self.lbl_param_update_status.setStyleSheet(
+                f"font-size: {UIConfig.FONT_TINY}pt; color: {color}; font-weight: bold;"
+            )
+            self.lbl_param_update_status.setText(text)
+            if text and warning:
+                QtCore.QTimer.singleShot(8000, lambda expected=text: self._clear_param_update_status(expected))
+        except Exception:
+            pass
+
+    def _clear_param_update_status(self, expected: str):
+        try:
+            if self.lbl_param_update_status.text() == expected:
+                self.lbl_param_update_status.setText("")
         except Exception:
             pass
 

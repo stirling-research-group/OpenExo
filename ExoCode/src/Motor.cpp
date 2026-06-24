@@ -626,7 +626,9 @@ _CANMotor(id, exo_data, enable_pin)
     _I_MAX = 10.3f;
     _V_MAX = 48.0f;
 
-    float kt = 0.420*6;//corrected values
+    // Experimentally determined AK60v3 Kt, including the internal 6:1 gearbox.
+    // External joint gearing is handled in Joint.cpp.
+    float kt = 0.185f * 6;
     set_Kt(kt);
     exo_data->get_joint_with(static_cast<uint8_t>(id))->motor.kt = kt;
 

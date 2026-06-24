@@ -23,6 +23,15 @@ from utils import SettingsManager
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    _PARAM_UPDATE_REASONS = {
+        1: "invalid message",
+        2: "side or joint mismatch",
+        3: "controller mismatch",
+        4: "invalid parameter index",
+        5: "value out of bounds",
+        6: "value must be an integer",
+    }
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("OpenExo - Qt")
@@ -87,6 +96,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Receive flattened 2D matrix of controllers and parameters
         self.rt_bridge.controllerMatrixReceived.connect(self._on_controller_matrix)
         self.rt_bridge.controllerValuesReceived.connect(self._on_controller_values)
+        self.rt_bridge.paramUpdateAckReceived.connect(self._on_param_update_ack)
 
         ## PID GUI Update start - Sophie
         self.rt_bridge.pidValuesReceived.connect(self._on_pid_values)
@@ -107,6 +117,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._pid_values = []
         # Store controller values by (joint_id, controller_id)
         self._controller_values = {}
+        self._pending_param_updates = {}
+        self._pending_param_update_seq = 0
         # Device control wiring from ActiveTrialPage
         self.trial_page.deviceStartRequested.connect(self._on_device_start)
         self.trial_page.deviceStopRequested.connect(self._on_device_stop_motors)
@@ -362,6 +374,130 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as e:
             self.logger.error(f"Failed to store controller value DB: {e}")
             self.logger.debug(traceback.format_exc())
+
+    def _queue_pending_param_updates(self, updates):
+        for joint_id, controller_id, param_index, value in updates:
+            key = (str(joint_id), str(controller_id), int(param_index))
+            self._pending_param_update_seq += 1
+            record = {
+                "token": self._pending_param_update_seq,
+                "value": value,
+            }
+            self._pending_param_updates.setdefault(key, []).append(record)
+            QtCore.QTimer.singleShot(
+                5000,
+                lambda key=key, token=record["token"]: self._on_param_update_timeout(key, token),
+            )
+
+    def _pop_pending_param_update(self, key):
+        records = self._pending_param_updates.get(key, [])
+        if not records:
+            return None
+        record = records.pop(0)
+        if records:
+            self._pending_param_updates[key] = records
+        else:
+            self._pending_param_updates.pop(key, None)
+        return record
+
+    def _remove_pending_param_update(self, key, token):
+        records = self._pending_param_updates.get(key, [])
+        for idx, record in enumerate(records):
+            if record.get("token") == token:
+                removed = records.pop(idx)
+                if records:
+                    self._pending_param_updates[key] = records
+                else:
+                    self._pending_param_updates.pop(key, None)
+                return removed
+        return None
+
+    def _update_controller_value_cache(self, joint_id, controller_id, param_index, value):
+        key = (str(joint_id), str(controller_id))
+        values = list(self._controller_values.get(key, []))
+        while len(values) <= int(param_index):
+            values.append("0")
+        values[int(param_index)] = str(value)
+        self._controller_values[key] = values
+        self.settings_page.set_controller_values(self._controller_values)
+
+    def _show_param_update_status(self, message: str, warning: bool = True):
+        try:
+            self.trial_page.set_param_update_status(message, warning=warning)
+        except Exception as e:
+            self.logger.error(f"Failed to update trial parameter status: {e}")
+            self.logger.debug(traceback.format_exc())
+        for page_name, page in (
+            ("settings", self.settings_page),
+            ("basic settings", self.basic_settings_page),
+        ):
+            try:
+                page.set_param_update_status(message, warning=warning)
+            except Exception as e:
+                self.logger.error(f"Failed to update {page_name} parameter status: {e}")
+                self.logger.debug(traceback.format_exc())
+        if warning:
+            try:
+                self.scan_page.status.setText(message)
+            except Exception as e:
+                self.logger.error(f"Failed to update scan parameter status: {e}")
+                self.logger.debug(traceback.format_exc())
+
+    def _param_rejection_text(self, reason: int) -> str:
+        return self._PARAM_UPDATE_REASONS.get(int(reason), f"reason {reason}")
+
+    @QtCore.Slot(dict)
+    def _on_param_update_ack(self, ack: dict):
+        try:
+            joint_id = str(ack.get("joint_id"))
+            controller_id = str(ack.get("controller_id"))
+            param_index = int(ack.get("param_index"))
+            accepted = bool(ack.get("accepted"))
+            reason = int(ack.get("reason", 0))
+            key = (joint_id, controller_id, param_index)
+            record = self._pop_pending_param_update(key)
+
+            if accepted:
+                if record is not None:
+                    self._update_controller_value_cache(
+                        joint_id,
+                        controller_id,
+                        param_index,
+                        record["value"],
+                    )
+                self.logger.info(
+                    "Parameter update accepted: joint=%s controller=%s index=%s",
+                    joint_id,
+                    controller_id,
+                    param_index,
+                )
+                return
+
+            reason_text = self._param_rejection_text(reason)
+            self.logger.warning(
+                "Parameter update rejected: joint=%s controller=%s index=%s reason=%s",
+                joint_id,
+                controller_id,
+                param_index,
+                reason_text,
+            )
+            self._show_param_update_status(f"Controller update rejected: {reason_text}", warning=True)
+        except Exception as e:
+            self.logger.error(f"Failed to handle parameter update ack: {e}")
+            self.logger.debug(traceback.format_exc())
+
+    def _on_param_update_timeout(self, key, token):
+        record = self._remove_pending_param_update(key, token)
+        if record is None:
+            return
+        joint_id, controller_id, param_index = key
+        self.logger.warning(
+            "Parameter update timed out waiting for ack: joint=%s controller=%s index=%s",
+            joint_id,
+            controller_id,
+            param_index,
+        )
+        self._show_param_update_status("Controller update failed: no device acknowledgement", warning=True)
 
     @QtCore.Slot()
     def _on_device_start(self):
@@ -669,24 +805,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # payload: [isBilateral, joint, controller, parameter, value]
         self.logger.info(f"Applying settings: {payload}")
         try:
+            updates = QtExoDeviceManager.build_parameter_updates(payload)
+            self._queue_pending_param_updates(updates)
+            self._show_param_update_status("", warning=False)
+        except Exception as e:
+            self.logger.error(f"Invalid parameter update request: {e}")
+            self.logger.debug(traceback.format_exc())
+            self._show_param_update_status(f"Controller update not sent: {e}", warning=True)
+            return
+
+        try:
             self.qt_dev.updateTorqueValues(payload)
         except Exception as e:
             self.logger.error(f"Failed to update torque values: {e}")
-            self.logger.debug(traceback.format_exc())
-        try:
-            joint_id = str(payload[1])
-            controller_id = str(payload[2])
-            parameter_idx = int(payload[3])
-            value = payload[4]
-            key = (joint_id, controller_id)
-            values = list(self._controller_values.get(key, []))
-            while len(values) <= parameter_idx:
-                values.append("0")
-            values[parameter_idx] = str(value)
-            self._controller_values[key] = values
-            self.settings_page.set_controller_values(self._controller_values)
-        except Exception as e:
-            self.logger.error(f"Failed to mirror apply into controller value DB: {e}")
             self.logger.debug(traceback.format_exc())
         # Return to trial page
         try:

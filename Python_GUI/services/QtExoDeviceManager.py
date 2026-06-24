@@ -650,6 +650,42 @@ class QtExoDeviceManager(QtCore.QObject):
             self.error.emit(f"Internal error: {ex}")
             return None
 
+    @staticmethod
+    def build_parameter_updates(parameter_list: list) -> list[tuple[int, int, int, float]]:
+        if len(parameter_list) != 5:
+            raise ValueError("Parameter update must contain bilateral, joint, controller, parameter, value")
+
+        use_bilateral = bool(parameter_list[0])
+        joint_id = int(parameter_list[1])
+        controller_id = int(parameter_list[2])
+        parameter_index = int(parameter_list[3])
+        value = float(parameter_list[4])
+
+        for label, field in (
+            ("joint", joint_id),
+            ("controller", controller_id),
+            ("parameter", parameter_index),
+        ):
+            if field < 0 or field > 255:
+                raise ValueError(f"{label} field out of range: {field}")
+
+        side_mask = 0x60
+        left_side = 0x40
+        right_side = 0x20
+        side_bits = joint_id & side_mask
+        if side_bits not in (left_side, right_side):
+            raise ValueError(f"Joint ID {joint_id} does not include a valid side bit")
+
+        updates = [(joint_id, controller_id, parameter_index, value)]
+        if use_bilateral:
+            mirror_joint_id = joint_id ^ side_mask
+            mirror_side_bits = mirror_joint_id & side_mask
+            if mirror_side_bits not in (left_side, right_side):
+                raise ValueError(f"Could not mirror joint ID {joint_id} across sides")
+            updates.append((mirror_joint_id, controller_id, parameter_index, value))
+
+        return updates
+
     @QtCore.Slot()
     def startExoMotors(self):
         if not self._ensure_connected():
@@ -738,37 +774,28 @@ class QtExoDeviceManager(QtCore.QObject):
         if not self._ensure_connected():
             return
 
+        try:
+            updates = self.build_parameter_updates(parameter_list)
+        except Exception as ex:
+            self.logger.warning("Invalid parameter update payload %s: %s", parameter_list, ex)
+            self.error.emit(str(ex))
+            return
+
         async def _do():
             try:
-                totalLoops = 1
-                loopCount = 0
-                float_values = parameter_list
-                use_bilateral = bool(float_values[0]) if float_values else False
-
-                mirror_val = None
-                if float_values and len(float_values) > 1 and use_bilateral:
-                    key = int(float_values[1])
-                    side_bits = key & 0x60
-                    if side_bits in (0x20, 0x40):
-                        totalLoops = 2
-                        mirror_val = key ^ 0x60
-
-                while loopCount != totalLoops:
+                for joint_id, controller_id, parameter_index, value in updates:
+                    self.logger.info(
+                        "Sending parameter update: joint=%s controller=%s index=%s value=%s",
+                        joint_id,
+                        controller_id,
+                        parameter_index,
+                        value,
+                    )
                     await self._client.write_gatt_char(UART_TX_UUID, b"f", response=False)
-
-                    for i in range(1, len(float_values)):
-                        if i == 1:
-                            key = int(float_values[1])
-                            if use_bilateral and mirror_val is not None:
-                                val = key if loopCount == 0 else mirror_val
-                            else:
-                                val = key
-                            float_bytes = struct.pack("<d", float(val))
-                        else:
-                            float_bytes = struct.pack("<d", float(float_values[i]))
+                    for val in (joint_id, controller_id, parameter_index, value):
+                        float_bytes = struct.pack("<d", float(val))
                         await self._client.write_gatt_char(UART_TX_UUID, float_bytes, response=False)
-
-                    loopCount += 1
+                    await asyncio.sleep(0.01)
                 self.log.emit("Torque parameters updated")
             except Exception as ex:
                 self.error.emit(str(ex))
