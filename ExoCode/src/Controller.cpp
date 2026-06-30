@@ -1552,13 +1552,16 @@ float CalibrManager::calc_motor_cmd()
 		//Currently, for Maxon motors, the motor command isn’t divided by the motor torque constant or gear ratio. Adjust the command accordingly.
 		if (_joint_data->motor.motor_type == (uint8_t)config_defs::motor::MaxonMotor)
 		{
-			cmd = 100;
+			cmd = 0;//100;
 		}
 	}
 	else {
 		cmd = 0;
 	}
-	
+	#ifdef CONTROLLER_DEBUG
+        Serial.println("CalibrManager::calc_motor_cmd->cmd:");
+        Serial.println(cmd);
+    #endif
 	// Serial.print("\nExo status: ");
 	// Serial.print(String(exo_status));
 	// Serial.print("  |  doToeRefinement: ");
