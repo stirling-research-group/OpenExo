@@ -182,9 +182,9 @@ namespace
         param_bound(false, 0.0f, 10000.0f, false),  // 8 kd
         param_bound(false, 0.0f, 1.0f, true),       // 9 turn_on_peak_limiter
     };
-
+    // Could add harder bounds for controllers here instead of in GUI
     const ParameterBoundConfig chirp_bounds[controller_defs::chirp::num_parameter] =
-    {
+    { 
         param_bound(false, -100.0f, 100.0f, false), // 0 amplitude
         param_bound(false, 0.0f, 100.0f, false),    // 1 start_frequency
         param_bound(false, 0.0f, 100.0f, false),    // 2 end_frequency
