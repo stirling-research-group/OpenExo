@@ -1690,7 +1690,7 @@ float Chirp::calc_motor_cmd()
            : 0);
 
         // Safe start mode
-         if (_controller_data->parameters[controller_defs::chirp::pid_flag_idx])
+         if (_controller_data->parameters[controller_defs::chirp::safe_start_idx])
         {
             cmd = 0; //
         }
