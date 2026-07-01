@@ -298,7 +298,7 @@ class RtBridge(QtCore.QObject):
                 return
             event_info = parts[0]
             event_data = parts[1]
-           # Their update: command = event_info[1] if len(event_info) > 1 else ""
+            # Their update: command = event_info[1] if len(event_info) > 1 else ""
             ## Figure out command
             if len(event_info) < 3 or event_info[0] != 'S':
 
@@ -317,7 +317,7 @@ class RtBridge(QtCore.QObject):
                 self.logger.debug(traceback.format_exc())
                 return
 
-            if command == 'a':
+            if curr_command == 'a':
                 self._handle_param_update_ack(event_data, self._data_length)
                 return
 

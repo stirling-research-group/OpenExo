@@ -69,6 +69,7 @@ namespace
         param_bound(false, 0.0f, 10000.0f, false), // 1 p_gain
         param_bound(false, 0.0f, 10000.0f, false), // 2 i_gain
         param_bound(false, 0.0f, 10000.0f, false), // 3 d_gain
+        param_bound(true, 0.0f, 1.0f, true), // safe_start
     };
 
     const ParameterBoundConfig pjmc_bounds[controller_defs::proportional_joint_moment::num_parameter] =
