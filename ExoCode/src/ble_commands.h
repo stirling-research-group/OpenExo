@@ -103,8 +103,8 @@ namespace ble
         {ble_names::send_trq_cal,           2},
         {ble_names::send_step_count,        2},
         {ble_names::cal_fsr_finished,       0},
-        {ble_names::send_pid,       3}
-        {ble_names::param_update_ack,       5},
+        {ble_names::send_pid,       3},
+        {ble_names::param_update_ack,       5}
     };
 };
 
