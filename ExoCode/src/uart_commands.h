@@ -181,7 +181,15 @@ namespace UART_command_handlers
 #if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
         j_data->controller.controller = (uint8_t)msg.data[(uint8_t)UART_command_enums::controller_params::CONTROLLER_ID];
         set_controller_params(msg.joint_id, (uint8_t)msg.data[(uint8_t)UART_command_enums::controller_params::CONTROLLER_ID], (uint8_t)msg.data[(uint8_t)UART_command_enums::controller_params::PARAM_START], exo_data);
+        get_controller_params(handler, exo_data, msg);
         //Serial.println("Updating Controller Params: " + String(msg.joint_id) + ", " + String((uint8_t)msg.data[(uint8_t)UART_command_enums::controller_params::PARAM_START]) + ", " + String(j_data->controller.controller));
+#else
+        j_data->controller.controller = (uint8_t)msg.data[(uint8_t)UART_command_enums::controller_params::CONTROLLER_ID];
+        uint8_t param_length = (uint8_t)msg.data[(uint8_t)UART_command_enums::controller_params::PARAM_LENGTH];
+        for (uint8_t i = 0; i < param_length && i < controller_defs::max_parameters; i++)
+        {
+            j_data->controller.parameters[i] = msg.data[(uint8_t)UART_command_enums::controller_params::PARAM_START + i];
+        }
 #endif
     }
 
@@ -653,6 +661,10 @@ namespace UART_command_handlers
         logger::print(", value=");
         logger::println(request.value);
         send_controller_param_ack(handler, request, true, param_update::RejectionReason::accepted);
+
+#if defined(ARDUINO_TEENSY36) || defined(ARDUINO_TEENSY41)
+        get_controller_params(handler, exo_data, msg);
+#endif
 		
 		#ifdef SIMPLE_DEBUG
 		Serial.print("\nTeensy just updated a control parameter:");

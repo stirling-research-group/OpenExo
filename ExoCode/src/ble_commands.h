@@ -498,6 +498,7 @@ namespace ble_handlers
         {
             j_data->controller.controller = controller_id;
             j_data->controller.parameters[param_idx] = param_value;
+            
         }
         // PID addition - sophie
 

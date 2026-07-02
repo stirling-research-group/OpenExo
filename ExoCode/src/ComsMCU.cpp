@@ -14,7 +14,7 @@
 
 #if defined(ARDUINO_ARDUINO_NANO33BLE) | defined(ARDUINO_NANO_RP2040_CONNECT)
 
-#define COMSMCU_DEBUG 0
+#define COMSMCU_DEBUG 1
 
 ComsMCU::ComsMCU(ExoData* data, uint8_t* config_to_send):_data{data}
 {
@@ -234,6 +234,28 @@ void ComsMCU::update_gui()
 
       JointData* r_elbow = &this->_data->right_side.elbow;
       JointData* l_elbow = &this->_data->left_side.elbow;
+      static bool requested_initial_params = false; // request initial parameters from SD card
+      if (!requested_initial_params)
+      {
+          UARTHandler* uart_handler = UARTHandler::get_instance();
+          UART_msg_t tx_msg;
+          tx_msg.command = UART_command_names::get_controller_params;
+          tx_msg.len = 0;
+
+          if (l_elbow->is_used)
+          {
+              tx_msg.joint_id = (uint8_t)l_elbow->id;
+              uart_handler->UART_msg(tx_msg);
+          }
+
+          if (r_elbow->is_used)
+          {
+              tx_msg.joint_id = (uint8_t)r_elbow->id;
+              uart_handler->UART_msg(tx_msg);
+          }
+
+          requested_initial_params = true;
+      }
      #if COMSMCU_DEBUG
             logger::println(del_t_status);
             logger::println(BLE_times::_status_msg_delay);
@@ -270,7 +292,23 @@ void ComsMCU::update_gui()
 
 
 
-        int idx = 0;
+        JointData* pid_elbow = NULL;
+        if (l_elbow->is_used &&
+            l_elbow->controller.controller != 0 &&
+            l_elbow->controller.controller != (uint8_t)config_defs::elbow_controllers::disabled)
+        {
+            pid_elbow = l_elbow;
+        }
+        else if (r_elbow->is_used &&
+                 r_elbow->controller.controller != 0 &&
+                 r_elbow->controller.controller != (uint8_t)config_defs::elbow_controllers::disabled)
+        {
+            pid_elbow = r_elbow;
+        }
+        else
+        {
+            pid_elbow = l_elbow->is_used ? l_elbow : (r_elbow->is_used ? r_elbow : NULL);
+        }
 //        _data->for_each_joint([&](JointData* j, float*) {
 
 
@@ -296,7 +334,7 @@ void ComsMCU::update_gui()
 
             #endif
             //found = true;
-            switch (l_elbow->controller.controller){
+            switch (pid_elbow == NULL ? 0 : pid_elbow->controller.controller){
                 case 0: // none
                     pid_msg.data[0]=0;
                     pid_msg.data[1]=0;
@@ -309,17 +347,17 @@ void ComsMCU::update_gui()
                     break;
                 case 2: // zero torque
                     logger::println("P gain:");
-                    logger::println(l_elbow->controller.parameters[controller_defs::zero_torque::p_gain_idx]);
-                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::zero_torque::p_gain_idx];
-                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::zero_torque::i_gain_idx];
-                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::zero_torque::d_gain_idx];
+                    logger::println(pid_elbow->controller.parameters[controller_defs::zero_torque::p_gain_idx]);
+                    pid_msg.data[0] = pid_elbow->controller.parameters[controller_defs::zero_torque::p_gain_idx];
+                    pid_msg.data[1] = pid_elbow->controller.parameters[controller_defs::zero_torque::i_gain_idx];
+                    pid_msg.data[2] = pid_elbow->controller.parameters[controller_defs::zero_torque::d_gain_idx];
                     break;
                 case 3: // elbow_min_max
                     logger::println("P gain:");
-                    logger::println(l_elbow->controller.parameters[controller_defs::elbow_min_max::P_gain_idx]);
-                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::elbow_min_max::P_gain_idx];
-                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::elbow_min_max::I_gain_idx];
-                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::elbow_min_max::D_gain_idx];
+                    logger::println(pid_elbow->controller.parameters[controller_defs::elbow_min_max::P_gain_idx]);
+                    pid_msg.data[0] = pid_elbow->controller.parameters[controller_defs::elbow_min_max::P_gain_idx];
+                    pid_msg.data[1] = pid_elbow->controller.parameters[controller_defs::elbow_min_max::I_gain_idx];
+                    pid_msg.data[2] = pid_elbow->controller.parameters[controller_defs::elbow_min_max::D_gain_idx];
                     break;
                 case 4: // Calibration manager
                     //logger::println();
@@ -330,17 +368,17 @@ void ComsMCU::update_gui()
 
                 case 5: // chirp
                     logger::println("P gain:");
-                    logger::println(l_elbow->controller.parameters[controller_defs::chirp::p_gain_idx]);
-                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::chirp::p_gain_idx];
-                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::chirp::i_gain_idx];
-                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::chirp::d_gain_idx];
+                    logger::println(pid_elbow->controller.parameters[controller_defs::chirp::p_gain_idx]);
+                    pid_msg.data[0] = pid_elbow->controller.parameters[controller_defs::chirp::p_gain_idx];
+                    pid_msg.data[1] = pid_elbow->controller.parameters[controller_defs::chirp::i_gain_idx];
+                    pid_msg.data[2] = pid_elbow->controller.parameters[controller_defs::chirp::d_gain_idx];
                     break;
                  case 6: // step
                     logger::println("P gain:");
-                    logger::println(l_elbow->controller.parameters[controller_defs::step::p_gain_idx]);
-                    pid_msg.data[0] = r_elbow->controller.parameters[controller_defs::step::p_gain_idx];
-                    pid_msg.data[1] = r_elbow->controller.parameters[controller_defs::step::i_gain_idx];
-                    pid_msg.data[2] = r_elbow->controller.parameters[controller_defs::step::d_gain_idx];
+                    logger::println(pid_elbow->controller.parameters[controller_defs::step::p_gain_idx]);
+                    pid_msg.data[0] = pid_elbow->controller.parameters[controller_defs::step::p_gain_idx];
+                    pid_msg.data[1] = pid_elbow->controller.parameters[controller_defs::step::i_gain_idx];
+                    pid_msg.data[2] = pid_elbow->controller.parameters[controller_defs::step::d_gain_idx];
                     break;
                 default:
                     //logger::println();
