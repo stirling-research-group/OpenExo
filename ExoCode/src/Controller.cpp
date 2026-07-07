@@ -1692,7 +1692,8 @@ float Chirp::calc_motor_cmd()
         // Safe start mode
          if (_controller_data->parameters[controller_defs::chirp::safe_start_idx])
         {
-            cmd = 0; //
+            cmd = 0;
+            _controller_data->ff_setpoint = 0;
         }
 
         //uint16_t exo_status = _data->get_status();
