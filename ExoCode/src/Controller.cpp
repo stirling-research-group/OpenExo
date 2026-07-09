@@ -1637,7 +1637,8 @@ Chirp::Chirp(config_defs::joint_id id, ExoData* exo_data)
 
 float Chirp::calc_motor_cmd()
 {
-    if (_joint_data->is_left) // only for left?
+    // switched to the right
+    if (!(_joint_data->is_left)) // only for left?
     {
         float cmd_ff = 0;
 
