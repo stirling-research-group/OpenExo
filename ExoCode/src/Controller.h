@@ -417,6 +417,37 @@ public:
     float calc_motor_cmd();         /* Function that calculates the motor command. */
 
 };
+/**
+ * @brief Two-Step Controller
+ * This controller is designed to be used for the elbow joint during pid tuning. DO NOT USE ON A PERSON, ONLY ON GROUND.
+ * Applies a positive step response followed by a negative step response to hardware of user specified magnitude, duration, and frequency.
+ * Used for hardware performance validation. Each repition is two steps, one positive and one negative. 
+ *
+ * See ControllerData.h for details on the parameters used.
+ */
+class TwoStep : public _Controller
+{
+public:
+    TwoStep(config_defs::joint_id id, ExoData* exo_data);
+    ~TwoStep() {};
+
+    int n;                          /* Keeps track of how many steps have been performed. */
+    int start_flag;                 /* Flag that triggers the recording of the time that the step is first applied. */
+    float start_time;               /* Time that the step was first applied. */
+    float cmd_ff;                   /* Motor command. */
+    float previous_time;            /* Stores time from previous iteration. */
+    float end_time;                 /* Records time that step ended. */
+
+    float previous_command;
+    float previous_torque_reading;
+    int flag;
+    float difference;
+    float turn;
+    float flag_time;
+    float change_time;
+     float calc_motor_cmd();         /* Function that calculates the motor command. */
+};
+
 
 /**
  * @brief Proportional Hip Moment Controller

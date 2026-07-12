@@ -1787,7 +1787,9 @@ Step::Step(config_defs::joint_id id, ExoData* exo_data)
     flag_time = 0;
     change_time = 0;
 
+
 }
+
 
 float Step::calc_motor_cmd()
 {
@@ -1796,9 +1798,27 @@ float Step::calc_motor_cmd()
     float Duration = _controller_data->parameters[controller_defs::step::duration_idx];             //Duration of Step Response
     int Repetitions = _controller_data->parameters[controller_defs::step::repetitions_idx];         //Number of Step Responses
     float Spacing = _controller_data->parameters[controller_defs::step::spacing_idx];               //Time Between Each Step Response
-
+    float SafeStart = _controller_data->parameters[controller_defs::two_step::safe_start_idx]
     float tt = 0;
+    uint16_t exo_status = _data->get_status();
+    const bool active_trial = (exo_status == status_defs::messages::trial_on) ||
+        (exo_status == status_defs::messages::fsr_calibration) ||
+        (exo_status == status_defs::messages::fsr_refinement);
 
+    if (_data->user_paused || !active_trial || SafeStart == 1)
+    {
+        n = 1;
+        start_flag = 1;
+        start_time = 0;
+        previous_time = 0;
+        end_time = 0;
+        cmd_ff = 0;
+        previous_command = 0;
+        _controller_data->ff_setpoint = 0;
+        _controller_data->desired_torque = 0;
+        reset_integral();
+        return 0;
+    }
     if (n <= Repetitions)                                          //If we are less than the number of desired repetitions
     {
         if (start_flag == 1)                                        //If this is the start of this loop
@@ -1820,6 +1840,167 @@ float Step::calc_motor_cmd()
             cmd_ff = 0;                                             //Set the torque to 0
 
             if (previous_time <= Duration && tt > Duration)         //Calculate the time that the amplitude ended
+            {
+                end_time = millis();
+            }
+
+            if (((current_time - end_time)/1000) >= Spacing)        //If the time since ending the step has exceeded our desired spacing
+            {
+                n = n + 1;                                          //Update the iteration count
+                start_flag = 1;                                     //Update the start flag to get a new start time and begin a new cycle
+            }
+        }
+
+        previous_time = tt;                                         //Record time to be used as previous time in next loop. 
+
+    }
+    else
+    {
+        cmd_ff = 0;
+    }
+
+    //Real-Time Torque Filtering if Using Torque Transducer
+    //if (cmd_ff != previous_command)
+    //{
+    //    flag = 1;
+    //    difference = cmd_ff - previous_command;
+    //    turn = millis();;
+    //}
+
+    //if (difference > 0)
+    //{
+    //    if (flag == 1 && (previous_torque_reading >=  0.9 * cmd_ff))
+    //    {
+    //        flag = 0;
+    //    }
+    //}
+
+    //if (difference < 0)
+    //{
+    //    //if (flag == 1 && (previous_torque_reading <= (1 - 0.9) * cmd_ff))
+    //    //{
+    //    //    flag = 0;
+    //    //}
+    //}
+
+    //if (flag == 0)
+    //{
+    //    _controller_data->filtered_torque_reading = utils::ewma(_joint_data->torque_reading, _controller_data->filtered_torque_reading, (_controller_data->parameters[controller_defs::step::alpha_idx] / 100));
+    //}
+    //else
+    //{
+    //    _controller_data->filtered_torque_reading = utils::ewma(_joint_data->torque_reading, _controller_data->filtered_torque_reading, 1);
+    //}
+
+    _controller_data->filtered_torque_reading = utils::ewma(_joint_data->torque_reading, _controller_data->filtered_torque_reading, (_controller_data->parameters[controller_defs::step::alpha_idx])/100);
+
+    _controller_data->ff_setpoint = cmd_ff;
+
+    float cmd = cmd_ff;
+
+    if (_controller_data->parameters[controller_defs::step::pid_flag_idx] > 0)
+    {
+        cmd = cmd_ff + _pid(cmd_ff, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::step::p_gain_idx], _controller_data->parameters[controller_defs::step::i_gain_idx], _controller_data->parameters[controller_defs::step::d_gain_idx]);
+    }
+    else
+    {
+        cmd = cmd_ff;
+    }
+
+    previous_command = cmd_ff;
+
+    previous_torque_reading = _controller_data->filtered_torque_reading;
+
+    //if (active_trial)
+    //{
+    //    if (!_joint_data->is_left)
+    //    {
+    //        Serial.print(_controller_data->ff_setpoint);
+    //        Serial.print(',');
+    //        Serial.print(100);
+    //        Serial.print("\n");
+
+    //        Serial.print(_controller_data->filtered_torque_reading);
+    //        Serial.print(',');
+    //        Serial.print(200);
+    //        Serial.print("\n");
+
+    //        Serial.print(tt*1000);
+    //        Serial.print(',');
+    //        Serial.print(300);
+    //        Serial.print("\n");
+    //    }
+    //}
+
+    //Sets the desired torque for plotting
+    _controller_data->desired_torque = cmd_ff;
+
+    return cmd;
+}
+
+//     
+
+//****************************************************
+
+TwoStep::TwoStep(config_defs::joint_id id, ExoData* exo_data)
+    : _Controller(id, exo_data)
+{
+#ifdef CONTROLLER_DEBUG
+    Serial.println("TwoStep::TwoStep");
+#endif
+
+    //Initializes Values
+    n = 1;
+    start_flag = 1;
+    start_time = 0;
+    cmd_ff = 0;
+    end_time = 0;
+
+    previous_command = 0;
+    previous_torque_reading = 0;
+    flag = 0;
+    difference = 0;
+    turn = 0;
+    flag_time = 0;
+    change_time = 0;
+
+}
+
+float TwoStep::calc_motor_cmd()
+{
+    
+    float Amplitude = _controller_data->parameters[controller_defs::two_step::amplitude_idx];           //Magnitude of Step Response
+    float Duration = _controller_data->parameters[controller_defs::two_step::duration_idx];             //Duration of Step Response
+    int Repetitions = _controller_data->parameters[controller_defs::two_step::repetitions_idx];         //Number of Step Responses
+    float Spacing = _controller_data->parameters[controller_defs::two_step::spacing_idx];               //Time Between Each Step Response
+
+    float tt = 0;
+
+    if (n <= Repetitions)                                          //If we are less than the number of desired repetitions
+    {
+        if (start_flag == 1)                                        //If this is the start of this loop
+        {
+            start_time = millis();                                  //Record the start time
+            start_flag = 0;                                         //Set the flag so that we don't continue to record start time
+        }
+
+        float current_time = millis();                              //Measure the current time
+
+        tt = (current_time - start_time) / 1000;                    //Determine the time since the begining of the control iteration, converted to seconds
+
+        if (tt <= Duration)                                         //If the time is less than the desired duration of the step
+        {
+            cmd_ff = Amplitude;                                     //Apply a torque at the desired magnitude 
+        }
+        else if(tt > Duration && tt <= 2*Duration)                          //If the time is less than the desired duration of the step
+        {
+            cmd_ff = -1*Amplitude;                                     //Apply a torque at the desired magnitude 
+        }
+        else
+        {
+            cmd_ff = 0;                                             //Set the torque to 0
+
+            if ((previous_time <= 2.0f * Duration && tt > 2.0f * Duration))        //Calculate the time that the amplitude ended
             {
                 end_time = millis();
             }
@@ -1915,6 +2096,14 @@ float Step::calc_motor_cmd()
     //        Serial.print("\n");
     //    }
     //}
+
+    // Check for safe start mode
+    if (_controller_data->parameters[controller_defs::two_step::safe_start_idx])
+    {
+        cmd = 0;
+        _controller_data->ff_setpoint = 0;
+        cmd_ff = 0;
+    }
 
     //Sets the desired torque for plotting
     _controller_data->desired_torque = cmd_ff;

@@ -368,7 +368,7 @@ class RtBridge(QtCore.QObject):
                             # Sophie - addition delete or comment if error
                             values = list(self._payload)
 
-                            if self._command == "p":
+                            if self._command in ("p", "P"):
                                 self.pidValuesReceived.emit(values)
                                 self._reset_stream()
                                 return

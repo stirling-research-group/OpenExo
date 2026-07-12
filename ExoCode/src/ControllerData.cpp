@@ -211,6 +211,20 @@ namespace
         param_bound(false, 0.0f, 100.0f, false),    // 8 alpha
     };
 
+    const ParameterBoundConfig two_step_bounds[controller_defs::two_step::num_parameter] =
+    {
+        param_bound(false, -100.0f, 100.0f, false), // 0 amplitude
+        param_bound(false, 0.0f, 10000.0f, false),  // 1 duration
+        param_bound(false, 0.0f, 10000.0f, true),   // 2 repetitions
+        param_bound(false, 0.0f, 10000.0f, false),  // 3 spacing
+        param_bound(false, 0.0f, 1.0f, true),       // 4 pid_flag
+        param_bound(false, 0.0f, 10000.0f, false),  // 5 p_gain
+        param_bound(false, 0.0f, 10000.0f, false),  // 6 i_gain
+        param_bound(false, 0.0f, 10000.0f, false),  // 7 d_gain
+        param_bound(false, 0.0f, 100.0f, false),    // 8 alpha
+        param_bound(true, 0.0f, 1.0f, true),        // 9 safe_start
+    };
+
     const ParameterBoundConfig phmc_bounds[controller_defs::proportional_hip_moment::num_parameter] =
     {
         param_bound(false, -100.0f, 100.0f, false), // 0 extension_setpoint
@@ -317,6 +331,11 @@ namespace
     bool bounds_for_step(uint8_t parameter_index, float* min_out, float* max_out, bool* integer_only_out)
     {
         return read_parameter_bound(step_bounds, PARAM_BOUND_COUNT(step_bounds), parameter_index, min_out, max_out, integer_only_out);
+    }
+
+    bool bounds_for_two_step(uint8_t parameter_index, float* min_out, float* max_out, bool* integer_only_out)
+    {
+        return read_parameter_bound(two_step_bounds, PARAM_BOUND_COUNT(two_step_bounds), parameter_index, min_out, max_out, integer_only_out);
     }
 
     bool bounds_for_phmc(uint8_t parameter_index, float* min_out, float* max_out, bool* integer_only_out)
@@ -545,6 +564,8 @@ uint8_t ControllerData::get_parameter_length_for(config_defs::JointType joint, u
                     return controller_defs::chirp::num_parameter;
                 case (uint8_t)config_defs::elbow_controllers::step:
                     return controller_defs::step::num_parameter;
+                case (uint8_t)config_defs::elbow_controllers::two_step:
+                    return controller_defs::two_step::num_parameter;
                 default:
                     return 0;
             }
@@ -684,6 +705,8 @@ bool ControllerData::get_parameter_bounds_for(
                     return bounds_for_chirp(parameter_index, min_value, max_value, integer_only);
                 case (uint8_t)config_defs::elbow_controllers::step:
                     return bounds_for_step(parameter_index, min_value, max_value, integer_only);
+                case (uint8_t)config_defs::elbow_controllers::two_step:
+                    return bounds_for_two_step(parameter_index, min_value, max_value, integer_only);
                 default:
                     return false;
             }

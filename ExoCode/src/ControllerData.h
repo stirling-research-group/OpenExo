@@ -247,6 +247,25 @@ namespace controller_defs                   /**< Stores the parameter indexes fo
         const uint8_t num_parameter = 17;
     }
 
+    // sophie addition start 
+    
+     namespace two_step                                              //Parameters for the two step torque used in pid tuning (NOT ON A PERSON, ON GROUND)
+    {
+        const uint8_t amplitude_idx = 0;                        //Magnitude of the applied torque in Nm             
+        const uint8_t duration_idx = 1;                         //Duration of the applied torque
+        const uint8_t repetitions_idx = 2;                      //Number of times the torque is applied
+        const uint8_t spacing_idx = 3;                          //Time between each application of torque
+        const uint8_t pid_flag_idx = 4;                         //Flag to determine whether or not PID used
+        const uint8_t p_gain_idx = 5;                           //Value of P Gain for PID control
+        const uint8_t i_gain_idx = 6;                           //Value of I Gain for PID control
+        const uint8_t d_gain_idx = 7;                           //Value of D Gain for PID control
+
+        const uint8_t alpha_idx = 8;                            //Filtering term for exponentially wieghted moving average (EWMA) filter, used on torque sensor to cut down on noise.
+        const uint8_t safe_start_idx = 9;   // safe start flag, 1 = safe start on (max torque = 0), 0 = safe start off -- sophie
+        const uint8_t num_parameter = 10;
+    }
+    // sophie addition end
+
     const uint8_t max_parameters = spv2::num_parameter;         //This should be the largest of all the num_parameters
 }
 

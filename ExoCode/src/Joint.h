@@ -271,6 +271,7 @@ protected:
     CalibrManager _calibr_manager;                          /**< Calibration Manager "Controller" */
     Chirp _chirp;                                           /**< Chirp Controller for Device Characterization */
     Step _step;                                             /**< Step Controller for Device Characterization */
+    TwoStep _two_step;                                         /**< Two Step Controller for Device Characterization */
 
 };
 

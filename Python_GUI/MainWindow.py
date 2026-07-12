@@ -1051,8 +1051,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_pid_button_pressed(self):
         try:
             if self._pid_values:
-                self.qt_dev.write(b'p')
-                #self.trial_page.update_pid_values(self._pid_values)
+                self.trial_page.update_pid_values(self._pid_values)
             else:
                 self.logger.debug("PID button pressed but no PID values received yet")
         except Exception as e:
@@ -1069,5 +1068,4 @@ class MainWindow(QtWidgets.QMainWindow):
             self.logger.debug(traceback.format_exc())
 
     ## PID GUI Update end - sophie
-
 

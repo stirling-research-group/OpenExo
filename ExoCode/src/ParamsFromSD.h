@@ -85,6 +85,7 @@
             {(uint8_t)config_defs::elbow_controllers::elbow_min_max, "elbowControllers/elbowMinMax.csv"},
             {(uint8_t)config_defs::elbow_controllers::chirp,"elbowControllers/chirp.csv"},
             {(uint8_t)config_defs::elbow_controllers::step,"elbowControllers/step.csv"},
+            {(uint8_t)config_defs::elbow_controllers::two_step,"elbowControllers/twoStep.csv"},
         };
 
         const ParamFilenameKey arm_1

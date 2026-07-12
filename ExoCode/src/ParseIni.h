@@ -202,7 +202,7 @@ namespace config_defs
         calibr_manager = 4,
         chirp = 5,
         step = 6,
-		
+		two_step = 7,
 		Count //Leave this at the end of the enum class. Count can be used to get the total number of controllers defined for this joint.
     };
 
@@ -533,6 +533,7 @@ namespace config_defs
             {"calibrManager", (uint8_t)config_defs::elbow_controllers::calibr_manager},
             {"chirp", (uint8_t)config_defs::elbow_controllers::chirp},
             {"step", (uint8_t)config_defs::elbow_controllers::step},
+            {"twoStep", (uint8_t)config_defs::elbow_controllers::two_step},
         };
 
         const IniKeyCode arm_1_controllers

@@ -1217,6 +1217,7 @@ ElbowJoint::ElbowJoint(config_defs::joint_id id, ExoData* exo_data)
     , _calibr_manager(id, exo_data)
     , _chirp(id, exo_data)
     , _step(id, exo_data)
+    , _two_step(id, exo_data)
 {
     #ifdef JOINT_DEBUG
         logger::print(_is_left ? "Left " : "Right ");
@@ -1420,6 +1421,9 @@ void ElbowJoint::set_controller(uint8_t controller_id)  //Changes the high level
             break;
         case (uint8_t)config_defs::elbow_controllers::step:
             _controller = &_step;
+            break;
+        case (uint8_t)config_defs::elbow_controllers::two_step:
+            _controller = &_two_step;
             break;
         default:
             logger::print("Unkown Controller!\n", LogLevel::Error);
