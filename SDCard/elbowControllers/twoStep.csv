@@ -3,4 +3,4 @@
 ,Parameter list for the  Sine controller,,,,,,,
 ,Parameter order:,,,,,,,
 Amplitude,Duration,Repetitions,Spacing,PID Flag,P Gain,I Gain,D Gain,Alpha, Safe Start 
-0.1,3,3,8,0,0,0,0,100, 1
+0.15,2,20,0.50,0,0.9,0,0,100, 1
