@@ -164,7 +164,14 @@ _Controller::_Controller(config_defs::joint_id id, ExoData* exo_data)
 }
 
 //****************************************************
-
+void _Controller::reset_integral()
+{
+    _pid_error_sum = 0;
+    _prev_input = 0;
+    _prev_de_dt = 0;
+    _prev_pid_time = 0;
+}
+//****************************************************
 float _Controller::_cf_mfac(float reference, float current_measurement)         //Compact Form Model Free Adaptive Controller (In-development, not yet employed)
 {
     //Calculate k-1 (k_0) delta
@@ -1790,7 +1797,16 @@ Step::Step(config_defs::joint_id id, ExoData* exo_data)
 
 }
 
-
+void Step::reset_state()
+{
+    n = 1;
+    start_flag = 1;
+    start_time = 0;
+    previous_time = 0;
+    end_time = 0;
+    cmd_ff = 0;
+    reset_integral();
+}
 float Step::calc_motor_cmd()
 {
     
@@ -1798,7 +1814,7 @@ float Step::calc_motor_cmd()
     float Duration = _controller_data->parameters[controller_defs::step::duration_idx];             //Duration of Step Response
     int Repetitions = _controller_data->parameters[controller_defs::step::repetitions_idx];         //Number of Step Responses
     float Spacing = _controller_data->parameters[controller_defs::step::spacing_idx];               //Time Between Each Step Response
-    float SafeStart = _controller_data->parameters[controller_defs::two_step::safe_start_idx]
+    float SafeStart = _controller_data->parameters[controller_defs::step::safe_start_idx];
     float tt = 0;
     uint16_t exo_status = _data->get_status();
     const bool active_trial = (exo_status == status_defs::messages::trial_on) ||
@@ -1965,7 +1981,16 @@ TwoStep::TwoStep(config_defs::joint_id id, ExoData* exo_data)
     change_time = 0;
 
 }
-
+void TwoStep::reset_state()
+{
+    n = 1;
+    start_flag = 1;
+    start_time = 0;
+    previous_time = 0;
+    end_time = 0;
+    cmd_ff = 0;
+    reset_integral();
+}
 float TwoStep::calc_motor_cmd()
 {
     
@@ -1973,8 +1998,27 @@ float TwoStep::calc_motor_cmd()
     float Duration = _controller_data->parameters[controller_defs::two_step::duration_idx];             //Duration of Step Response
     int Repetitions = _controller_data->parameters[controller_defs::two_step::repetitions_idx];         //Number of Step Responses
     float Spacing = _controller_data->parameters[controller_defs::two_step::spacing_idx];               //Time Between Each Step Response
-
+    float SafeStart = _controller_data->parameters[controller_defs::step::safe_start_idx];   
     float tt = 0;
+    uint16_t exo_status = _data->get_status();
+    const bool active_trial = (exo_status == status_defs::messages::trial_on) ||
+        (exo_status == status_defs::messages::fsr_calibration) ||
+        (exo_status == status_defs::messages::fsr_refinement);
+
+    if (_data->user_paused || !active_trial || SafeStart == 1)
+    {
+        n = 1;
+        start_flag = 1;
+        start_time = 0;
+        previous_time = 0;
+        end_time = 0;
+        cmd_ff = 0;
+        previous_command = 0;
+        _controller_data->ff_setpoint = 0;
+        _controller_data->desired_torque = 0;
+        reset_integral();
+        return 0;
+    }
 
     if (n <= Repetitions)                                          //If we are less than the number of desired repetitions
     {
@@ -1992,23 +2036,28 @@ float TwoStep::calc_motor_cmd()
         {
             cmd_ff = Amplitude;                                     //Apply a torque at the desired magnitude 
         }
-        else if(tt > Duration && tt <= 2*Duration)                          //If the time is less than the desired duration of the step
+       else if (tt > Duration && tt <= Duration + Spacing)
         {
-            cmd_ff = -1*Amplitude;                                     //Apply a torque at the desired magnitude 
+            cmd_ff = 0;
+        }
+        else if (tt > Duration + Spacing && tt <= (2 * Duration) + Spacing)
+        {
+            cmd_ff = -1 * Amplitude;
         }
         else
         {
-            cmd_ff = 0;                                             //Set the torque to 0
+            cmd_ff = 0;
 
-            if ((previous_time <= 2.0f * Duration && tt > 2.0f * Duration))        //Calculate the time that the amplitude ended
+            if (previous_time <= ((2.0f * Duration) + Spacing) &&
+                tt > ((2.0f * Duration) + Spacing))
             {
                 end_time = millis();
             }
 
-            if (((current_time - end_time)/1000) >= Spacing)        //If the time since ending the step has exceeded our desired spacing
+            if (((current_time - end_time) / 1000) >= Spacing)
             {
-                n = n + 1;                                          //Update the iteration count
-                start_flag = 1;                                     //Update the start flag to get a new start time and begin a new cycle
+                n = n + 1;
+                start_flag = 1;
             }
         }
 
@@ -2071,10 +2120,6 @@ float TwoStep::calc_motor_cmd()
     previous_command = cmd_ff;
 
     previous_torque_reading = _controller_data->filtered_torque_reading;
-
-    uint16_t exo_status = _data->get_status();
-    
-    bool active_trial = (exo_status == status_defs::messages::trial_on) || (exo_status == status_defs::messages::fsr_calibration) || (exo_status == status_defs::messages::fsr_refinement);
 
     //if (active_trial)
     //{

@@ -60,6 +60,11 @@ class _Controller
          * @brief Resets the integral sum for the controller
          */
         void reset_integral(); 
+
+        /**
+         * @brief Resets the state of the controller (specifically when they have repititons such as step and two_step)
+         */
+        virtual void reset_state() {};
         
     protected:
         
@@ -415,7 +420,7 @@ public:
     float change_time;
 
     float calc_motor_cmd();         /* Function that calculates the motor command. */
-
+    void reset_state() override;
 };
 /**
  * @brief Two-Step Controller
@@ -445,7 +450,8 @@ public:
     float turn;
     float flag_time;
     float change_time;
-     float calc_motor_cmd();         /* Function that calculates the motor command. */
+    float calc_motor_cmd();         /* Function that calculates the motor command. */
+    void reset_state() override;
 };
 
 
