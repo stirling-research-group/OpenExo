@@ -1998,7 +1998,7 @@ float TwoStep::calc_motor_cmd()
     float Duration = _controller_data->parameters[controller_defs::two_step::duration_idx];             //Duration of Step Response
     int Repetitions = _controller_data->parameters[controller_defs::two_step::repetitions_idx];         //Number of Step Responses
     float Spacing = _controller_data->parameters[controller_defs::two_step::spacing_idx];               //Time Between Each Step Response
-    float SafeStart = _controller_data->parameters[controller_defs::step::safe_start_idx];   
+    float SafeStart = _controller_data->parameters[controller_defs::two_step::safe_start_idx];   
     float tt = 0;
     uint16_t exo_status = _data->get_status();
     const bool active_trial = (exo_status == status_defs::messages::trial_on) ||
