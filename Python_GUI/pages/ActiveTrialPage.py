@@ -188,18 +188,34 @@ class ActiveTrialPage(QtWidgets.QWidget):
         pid_layout.setSpacing(UIConfig.SPACING_SMALL)
 
 
-        lbl_elbow = QtWidgets.QLabel("Elbow:")
-        lbl_elbow.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL}pt; font-weight: bold;")
-        self.lbl_elbow_kp = QtWidgets.QLabel("Kp: --")
-        self.lbl_elbow_ki = QtWidgets.QLabel("Ki: --")
-        self.lbl_elbow_kd = QtWidgets.QLabel("Kd: --")
-        self.lbl_elbow_kp.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
-        self.lbl_elbow_ki.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
-        self.lbl_elbow_kd.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
-        pid_layout.addWidget( lbl_elbow, 0, 0)
-        pid_layout.addWidget(self.lbl_elbow_kp, 0, 1)
-        pid_layout.addWidget(self.lbl_elbow_ki, 0, 2)
-        pid_layout.addWidget(self.lbl_elbow_kd, 0, 3)
+        lbl_left_elbow = QtWidgets.QLabel("Left Elbow:")
+        lbl_right_elbow = QtWidgets.QLabel("Right Elbow:")
+        lbl_left_elbow.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL}pt; font-weight: bold;")
+        lbl_right_elbow.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL}pt; font-weight: bold;")
+
+        
+        self.lbl_left_elbow_kp = QtWidgets.QLabel("Kp: --")
+        self.lbl_left_elbow_ki = QtWidgets.QLabel("Ki: --")
+        self.lbl_left_elbow_kd = QtWidgets.QLabel("Kd: --")
+        self.lbl_left_elbow_kp.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_left_elbow_ki.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_left_elbow_kd.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+
+        self.lbl_right_elbow_kp = QtWidgets.QLabel("Kp: --")
+        self.lbl_right_elbow_ki = QtWidgets.QLabel("Ki: --")
+        self.lbl_right_elbow_kd = QtWidgets.QLabel("Kd: --")
+        self.lbl_right_elbow_kp.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_right_elbow_ki.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+        self.lbl_right_elbow_kd.setStyleSheet(f"font-size: {UIConfig.FONT_SMALL - 2}pt;")
+
+        pid_layout.addWidget(lbl_left_elbow, 0, 0)
+        pid_layout.addWidget(self.lbl_left_elbow_kp, 0, 1)
+        pid_layout.addWidget(self.lbl_left_elbow_ki, 0, 2)
+        pid_layout.addWidget(self.lbl_left_elbow_kd, 0, 3)
+        pid_layout.addWidget(lbl_right_elbow, 1, 0)
+        pid_layout.addWidget(self.lbl_right_elbow_kp, 1, 1)
+        pid_layout.addWidget(self.lbl_right_elbow_ki, 1, 2)
+        pid_layout.addWidget(self.lbl_right_elbow_kd, 1, 3)
         controls.addLayout(pid_layout)
         controls.addSpacing(UIConfig.SPACING_XLARGE)
         # ═══════ SETTINGS ═══════
@@ -599,9 +615,12 @@ class ActiveTrialPage(QtWidgets.QWidget):
         try:
 
 
-                self.lbl_elbow_kp.setText(f"Kp: {pid_data[0]:.4f}")
-                self.lbl_elbow_ki.setText(f"Ki: {pid_data[1]:.4f}")
-                self.lbl_elbow_kd.setText(f"Kd: {pid_data[2]:.4f}")
+                self.lbl_left_elbow_kp.setText(f"Kp: {pid_data[0]:.4f}")
+                self.lbl_left_elbow_ki.setText(f"Ki: {pid_data[1]:.4f}")
+                self.lbl_left_elbow_kd.setText(f"Kd: {pid_data[2]:.4f}")
+                self.lbl_right_elbow_kp.setText(f"Kp: {pid_data[3]:.4f}")
+                self.lbl_right_elbow_ki.setText(f"Ki: {pid_data[4]:.4f}")
+                self.lbl_right_elbow_kd.setText(f"Kd: {pid_data[5]:.4f}")
 
 
         except Exception as e:

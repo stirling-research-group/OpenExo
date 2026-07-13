@@ -1036,7 +1036,7 @@ class QtExoDeviceManager(QtCore.QObject):
 
         async def _do():
             try:
-                await self._client.write_gatt_char(UART_TX_UUID, b"P", response=False)
+                await self._client.write_gatt_char(UART_TX_UUID, b"p", response=False)
                 self.log.emit("PID request sent")
             except Exception as ex:
                 self.error.emit(str(ex))

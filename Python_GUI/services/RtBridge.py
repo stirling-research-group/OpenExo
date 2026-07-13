@@ -325,6 +325,7 @@ class RtBridge(QtCore.QObject):
 
             # Parse stream similar to original logic
             if curr_command == 'P':
+                print("RAW PID:", event_data)
                 self.logger.debug(f"PID frame detected, expecting {self._data_length} values")
                 values = []
                 token = ""
@@ -337,6 +338,7 @@ class RtBridge(QtCore.QObject):
                         token = ""
                     else:
                         token += ch
+                print("PARSED PID:", values)
                 if values:
                     self.logger.debug(f"Emitting PID values: {values}")
                     self.pidValuesReceived.emit(values)
@@ -368,11 +370,7 @@ class RtBridge(QtCore.QObject):
                             # Sophie - addition delete or comment if error
                             values = list(self._payload)
 
-                            if self._command in ("p", "P"):
-                                self.pidValuesReceived.emit(values)
-                                self._reset_stream()
-                                return
-
+                         
                             # Drop spurious single-value frames (e.g., fragmented BLE chunks)
                             if self._data_length <= 1:
                                 self._reset_stream()

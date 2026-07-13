@@ -52,7 +52,7 @@ namespace ble_names
     static const char mark              = 'N';
     static const char update_param      = 'f';
     static const char reset_system      = 'Z';
-   // static const char get_pid = 'p';
+    static const char get_pid = 'p';
 
     //Sending Commands (Firmware->GUI)
     static const char send_real_time_data = '?';
@@ -91,7 +91,7 @@ namespace ble
         {ble_names::update_param,       4},
         {ble_names::reset_system,       0},
 
-        //{ble_names::get_pid,       0}, //May need to update this
+        {ble_names::get_pid,       0}, //May need to update this
 
 
 
@@ -103,7 +103,7 @@ namespace ble
         {ble_names::send_trq_cal,           2},
         {ble_names::send_step_count,        2},
         {ble_names::cal_fsr_finished,       0},
-        {ble_names::send_pid,       3},
+        {ble_names::send_pid,       6}, // left p, i, d, right p, i, d
         {ble_names::param_update_ack,       5}
     };
 };
@@ -158,6 +158,115 @@ namespace ble_handler_vars
  */
 namespace ble_handlers
 {
+    // Sophie addition - start
+    struct Pid_Idx //  just a struct to hold the indexes of the PID parameters for a given controller
+    {
+        bool available;
+        uint8_t p_idx;
+        uint8_t i_idx;
+        uint8_t d_idx;
+   
+    };
+
+    inline static Pid_Idx get_pid_indexes(uint8_t joint_type, uint8_t controller_id)
+    {
+        if (joint_type == (uint8_t)config_defs::joint_id::elbow)
+        {
+            switch (controller_id)
+            {
+                case (uint8_t)config_defs::elbow_controllers::zero_torque:
+                    return {true,
+                        controller_defs::zero_torque::p_gain_idx,
+                        controller_defs::zero_torque::i_gain_idx,
+                        controller_defs::zero_torque::d_gain_idx};
+
+                case (uint8_t)config_defs::elbow_controllers::elbow_min_max:
+                    return {true,
+                        controller_defs::elbow_min_max::P_gain_idx,
+                        controller_defs::elbow_min_max::I_gain_idx,
+                        controller_defs::elbow_min_max::D_gain_idx};
+
+                case (uint8_t)config_defs::elbow_controllers::step:
+                    return {true,
+                        controller_defs::step::p_gain_idx,
+                        controller_defs::step::i_gain_idx,
+                        controller_defs::step::d_gain_idx};
+
+                case (uint8_t)config_defs::elbow_controllers::two_step:
+                    return {true,
+                        controller_defs::two_step::p_gain_idx,
+                        controller_defs::two_step::i_gain_idx,
+                        controller_defs::two_step::d_gain_idx};
+
+                case (uint8_t)config_defs::elbow_controllers::chirp:
+                    return {true,
+                        controller_defs::chirp::p_gain_idx,
+                        controller_defs::chirp::i_gain_idx,
+                        controller_defs::chirp::d_gain_idx};
+                        // Add more cases if you add more elbow controllers
+            }
+        }
+        // default return 
+        return {false, 0, 0, 0};
+    }
+
+    inline static void get_pid(ExoData* data, BleMessage* msg, BleMessage* response)
+    {
+        JointData* left = &data->left_side.elbow;
+        JointData* right = &data->right_side.elbow;
+
+        response->command = ble_names::send_pid;
+        response->expecting = 6;
+        response->is_complete = true;
+     
+        // Left side
+        Pid_Idx left_pid = get_pid_indexes(utils::get_joint_type(left->id), left->controller.controller);
+        Serial.print("Left is_used: ");
+        Serial.println(left->is_used);
+
+        Serial.print("Left controller: ");
+        Serial.println(left->controller.controller);
+        if (left->is_used && left_pid.available)
+        {
+            response->data[0] = left->controller.parameters[left_pid.p_idx];
+            response->data[1] = left->controller.parameters[left_pid.i_idx];
+            response->data[2] = left->controller.parameters[left_pid.d_idx];
+       
+        }
+        else
+        {
+            response->data[0] = 0;
+            response->data[1] = 0;
+            response->data[2] = 0;
+           
+        }
+
+        // Right side
+        Pid_Idx right_pid = get_pid_indexes(utils::get_joint_type(right->id), right->controller.controller);
+
+        if (right->is_used && right_pid.available)
+        {
+            response->data[3] = right->controller.parameters[right_pid.p_idx];
+            response->data[4] = right->controller.parameters[right_pid.i_idx];
+            response->data[5] = right->controller.parameters[right_pid.d_idx];
+        }
+        else
+        {
+            response->data[3] = 0;
+            response->data[4] = 0;
+            response->data[5] = 0;
+         
+        }
+        Serial.print("Left controller: ");
+        Serial.println(left->controller.controller);
+
+        Serial.print("Left P index: ");
+        Serial.println(left_pid.p_idx);
+
+        Serial.print("Left P value: ");
+        Serial.println(left->controller.parameters[left_pid.p_idx]);
+    }
+    // Sophie addition - end
     inline static void start(ExoData* data, BleMessage* msg)
     {
         //Start the trial (ie Enable motors and begin streaming data). If the joint is used; enable the motor, and set the controller to zero torque
