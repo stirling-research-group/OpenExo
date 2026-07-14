@@ -221,50 +221,23 @@ namespace ble_handlers
      
         // Left side
         Pid_Idx left_pid = get_pid_indexes(utils::get_joint_type(left->id), left->controller.controller);
-        Serial.print("Left is_used: ");
-        Serial.println(left->is_used);
-
-        Serial.print("Left controller: ");
-        Serial.println(left->controller.controller);
-        if (left->is_used && left_pid.available)
-        {
-            response->data[0] = left->controller.parameters[left_pid.p_idx];
-            response->data[1] = left->controller.parameters[left_pid.i_idx];
-            response->data[2] = left->controller.parameters[left_pid.d_idx];
+        
        
-        }
-        else
-        {
-            response->data[0] = 0;
-            response->data[1] = 0;
-            response->data[2] = 0;
-           
-        }
+        response->data[0] = left->controller.parameters[left_pid.p_idx];
+        response->data[1] = left->controller.parameters[left_pid.i_idx];
+        response->data[2] = left->controller.parameters[left_pid.d_idx];
+    
+       
 
         // Right side
         Pid_Idx right_pid = get_pid_indexes(utils::get_joint_type(right->id), right->controller.controller);
 
-        if (right->is_used && right_pid.available)
-        {
-            response->data[3] = right->controller.parameters[right_pid.p_idx];
-            response->data[4] = right->controller.parameters[right_pid.i_idx];
-            response->data[5] = right->controller.parameters[right_pid.d_idx];
-        }
-        else
-        {
-            response->data[3] = 0;
-            response->data[4] = 0;
-            response->data[5] = 0;
-         
-        }
-        Serial.print("Left controller: ");
-        Serial.println(left->controller.controller);
-
-        Serial.print("Left P index: ");
-        Serial.println(left_pid.p_idx);
-
-        Serial.print("Left P value: ");
-        Serial.println(left->controller.parameters[left_pid.p_idx]);
+    
+        response->data[3] = right->controller.parameters[right_pid.p_idx];
+        response->data[4] = right->controller.parameters[right_pid.i_idx];
+        response->data[5] = right->controller.parameters[right_pid.d_idx];
+    
+        
     }
     // Sophie addition - end
     inline static void start(ExoData* data, BleMessage* msg)
