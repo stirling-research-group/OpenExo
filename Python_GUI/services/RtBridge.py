@@ -325,20 +325,20 @@ class RtBridge(QtCore.QObject):
 
             # Parse stream similar to original logic
             if curr_command == 'P':
-                print("RAW PID:", event_data)
+                
                 self.logger.debug(f"PID frame detected, expecting {self._data_length} values")
                 values = []
                 token = ""
                 for ch in event_data:
                     if ch == 'n':
                         try:
-                            values.append(float(token) / 100.0)
+                            values.append(float(token) / 1000.0)
                         except Exception:
                             pass
                         token = ""
                     else:
                         token += ch
-                print("PARSED PID:", values)
+                
                 if values:
                     self.logger.debug(f"Emitting PID values: {values}")
                     self.pidValuesReceived.emit(values)

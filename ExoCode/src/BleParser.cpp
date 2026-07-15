@@ -112,7 +112,8 @@ int BleParser::package_raw_data(byte *buffer, BleMessage &msg)
         double data_to_send = (double)msg.data[i];
 
         //Send as Int to reduce bytes being sent
-        int modData = int(data_to_send * 100);
+        int scale = (msg.command == ble_names::send_pid) ? 1000 : 100;
+        int modData = int(data_to_send * scale);
         int cLength = utils::get_char_length(modData);
        
         if (cLength > _maxChars)
