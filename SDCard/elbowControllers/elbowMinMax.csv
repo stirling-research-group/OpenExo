@@ -1,6 +1,6 @@
-5,"header Size, the first N rows will be ignored, except for this first cells in the first two rows",,,,,,,,,,,,
-14,"parameter number, the number of parameters to read per line",,,,,,,,,,,,
-,Parameter list for the  Sine controller,,,,,,,,,,,,
-,Parameter order:,,,,,,,,,,,,
-FlEXamplitude,DigitFSR_threshold,PalmFSR_threshold,DigitFSR_LOWthreshold,PalmFSR_LOWthreshold,CaliRequest,TrqProfile,P_gain,I_gain,D_gain,TorqueLimit,SpringPkTorque,EXTamplitude,FiltStrength
-0,4,4,2,2,3,0,0.05,0.025,0,1.5,0,0,4
+5,"header Size, the first N rows will be ignored, except for this first cells in the first two rows",,,,,,,,,,,,,
+15,"parameter number, the number of parameters to read per line",,,,,,,,,,,,,
+,Parameter list for the  Sine controller,,,,,,,,,,,,,
+,Parameter order:,,,,,,,,,,,,,
+FlEXamplitude,DigitFSR_threshold,PalmFSR_threshold,DigitFSR_LOWthreshold,PalmFSR_LOWthreshold,CaliRequest,TrqProfile,P_gain,I_gain,D_gain,TorqueLimit,SpringPkTorque,EXTamplitude,FiltStrength,SafeStart
+0.75,4,4,2,2,3,0,0.05,0.025,0,1.5,0,0.75,4,1

@@ -1525,13 +1525,13 @@ float ElbowMinMax::calc_motor_cmd()
     //Get motor command based on PID
     cmd = _controller_data->filtered_setpoint + _pid(_controller_data->filtered_setpoint, _controller_data->filtered_torque_reading, _controller_data->parameters[controller_defs::elbow_min_max::P_gain_idx], _controller_data->parameters[controller_defs::elbow_min_max::I_gain_idx], _controller_data->parameters[controller_defs::elbow_min_max::D_gain_idx]);       //originally, (10, 0, 200)
     // Safe start mode
-    if (_controller_data->parameters[controller_defs::elbow_min_max::safe_start_idx])
-    {
-        cmd = 0;
-        _controller_data->ff_setpoint = 0;
-        _controller_data->filtered_setpoint = 0;
-        reset_integral();
-    }
+    // if (_controller_data->parameters[controller_defs::elbow_min_max::safe_start_idx])
+    // {
+    //     cmd = 0;
+    //     _controller_data->ff_setpoint = 0;
+    //     _controller_data->filtered_setpoint = 0;
+    //     reset_integral();
+    // }
 
     //Sets the desired torque for plotting
     _controller_data->desired_torque = _controller_data->filtered_setpoint;
